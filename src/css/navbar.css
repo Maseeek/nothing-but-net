@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap');
+.nav-container {
+    display: flex;
+    justify-content: space-between; /* Adjusts spacing between title and buttons */
+    align-items: center;
+    padding: 15px;
+    background-color: #1e1e2f;
+    color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixes the navbar at the top */
+    top: 0; /* Ensures it stays at the top */
+    left: 0; /* Aligns it to the left edge */
+    width: 100%; /* Makes it span the full width */
+    z-index: 1000; /* Ensures it stays above other elements */
+    font-family: 'Arial', sans-serif;
+}
+
+.nav-options{
+    justify-content: end;
+    display: flex;
+}
+
+.nav-title {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds spacing between the logo and the title */
+    margin-left: 15px; /* Adds spacing from the left edge */
+    font-family: 'Cal Sans', sans-serif;
+}
+
+/* Home button */
+.home-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    /*margin-left: 0px; !* Add spacing from the left edge *!*/
+}
+
+.home-btn:hover {
+    color: #4caf50;
+    transform: scale(1.1);
+}
+
+/* Profile button */
+.profile-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-right: 30px; /* Add spacing from the right edge */
+}
+
+.profile-btn:hover {
+    color: #c14c1f;
+    transform: scale(1.1);
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    right: 30px;
+    background-color: #2a2a3d;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    min-width: 180px;
+    z-index: 1000;
+    overflow: hidden;
+    margin:30px;
+    margin-right: 10px;
+}
+
+.dropdown-menu.visible {
+    display: flex;
+}
+
+.dropdown-item {
+    padding: 12px 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #853216;
+    color: #ffffff;
+}
+
+/* SVG icons */
+button svg,
+a svg {
+    stroke: #ffffff;
+    transition: stroke 0.3s ease;
+}
+
+button:hover svg,
+a:hover svg {
+    stroke: #f15d15;
+}
+
+#auth-btn{
+    margin:0px;
+    padding:0px;
+}
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .dropdown-menu {
+        top: 50px;
+        right: 15px;
+    }
+}
