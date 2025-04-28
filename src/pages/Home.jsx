@@ -4,7 +4,7 @@ import '../css/MainPage.css';
 function MainPage() {
     return (
         <div className="main-page">
-            <h1>Video Processing Page</h1>
+            <h1>Analyze your Video</h1>
             <form className="video-form">
                 <label htmlFor="videoInput">Upload a video:</label>
                 <input type="file" id="videoInput" accept="video/*"/>

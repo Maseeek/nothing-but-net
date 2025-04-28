@@ -12,7 +12,7 @@
     left: 0; /* Aligns it to the left edge */
     width: 100%; /* Makes it span the full width */
     z-index: 1000; /* Ensures it stays above other elements */
-    font-family: 'Arial', sans-serif;
+    font-family: "Cal Sans", 'Arial', sans-serif;
 }
 
 .nav-options{
@@ -26,6 +26,11 @@
     gap: 10px; /* Adds spacing between the logo and the title */
     margin-left: 15px; /* Adds spacing from the left edge */
     font-family: 'Cal Sans', sans-serif;
+}
+
+.nav-title:hover {
+    color: #c14c1f;
+    /*transform: scale(1.1);*/
 }
 
 /* Home button */
@@ -43,7 +48,7 @@
 }
 
 .home-btn:hover {
-    color: #4caf50;
+    color: #c14c1f;
     transform: scale(1.1);
 }
 
@@ -99,8 +104,13 @@
 }
 
 .dropdown-item:hover {
-    background-color: #853216;
+    background-color: #c14c1f;
     color: #ffffff;
+
+}
+
+.dropdown-item:hover svg {
+    stroke: #ffffff; /* Keep the stroke color white on hover */
 }
 
 /* SVG icons */
@@ -118,6 +128,24 @@ a:hover svg {
 #auth-btn{
     margin:0px;
     padding:0px;
+}
+
+#logo{
+    transition-duration: 0.3s;
+}
+
+#logo:hover{
+    filter: drop-shadow(0 0 0.4em #c14c1f);
+    scale: 1.05;
+}
+
+#nbntitle{
+    transition-duration: 0.3s;
+}
+
+#nbntitle:hover{
+    filter: drop-shadow(0 0 0.4em #c14c1f);
+    /*scale: 1.1;*/
 }
 
 
