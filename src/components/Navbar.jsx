@@ -72,8 +72,8 @@ function Navbar() {
     return (
         <div className="nav-container">
             <div className="nav-title">
-                <img src={nbnLogo} alt="NBN Logo" width="80" height="80" />
-                <h2>nothingbutnet</h2>
+                <img id="logo" src={nbnLogo} alt="NBN Logo" width="80" height="80" />
+                <h2 id="nbntitle">nothingbutnet</h2>
             </div>
             <div className={"nav-options"}>
             <HomeButton />
