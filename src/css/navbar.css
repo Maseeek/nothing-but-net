@@ -64,7 +64,7 @@
     align-items: center;
     gap: 8px;
     transition: transform 0.3s ease, color 0.3s ease;
-    margin-right: 30px; /* Add spacing from the right edge */
+    margin-right: 50px; /* Add spacing from the right edge */
 }
 
 .profile-btn:hover {
@@ -86,7 +86,6 @@
     z-index: 1000;
     overflow: hidden;
     margin:30px;
-    margin-right: 10px;
 }
 
 .dropdown-menu.visible {
@@ -146,6 +145,7 @@ a:hover svg {
 
 #nbntitle:hover{
     filter: drop-shadow(0 0 0.4em #c14c1f);
+    color: #c14c1f;
     /*scale: 1.1;*/
 }
 
