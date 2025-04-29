@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../css/navbar.css';
 import nbnLogo from '../assets/nbnlight.png';
+import nbnTitle from '../assets/nbn close letters transparent.png';
 
 function HomeButton() {
     return (
@@ -72,8 +73,9 @@ function Navbar() {
     return (
         <div className="nav-container">
             <div className="nav-title">
-                <img id="logo" src={nbnLogo} alt="NBN Logo" width="80" height="80" />
+                <img id="logo" src={nbnLogo} alt="NBN Logo" height="80" />
                 <h2 id="nbntitle">nothingbutnet</h2>
+                {/*<img id={"nbntitle"} src={nbnTitle} alt="NBN Title" height={80}/>*/}
             </div>
             <div className={"nav-options"}>
             <HomeButton />

@@ -11,8 +11,9 @@
     top: 0; /* Ensures it stays at the top */
     left: 0; /* Aligns it to the left edge */
     width: 100%; /* Makes it span the full width */
-    z-index: 1000; /* Ensures it stays above other elements */
+    z-index: 500; /* Ensures it stays above other elements */
     font-family: "Cal Sans", 'Arial', sans-serif;
+
 }
 
 .nav-options{
