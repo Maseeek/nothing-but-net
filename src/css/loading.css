@@ -1,0 +1,63 @@
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(30, 30, 47, 0.8); /* Semi-transparent dark overlay */
+    z-index: 1000;
+    pointer-events: auto; /* Block interactions with elements underneath */
+}
+
+.loading-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background-color: #1e1e2f; /* Dark box background */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Darker shadow */
+    z-index: 1001; /* Ensures the loading box is above the overlay */
+    pointer-events: auto; /* Allows interaction with the loading box */
+}
+
+.logo-title-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Adds spacing between the logo and title */
+    margin-bottom: 20px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #2a2a3d; /* Darker border */
+    border-top: 5px solid #c14c1f; /* Highlight color */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-logo {
+    width: 200px;
+    margin-bottom: 20px;
+    filter: brightness(0.8); /* Slightly dim the logo */
+}
+
+.loading-title {
+    width: 100px;
+    margin-bottom: 20px;
+    filter: brightness(0.8); /* Slightly dim the title */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
