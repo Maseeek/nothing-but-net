@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './css/index.css';
 import Home from './pages/Home.jsx';
 import Loading from './components/Loading.jsx';
+import Results from "./pages/Results.jsx";
 
 function Main() {
     const [isLoading, setIsLoading] = useState(true);

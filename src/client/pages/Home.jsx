@@ -1,5 +1,7 @@
 import Navbar from "../components/Navbar.jsx";
 import '../css/MainPage.css';
+import Coordinates from "../components/Coordinates.jsx";
+import image from "../assets/nbnlogo.png"
 
 function MainPage() {
     return (
@@ -20,6 +22,7 @@ function Home() {
 
             <Navbar/>
             <MainPage/>
+            <Coordinates imageUrl={image}/>
         </>
 
     )

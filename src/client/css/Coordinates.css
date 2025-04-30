@@ -1,0 +1,83 @@
+.coordinates-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(30, 30, 47, 0.8); /* Semi-transparent dark overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: auto; /* Block interactions with elements underneath */
+}
+
+.coordinates-content {
+    background-color: #1e1e2f; /* Dark background to match the theme */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    color: #ffffff;
+    max-width: 90%;
+    width: 600px;
+}
+
+.coordinates-message {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #f0f0f0;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.selectable-image {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    cursor: crosshair;
+}
+
+.coordinate-point {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #ff6f61; /* Highlight color for points */
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.coordinates-list {
+    text-align: left;
+    margin-top: 15px;
+}
+
+.coordinates-list h3 {
+    margin-bottom: 10px;
+    color: #f0f0f0;
+}
+
+.coordinates-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.coordinates-list li {
+    font-size: 1rem;
+    color: #d1d1d1;
+    margin-bottom: 5px;
+}
