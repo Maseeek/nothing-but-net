@@ -1,8 +1,13 @@
 import { useState } from "react";
 import "../css/Coordinates.css";
-function Coordinates({ imageUrl }) {
+import { sendVideoForAnalysis } from "../js/videoProcessing.js";
+import Loading from "../components/Loading.jsx";
+import { useNavigate } from "react-router-dom";
+
+function Coordinates({ imageUrl, videoFile }) {
     const [coordinates, setCoordinates] = useState([]);
-    const [message, setMessage] = useState("Click on the image to select the first coordinate.");
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const navigate = useNavigate();
 
     const handleImageClick = (event) => {
         if (coordinates.length < 2) {
@@ -11,49 +16,78 @@ function Coordinates({ imageUrl }) {
             const y = event.clientY - rect.top;
 
             setCoordinates((prev) => [...prev, { x, y }]);
+        }
+    };
 
-            if (coordinates.length === 0) {
-                setMessage("Click on the image to select the second coordinate.");
-            } else {
-                setMessage("You have selected both coordinates.");
+    const handleAnalyzeResults = async () => {
+        if (!videoFile) {
+            alert("No video file provided.");
+            return;
+        }
+
+        if (coordinates.length === 2) {
+            const [hoopLeft, hoopRight] = coordinates;
+
+            // Validate coordinates
+            if (
+                !hoopLeft ||
+                !hoopRight ||
+                typeof hoopLeft.x !== "number" ||
+                typeof hoopLeft.y !== "number" ||
+                typeof hoopRight.x !== "number" ||
+                typeof hoopRight.y !== "number"
+            ) {
+                alert("Invalid coordinates. Please select valid points.");
+                return;
             }
+
+            setIsAnalyzing(true); // Show loading screen
+
+            try {
+                await sendVideoForAnalysis(videoFile, hoopLeft, hoopRight, navigate);
+            } catch (error) {
+                console.error("Error during analysis:", error);
+                alert("An error occurred during analysis. Please try again.");
+            } finally {
+                setIsAnalyzing(false); // Hide loading screen after response
+            }
+        } else {
+            alert("Please select exactly two coordinates.");
         }
     };
 
     return (
         <div className="coordinates-container">
-            <div className="coordinates-content">
-                <p className="coordinates-message">{message}</p>
-                <div className="image-wrapper">
-                    <img
-                        src={imageUrl}
-                        alt="Selectable"
-                        onClick={handleImageClick}
-                        className="selectable-image"
-                    />
-                    {coordinates.map((coord, index) => (
-                        <div
-                            key={index}
-                            className="coordinate-point"
-                            style={{ left: `${coord.x}px`, top: `${coord.y}px` }}
-                        >
-                            {index + 1}
-                        </div>
-                    ))}
-                </div>
-                {coordinates.length > 0 && (
-                    <div className="coordinates-list">
-                        <h3>Selected Coordinates:</h3>
-                        <ul>
-                            {coordinates.map((coord, index) => (
-                                <li key={index}>
-                                    Point {index + 1}: (X: {coord.x}, Y: {coord.y})
-                                </li>
-                            ))}
-                        </ul>
+            {isAnalyzing && <Loading />}
+            {!isAnalyzing && (
+                <div className="coordinates-content">
+                    <h2>Please select the left and right edges of the hoop.</h2>
+                    <div className="image-wrapper">
+                        <img
+                            src={imageUrl}
+                            alt="Selectable"
+                            onClick={handleImageClick}
+                            className="selectable-image"
+                        />
+                        {coordinates.map((coord, index) => (
+                            <div
+                                key={index}
+                                className="coordinate-point"
+                                style={{ left: `${coord.x}px`, top: `${coord.y}px` }}
+                            >
+                                {index + 1}
+                            </div>
+                        ))}
                     </div>
-                )}
-            </div>
+                    <button
+                        className="analyze-button"
+                        onClick={handleAnalyzeResults}
+                        disabled={coordinates.length < 2 || isAnalyzing}
+                    >
+                        Analyze Results
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

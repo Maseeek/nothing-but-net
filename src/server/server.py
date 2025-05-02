@@ -13,7 +13,7 @@ cv2.setUseOptimized(True)
 
 # PYTHON PROGRAM TO PROCESS VIDEO AND DETERMINE BASKETBALL OUTCOMES
 # MAX_FRAMES = 1750 # optimal for my initial video
-MAX_FRAMES = 5000
+MAX_FRAMES = 500
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -176,6 +176,8 @@ def analyze_video(videoPath, hoopLeft, hoopRight, max_frames, accuracy=0.15):
     }
 
     return result
+
+import tempfile
 @app.route('/upload-and-analyze', methods=['POST'])
 def upload_and_analyze():
     if 'video' not in request.files:
@@ -186,28 +188,31 @@ def upload_and_analyze():
     if video_file.filename == '':
         return jsonify({'success': False, 'error': 'Empty filename'}), 400
 
-    # Get hoop coordinates from request
+    # Validate hoop coordinates
     try:
         hoopLeft = json.loads(request.form.get('hoopLeft', '[0, 0]'))
         hoopRight = json.loads(request.form.get('hoopRight', '[100, 0]'))
-    except:
-        return jsonify({'success': False, 'error': 'Invalid hoop coordinates'}), 400
 
-    # Get showAngle status from request
+        if not (isinstance(hoopLeft, list) and len(hoopLeft) == 2 and all(isinstance(i, (int, float)) for i in hoopLeft)):
+            raise ValueError("Invalid hoopLeft format. Expected a list of two numbers.")
+        if not (isinstance(hoopRight, list) and len(hoopRight) == 2 and all(isinstance(i, (int, float)) for i in hoopRight)):
+            raise ValueError("Invalid hoopRight format. Expected a list of two numbers.")
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Invalid hoop coordinates: {str(e)}'}), 400
+
+    # Validate showAngle
     show_angle = request.form.get('showAngle', 'false').lower() == 'true'
     accuracy = 0.5 if show_angle else 0.15
 
-    # Save the video file
-    filename = secure_filename(video_file.filename)
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    video_file.save(filepath)
-
     try:
-        # Run the analysis
-        result = analyze_video(filepath, hoopLeft, hoopRight, MAX_FRAMES, accuracy)
+        # Save the video to a temporary file
+        with tempfile.NamedTemporaryFile(delete=True, suffix=".mp4") as temp_video:
+            temp_video.write(video_file.read())
+            temp_video.flush()
 
-        # Clean up the file (optional)
-        # os.remove(filepath)
+            # Use the temporary file path with cv2.VideoCapture
+            video_path = temp_video.name
+            result = analyze_video(video_path, hoopLeft, hoopRight, MAX_FRAMES, accuracy)
 
         return jsonify({
             'success': True,
@@ -216,8 +221,7 @@ def upload_and_analyze():
     except Exception as e:
         return jsonify({
             'success': False,
-            'error': str(e)
+            'error': f'Error during video analysis: {str(e)}'
         }), 500
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

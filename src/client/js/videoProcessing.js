@@ -1,36 +1,29 @@
-function sendVideoForAnalysis(file, hoopLeft, hoopRight) {
+export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) {
     const formData = new FormData();
-    formData.append('video', file);
-    formData.append('hoopLeft', JSON.stringify(hoopLeft));
-    formData.append('hoopRight', JSON.stringify(hoopRight));
-    formData.append('showAngle', sessionStorage.getItem("showAngle") === "true");
+    formData.append("video", file);
+    formData.append("hoopLeft", JSON.stringify([hoopLeft.x, hoopLeft.y]));
+    formData.append("hoopRight", JSON.stringify([hoopRight.x, hoopRight.y]));
+    formData.append("showAngle", sessionStorage.getItem("showAngle") === "true");
 
-    $.ajax({
-        url: 'http://localhost:5000/upload-and-analyze',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: (data) => {
-            if (data.success) {
-                $("#upload-button").text("COMPLETED").css("background-color", "#149D2F");
+    try {
+        const response = await fetch("http://localhost:5000/upload-and-analyze", {
+            method: "POST",
+            body: formData,
+        });
 
-                // Display the results
-                if (sessionStorage.getItem("showAngle") === "false") {
-                    displayFGResults(data.data);
-                } else {
-                    displayAnalysisResults(data.data);
-                }
-            } else {
-                $("#upload-button").text("ERROR").css("background-color", "#FF0000");
-                console.error('Analysis failed:', data.error);
-                alert('Analysis failed: ' + data.error);
-            }
-        },
-        error: (error) => {
-            $("#upload-button").text("ERROR").css("background-color", "#FF0000");
-            console.error('Error:', error);
-            alert('Error processing video: ' + error.message);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            console.log("Analysis completed successfully:", data.data);
+            sessionStorage.setItem("analysisResults", JSON.stringify(data.data));
+            console.log("Stored in sessionStorage:", sessionStorage.getItem("analysisResults"));
+            navigate("/results"); // Navigate to Results.jsx page
+        } else {
+            console.error("Analysis failed:", data.error || "Unknown error");
+            alert("Analysis failed: " + (data.error || "Unknown error"));
         }
-    });
+    } catch (error) {
+        console.error("Error processing video:", error);
+        alert("Error processing video: " + error.message);
+    }
 }

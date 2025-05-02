@@ -81,3 +81,18 @@
     color: #d1d1d1;
     margin-bottom: 5px;
 }
+
+.analyze-button{
+    color: #c14c1f;
+}
+
+.analyze-button:hover {
+    background-color: #9e3d19;
+    color: #ffffff;
+}
+
+.analyze-button:disabled {
+    background-color: #cccccc; /* Light grey */
+    color: #666666; /* Darker grey for text */
+    cursor: not-allowed;
+}
