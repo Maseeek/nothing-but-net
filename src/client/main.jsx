@@ -1,22 +1,18 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './css/index.css';
 import Home from './pages/Home.jsx';
-import Loading from './components/Loading.jsx';
-import Results from "./pages/Results.jsx";
+import Results from './pages/Results.jsx';
 
 function Main() {
-    const [isLoading, setIsLoading] = useState(true);
-
-    const handleLoadingComplete = () => {
-        setIsLoading(false);
-    };
-
     return (
-        <>
-            {isLoading && <Loading onLoadingComplete={handleLoadingComplete} />}
-            <Home />
-        </>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/results" element={<Results />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
