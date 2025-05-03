@@ -6,6 +6,7 @@ export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) 
     formData.append("showAngle", sessionStorage.getItem("showAngle") === "true");
 
     try {
+        console.log("Hoop Left:", hoopLeft, "Hoop Right:", hoopRight);
         const response = await fetch("http://localhost:5000/upload-and-analyze", {
             method: "POST",
             body: formData,
