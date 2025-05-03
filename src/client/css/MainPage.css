@@ -32,7 +32,7 @@
 }
 
 .video-form label {
-    font-family: "Cal Sans";
+    font-family: "Cal Sans", serif;
     font-size: 2rem;
     text-align: center;
     color: #ffffff;
@@ -41,11 +41,10 @@
 
 .video-form:hover {
     background-color: #953411; /* Slightly lighter shade for hover effect */
+
 }
 
-.video-form:hover {
-    color: #c14c1f;
-}
+
 
 .video-form input[type="file"] {
     display: none; /* Hide the default file input */

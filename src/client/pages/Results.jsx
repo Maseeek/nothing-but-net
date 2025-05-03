@@ -16,10 +16,7 @@ function Results() {
     return (
         <>
             <Navbar />
-            <div className="results-container">
-                <h1>Analysis Results</h1>
                 <FGResults results={data} />
-            </div>
         </>
     );
 }

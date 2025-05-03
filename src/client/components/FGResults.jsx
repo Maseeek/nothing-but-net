@@ -13,7 +13,7 @@ function FGResults({ results }) {
 
     return (
         <div className="analysis-results">
-            <h2>Shot Analysis Results</h2>
+            <h2 className="regHeader">SHOT ANALYSIS RESULTS</h2>
             <div className="shot-sequence">
                 {results.shots_results.map((shot, index) => (
                     <div
@@ -28,14 +28,14 @@ function FGResults({ results }) {
                 <div className="stat-card">
                     <h3>Field Goal %</h3>
                     <div className="value">{results.fg_percentage}%</div>
-                    <div>
+                    <p className="regText">
                         {results.makes}/{results.total_shots}
-                    </div>
+                    </p>
                 </div>
                 <div className="stat-card">
                     <h3>Longest Streak</h3>
                     <div className="value">{results.longest_streak}</div>
-                    <div>consecutive makes</div>
+                    <p className="regText">consecutive makes</p>
                 </div>
             </div>
         </div>

@@ -1,37 +1,47 @@
-*{
-    font-family: "Cal Sans";
+* {
+    font-family: "Cal Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
 .analysis-results {
-    margin-top: 20px;
-    padding: 20px;
+    margin-top: 40px;
+    padding: 40px;
     background-color: #f5f5f5;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    font-family: 'Cal Sans', sans-serif;
+    font-weight: bold;
 }
 
 .shot-sequence {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 25px;
+    margin-bottom: 50px;
 }
 
 .shot {
-    width: 40px;
-    height: 40px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 24px;
     font-weight: bold;
     color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shot:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .make {
@@ -46,25 +56,46 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 35px;
 }
 
 .stat-card {
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 200px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    width: 300px;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
 }
 
 .stat-card h3 {
-    margin-top: 0;
+    margin-bottom: 20px;
     color: #333;
+    font-size: 1.8rem;
 }
 
 .stat-card .value {
-    font-size: 24px;
+    font-size: 36px;
     font-weight: bold;
-    color: #a63d40;
+    color: #951130;
+    margin-bottom: 20px;
+}
+
+.regHeader {
+    font-size: 3rem;
+    color: #c14c1f;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+}
+
+.regText {
+    font-size: 1.4rem;
+    color: black;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
