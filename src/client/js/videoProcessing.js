@@ -3,7 +3,7 @@ export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) 
     formData.append("video", file);
     formData.append("hoopLeft", JSON.stringify([hoopLeft.x, hoopLeft.y]));
     formData.append("hoopRight", JSON.stringify([hoopRight.x, hoopRight.y]));
-    formData.append("showAngle", sessionStorage.getItem("showAngle") === "true");
+    formData.append("showAngle", sessionStorage.getItem("showAngle") != "true");
 
     try {
         console.log("Hoop Left:", hoopLeft, "Hoop Right:", hoopRight);

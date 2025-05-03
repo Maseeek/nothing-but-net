@@ -65,7 +65,7 @@ function MainPage() {
                 <>
                     <h1>Analyze your Video</h1>
                     <form className="video-form">
-                        <label htmlFor="videoInput">UPLOAD VIDEO:</label>
+                        <label htmlFor="videoInput">UPLOAD VIDEO</label>
                         <input
                             type="file"
                             id="videoInput"
