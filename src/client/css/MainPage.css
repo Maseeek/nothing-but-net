@@ -42,11 +42,12 @@
 
 .video-form:hover {
     background-color: #bf4314; /* Slightly lighter shade for hover effect */
-    transform: scale(1.01); /* Slightly enlarge on hover */
-    box-shadow: 0 1px 8px #000000; /* Darker shadow on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    /*box-shadow: 0 1px 8px #000000; !* Darker shadow on hover *!*/
 }
 .video-form label:hover {
-    color: #ffffff; /* Slightly lighter text color on hover */
+    color: #f1f1f1; /* Slightly lighter text color on hover */
+    cursor: pointer;
 }
 
 
