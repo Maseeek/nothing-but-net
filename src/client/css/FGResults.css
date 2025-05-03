@@ -8,14 +8,15 @@
 .analysis-results {
     margin-top: 40px;
     padding: 40px;
-    background-color: #f5f5f5;
+    background-color: #1e1e2f; /* Dark background to match the theme */
     border-radius: 16px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7); /* Darker shadow */
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     font-weight: bold;
+    color: #ffffff; /* Light text color */
 }
 
 .shot-sequence {
@@ -41,15 +42,23 @@
 
 .shot:hover {
     transform: scale(1.1);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.2); /* Subtle light shadow */
 }
 
 .make {
-    background-color: #4caf50;
+    background-color: #4caf50; /* Keep green for makes */
 }
 
 .miss {
-    background-color: #f44336;
+    background-color: #f44336; /* Keep red for misses */
+}
+
+.make:hover {
+    box-shadow: 0 0 8px 2px rgba(76, 175, 80, 0.8); /* Subtle green glow on hover */
+}
+
+.miss:hover {
+    box-shadow: 0 0 8px 2px rgba(244, 67, 54, 0.8); /* Subtle red glow on hover */
 }
 
 .stats-container {
@@ -60,42 +69,43 @@
 }
 
 .stat-card {
-    background-color: white;
+    background-color: #2a2a3d; /* Darker card background */
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.9); /* Darker shadow */
     width: 300px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #ffffff; /* Light text color */
 }
 
 .stat-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.9); /* Darker shadow on hover */
 }
 
 .stat-card h3 {
     margin-bottom: 20px;
-    color: #333;
+    color: #e0e0e0; /* Slightly lighter text for headings */
     font-size: 1.8rem;
 }
 
 .stat-card .value {
     font-size: 36px;
     font-weight: bold;
-    color: #951130;
+    color: #e36125; /* Orange highlight for values */
     margin-bottom: 20px;
 }
 
 .regHeader {
     font-size: 3rem;
-    color: #c14c1f;
-    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+    color: #e36125; /* Orange for headers */
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
     margin-bottom: 30px;
 }
 
 .regText {
     font-size: 1.4rem;
-    color: black;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    color: #d1d1d1; /* Light grey for text */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
