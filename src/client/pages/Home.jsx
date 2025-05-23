@@ -63,7 +63,7 @@ function MainPage() {
                 <Loading />
             ) : (
                 <>
-                    <h1>Analyze your Video</h1>
+                    {/*<h1>Analyze your Video</h1>*/}
                     <form className="video-form">
                         <label htmlFor="videoInput">UPLOAD VIDEO</label>
                         <input
@@ -95,11 +95,28 @@ function MainPage() {
     );
 }
 
+function LandingPage(){
+    return(
+        <div className={"landing-page"}>
+            <div className={"background-video-form"}>
+                <video className={"background-video"} src={"src/client/assets/backgroundvideo.mp4"} autoPlay loop muted />
+                <h1 className={"welcome-message"}>Welcome to NOTHINGBUTNET</h1>
+
+                {/*<img className={"nbn-logo"} src={"src/client/assets/nbn logo transparent.png"} alt="NBN Logo" />*/}
+                {/*<p className={"welcome-info"}>NothingButNet</p>*/}
+
+            </div>
+            <MainPage />
+        </div>
+
+    )
+}
+
 function Home() {
     return (
         <>
             <Navbar />
-            <MainPage />
+            <LandingPage />
         </>
     );
 }
