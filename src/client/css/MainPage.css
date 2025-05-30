@@ -1,175 +1,153 @@
+/* src/client/css/MainPage.css */
 @import url('https://fonts.googleapis.com/css2?family=Cal+Sans:wght@400&display=swap');
-.main-page {
+
+/* Remove html, body styles from here; they are now in index.css */
+
+.landing-page {
+    position: relative; /* Crucial for child absolute positioning (like the video) */
+    width: 100%;
+    height: 100vh; /* Make landing page take full viewport height */
+    padding-top: 110px; /* IMPORTANT: Adjust to your ACTUAL Navbar height to prevent overlap */
+    box-sizing: border-box; /* Include padding in height calculation */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    padding: 20px;
-    margin: 0 auto; /* Centers the main-page horizontally */
-    max-width: 800px; /* Optional: Limit the width for better centering */
-    box-sizing: border-box;
+    justify-content: center; /* Vertically center content like welcome message and form */
+    overflow: hidden; /* Prevents scrollbars if content slightly overflows */
+    text-align: center; /* Default text align for children */
+    margin-top: 20px;
 }
 
-html, body {
-    height: 100%;
-    overflow: hidden; /* Prevent scrolling */
-}
-
-.main-page h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.video-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    /*border: 1px solid #444;*/
-    margin: 20px;
-    border-radius: 8px;
-    background-color: #d64b17;
-    max-width: 400px;
+.background-video-form {
+    position: absolute; /* Stretch this div to cover .landing-page for the video */
+    top: 0; /* Align with the very top of .landing-page (which includes its padding-top) */
+    left: 0;
     width: 100%;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    height: 100%; /* Cover the entire .landing-page */
+    z-index: 0; /* Behind other direct children of .landing-page */
 }
 
-.video-form label {
-    font-family: "Cal Sans", serif;
-    font-size: 2rem;
-    text-align: center;
-    color: #ffffff;
-    cursor: pointer;
-    padding:20px;
-}
-
-.video-form:hover {
-    background-color: #ba471b; /* Slightly lighter shade for hover effect */
-    transform: scale(1.03); /* Slightly enlarge on hover */
-    /*border: 5px solid #51200c;*/
-
-    /*box-shadow: 0 1px 8px #000000; !* Darker shadow on hover *!*/
-}
-.video-form label:hover {
-    color: #ffffff; /* Slightly lighter text color on hover */
-    cursor: pointer;
-}
-
-
-
-.video-form input[type="file"] {
-    display: none; /* Hide the default file input */
-}
-
-.custom-file-label {
-    display: inline-block;
-    padding: 12px 20px; /* Slightly larger padding for a bigger button */
-    background-color: #b0401c; /* Darker shade of the current color */
-    color: #ffffff;
-    border: none;
-    border-radius: 6px; /* Slightly more rounded corners */
-    cursor: pointer;
-    text-align: center;
-    font-weight: bolder;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.custom-file-label:hover {
-    /*background-color: #8e3317; !* Even darker shade for hover effect *!*/
-    /*transform: scale(1.05); !* Slightly enlarge on hover *!*/
-}
-
-.custom-file-label:active {
-    transform: scale(0.98); /* Slightly shrink on click */
-}
-
-.video-form button {
-    width: 100%;
-    max-width: 150px;
-    padding: 10px;
-    background-color: #dd5822;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.5s ease;
-}
-
-.video-form button:hover {
-    background-color: #fa8660;
-}
-
-.background-video{
+.background-video {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    z-index: -1; /* Send the video to the back */
-    opacity: 0.5;
+    object-fit: cover; /* Ensures video covers the area, might crop */
+    z-index: -1;       /* Behind everything in .background-video-form */
+    opacity: 0.4;      /* Slightly adjusted opacity */
     margin:0;
 }
 
-.welcome-div{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    margin-top: 50px;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-    z-index: 0; /* Send the overlay to the back */
-}
-
 .welcome-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 5em;
+    position: relative; /* No longer absolute, will be part of flex flow */
+    z-index: 2; /* Above video */
+    font-size: 5em; /* Adjust as needed */
     color: transparent;
-    background-image: url("../assets/gradient.jpg");
+    background-image: url("../assets/gradient.jpg"); /* */
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: none; /* No shadow by default */
-    z-index: 1;
-    filter: brightness(150%);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3); /* Softer shadow */
+    filter: brightness(250%);
+    max-width: ;
     background-size: 100% auto;
     background-position: center;
-    text-align: center;
-    white-space: normal;
-    overflow: hidden;
-    word-wrap: break-word;
-    transition: filter 0.3s ease-in-out; /* Apply transition here */
+    margin-top: 180px;
+    margin-bottom: 30px; /* Space below welcome message */
+    transition: filter 0.3s ease-in-out;
     cursor: default;
 }
 
 .welcome-message:hover {
-    filter: brightness(200%);
+    filter: brightness(180%); /* Slightly adjusted hover brightness */
 }
 
-.welcome-info{
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    font-size: 1em;
-    margin-top: 30px;
-    transform: translate(-50%, -50%);
-    font-family: calibri, serif;
-    color: #ffffff;
+/* .main-page is the styles for the MainPage component (upload form area) */
+/* This component is rendered *inside* .landing-page */
+.main-page {
+    position: relative; /* To ensure it's layered correctly if needed */
+    z-index: 1; /* Above background video, below modals */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* height: 100vh; */ /* REMOVE: This component shouldn't be full height itself */
+    padding: 25px;
+    margin-top: 20px; /* Space between welcome message and this form block */
+    max-width: 550px; /* Max width for the form content */
+    width: 90%;
+    /*background-color: rgba(20, 20, 30, 0.65); !* Semi-transparent dark background *!*/
+    border-radius: 12px;
+    /*box-shadow: 0 8px 25px rgba(0,0,0,0.4);*/
+    box-sizing: border-box;
+}
+
+/* Styles for the UPLOAD VIDEO "button" (form) */
+.video-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px; /* Space after the upload button/area */
+    padding: 10px; /* Reduced internal padding */
+    border-radius: 8px;
+    background-color: #d64b17; /* */
+    width: 100%;
+    max-width: 300px; /* Control width of the button itself */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.video-form:hover {
+    background-color: #ba471b; /* */
+    transform: scale(1.03);
+}
+
+.video-form label {
+    font-family: "Cal Sans", serif; /* */
+    font-size: 1.4rem; /* Adjusted size */
     text-align: center;
-
-    z-index: 1; /* Bring the message to the front */
+    color: #ffffff; /* */
+    cursor: pointer;
+    padding: 12px 20px; /* Padding for the label acting as a button */
+    display: block; /* Make label take full width of .video-form */
+    width: 100%;
+    box-sizing: border-box;
 }
 
+.video-form input[type="file"] {
+    display: none; /* */
+}
+
+/* Analyze Results Button (from Home.jsx) */
+.analyze-button {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    background-color: #e36125; /* Consistent orange from Coordinates.css */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px; /* Space if image/coordinates component is not shown */
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.analyze-button:hover {
+    background-color: #c14c1f;
+    transform: scale(1.05);
+}
+.analyze-button:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Unused styles from original MainPage.css for .welcome-info and .nbn-logo can be kept or removed if not used */
+.welcome-info{
+    /* ... */
+}
 .nbn-logo {
-    display: block;
-    margin: 0 auto; /* Center the logo horizontally */
-    width: 400px; /* Adjust size as needed */
-    height: auto; /* Maintain aspect ratio */
+    /* ... */
 }

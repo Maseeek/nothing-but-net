@@ -1,12 +1,28 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const helmet = require('helmet');
-const cors = require('cors');
-const { body, validationResult } = require('express-validator');
-const path = require('path');
+// Instead of:
+// require('dotenv').config();
+// const express = require('express');
+// const mongoose = require('mongoose');
+// ... etc.
+
+// Use:
+import dotenv from 'dotenv';
+dotenv.config(); // Call config if it's a function provided by the default export
+
+import express from 'express';
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import helmet from 'helmet';
+import cors from 'cors';
+import { body, validationResult } from 'express-validator'; // Assuming these are named exports
+import path from 'path';
+import { fileURLToPath } from 'url'; // Needed for __dirname equivalent in ES modules
+
+// For __dirname equivalent in ES modules:
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ... rest of your server.js code, ensuring all require calls are converted
 
 // Initialize Express
 const app = express();
@@ -23,17 +39,21 @@ const JWT_SECRET = process.env.JWT_SECRET; // ✏️ Use a strong secret in prod
 // ========================================
 app.use(helmet()); // Security headers
 const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:63342',
-    'http://localhost:63343',// WebStorm's preview server
-    process.env.FRONTEND_URL
+    'http://localhost:3000',    // Your backend's origin
+    'http://localhost:63342',   // WebStorm's preview server
+    'http://localhost:63343',   // WebStorm's preview server
+    'http://localhost:5173',    // <<< ADD THIS LINE for your Vite dev server
+    process.env.FRONTEND_URL    // Keep this if you use it for deployed frontend
 ].filter(Boolean);
 
 app.use(cors({
     origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.error('CORS error: Origin not allowed:', origin); // Log blocked origins
             callback(new Error('Not allowed by CORS'));
         }
     },
