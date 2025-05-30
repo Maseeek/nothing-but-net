@@ -1,0 +1,137 @@
+/* In your RegisterPage.css */
+
+/* --- General Page Setup --- */
+.register-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This centers .register-background (and Navbar if it's not full width) horizontally */
+    /* REMOVE or COMMENT OUT justify-content: center;
+       This will make the content start from the top (after Navbar),
+       and flex-grow on .register-background will handle filling the space. */
+    /* justify-content: center; */
+    min-height: 100vh;
+    font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
+    color: rgba(255, 255, 255, 0.87);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 20px; /* This padding is around the entire page content */
+    box-sizing: border-box;
+}
+
+/*
+The .register-background and .register-container CSS rules
+and the rest of your CSS remain the same as per the previous update.
+No changes needed there for this specific adjustment.
+*/
+
+.register-container {
+    background-color: rgba(30, 30, 30, 0.92);
+    padding: 20px 40px;
+    border-radius: 8px;
+    border-top: 4px solid #d64b17;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    text-align: left;
+    max-width: 500px;
+    width: 100%;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* --- Header Section --- */
+.register-container header {
+    text-align: center;
+    margin-bottom: 30px; /* Keeps the space below the header p tag */
+    margin-top: 0;       /* ADD THIS: Explicitly remove any top margin from the header block */
+}
+
+.register-container header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;  /* Keeps the space below the h1 title */
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 0;       /* ADD THIS: Remove default browser top margin for h1 */
+}
+
+/* The rest of your CSS remains the same */
+
+.register-container header p {
+    font-size: 0.95rem;
+    color: #cccccc; /* Lighter grey for better contrast on the darker container */
+    margin-bottom: 0; /* No margin if it's the last element in header */
+}
+
+/* --- Registration Form --- */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Increased gap between form elements */
+}
+
+.register-form input {
+    padding: 14px 16px; /* Increased padding for a more comfortable feel */
+    font-size: 1rem;
+    border: 1px solid #333333; /* Darker, more subtle border */
+    border-radius: 6px; /* Consistent, slightly rounded corners */
+    background-color: #1f1f1f; /* Darker input background for better contrast with text */
+    color: #ffffff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for focus */
+}
+
+.register-form input::placeholder {
+    color: #777777; /* Subtler placeholder text */
+    opacity: 1; /* Ensure placeholder is visible (for Firefox) */
+}
+
+.register-form input:focus {
+    border-color: #d64b17; /* Accent color for border on focus */
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.3); /* Glow effect on focus */
+    outline: none; /* Remove default browser outline */
+}
+
+/* --- Submit Button --- */
+.register-form button {
+    padding: 14px;
+    font-size: 1.05rem; /* Slightly larger font size */
+    font-weight: 600; /* Bolder text */
+    background-color: #d64b17; /* Primary accent color */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Consistent with input fields */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-top: 10px; /* Space above the button */
+}
+
+.register-form button:hover {
+    background-color: #c04015; /* Slightly darker shade on hover */
+    transform: translateY(-2px); /* Subtle lift effect */
+    box-shadow: 0 4px 10px rgba(214, 75, 23, 0.3); /* Shadow effect on hover */
+}
+
+.register-form button:active {
+    background-color: #a53710; /* Darker shade for active/click state */
+    transform: translateY(0); /* Reset lift effect */
+    box-shadow: none; /* Remove shadow on active */
+}
+
+/* --- Outcome Message --- */
+.outcome {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ff4d4d; /* Error color, unchanged */
+    margin-top: 15px; /* More space for the message */
+    min-height: 1.2em; /* Reserve space to prevent layout shift when message appears */
+}
+
+/* --- Keyframes for Animation --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -146,6 +146,7 @@ html, body {
     overflow: hidden;
     word-wrap: break-word;
     transition: filter 0.3s ease-in-out; /* Apply transition here */
+    cursor: default;
 }
 
 .welcome-message:hover {
