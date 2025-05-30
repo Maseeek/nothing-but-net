@@ -1,8 +1,12 @@
 const API_BASE = 'http://localhost:3000';
 
+// In: src/client/js/auth.js
+
+// (Make sure API_BASE is defined, e.g., const API_BASE = 'http://localhost:3000';)
+
 // Login function with proper error handling and redirect
 async function login(username, password) {
-    const outcomeEl = document.getElementById('outcome');
+    const outcomeEl = document.getElementById('outcome'); // This is for non-React HTML pages, can be kept for other uses or removed if LoginPage is the only consumer.
     try {
         const response = await fetch(`${API_BASE}/api/login`, {
             method: 'POST',
@@ -10,45 +14,67 @@ async function login(username, password) {
             body: JSON.stringify({ username, password })
         });
 
+        // Attempt to parse the JSON response body, even for errors, as it might contain messages.
+        // Default to an empty object if JSON parsing fails (e.g., for non-JSON error responses)
+        const data = await response.json().catch(() => ({ error: 'Failed to parse server response.' }));
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Login failed');
+            // Prioritize error message from the parsed JSON body
+            throw new Error(data.error || data.message || `Login failed with status: ${response.status}`);
         }
 
-        const { token } = await response.json();
-        localStorage.setItem('authToken', token);
+        // Ensure token exists in the successful response
+        if (!data.token) {
+            console.error('Login response successful, but no token received:', data);
+            throw new Error('Login successful, but no authentication token was provided by the server.');
+        }
+        localStorage.setItem('authToken', data.token);
 
-        // Visual feedback before redirect
+        // This UI update is for non-React contexts.
+        // Your React component (LoginPage.jsx) will handle its own outcome message.
         if (outcomeEl) {
             outcomeEl.textContent = 'Login successful! Redirecting...';
             outcomeEl.style.color = 'green';
         }
 
-        // Force redirect after short delay
+        // The redirect will still happen from here on success.
+        // The LoginPage.jsx success message might flash briefly.
         setTimeout(() => {
-            window.location.href = 'profile.html';
+            window.location.href = 'profile.html'; // Consider using React Router's navigate for SPA consistency if login is called from a component that has access to it.
         }, 1000);
 
+        return data; // Optionally return data if needed by a caller that doesn't rely on the redirect.
+
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Login error (from auth.js):', error.message);
+        // Update non-React UI if element exists
         if (outcomeEl) {
             outcomeEl.textContent = error.message;
             outcomeEl.style.color = 'red';
         }
+        // *** IMPORTANT: Re-throw the error ***
+        // This allows the calling function in LoginPage.jsx to catch it.
+        throw error;
     }
 }
 
-// Registration function with validation
+// In: src/client/js/auth.js
+
+// (Ensure API_BASE is defined)
+// const API_BASE = 'http://localhost:3000';
+
 async function register(username, email, password, confirmPassword) {
-    const outcomeEl = document.getElementById('reg-outcome');
+    // The client-side password match is already handled in RegisterPage.jsx before calling this.
+    // This internal check is redundant if only RegisterPage.jsx calls it, but kept for wider compatibility.
+    const outcomeEl = document.getElementById('reg-outcome'); // For non-React HTML pages
 
-    // Client-side validation
-    if (!outcomeEl) return;
-
+    // Note: RegisterPage.jsx handles this specific check before calling.
     if (password !== confirmPassword) {
-        outcomeEl.textContent = "Passwords don't match!";
-        outcomeEl.style.color = 'red';
-        return;
+        if (outcomeEl) {
+            outcomeEl.textContent = "Passwords don't match!";
+            outcomeEl.style.color = 'red';
+        }
+        throw new Error("Passwords don't match!"); // Ensures React component can catch if somehow called directly
     }
 
     try {
@@ -58,25 +84,40 @@ async function register(username, email, password, confirmPassword) {
             body: JSON.stringify({ username, email, password })
         });
 
-        const data = await response.json();
+        const data = await response.json().catch(() => ({ error: 'Failed to parse server response.' }));
 
         if (!response.ok) {
-            throw new Error(data.error || 'Registration failed');
+            throw new Error(data.error || data.message || `Registration failed with status: ${response.status}`);
         }
 
-        outcomeEl.textContent = "Registration successful! Redirecting...";
-        outcomeEl.style.color = 'green';
+        // For non-React UI:
+        if (outcomeEl) {
+            outcomeEl.textContent = "Registration successful! Redirecting...";
+            outcomeEl.style.color = 'green';
+        }
 
         setTimeout(() => {
-            window.location.href = 'login.html';
+            // RegisterPage.jsx also does its own redirect to '/login'.
+            // Ensure consistency; using '/login' for React Router.
+            window.location.href = '/login';
         }, 1500);
 
+        return data; // Return success data
+
     } catch (err) {
-        outcomeEl.textContent = err.message;
-        outcomeEl.style.color = 'red';
-        console.error('Registration error:', err);
+        // For non-React UI:
+        if (outcomeEl) {
+            outcomeEl.textContent = err.message;
+            outcomeEl.style.color = 'red';
+        }
+        console.error('Registration error (in auth.js):', err.message);
+        // *** IMPORTANT: Re-throw the error ***
+        throw err;
     }
 }
+
+// Make sure login and other functions are also correctly exported
+// export { login, register, isLoggedIn, ... };
 
 // Auth state functions
 function isLoggedIn() {

@@ -1,130 +1,269 @@
-/* In your RegisterPage.css */
+/* Add these new rules and update existing ones in your RegisterPage.css */
 
-/* --- General Page Setup --- */
+/* Ensure html, body reset is at the top if not already in a global CSS file */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: #000000; /* Fallback background */
+}
+
+/* --- General Page Setup (mostly as before) --- */
 .register-page {
     display: flex;
     flex-direction: column;
-    align-items: center; /* This centers .register-background (and Navbar if it's not full width) horizontally */
-    /* REMOVE or COMMENT OUT justify-content: center;
-       This will make the content start from the top (after Navbar),
-       and flex-grow on .register-background will handle filling the space. */
-    /* justify-content: center; */
-    min-height: 100vh;
+    align-items: center;
+    min-height: 100%;
     font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
     color: rgba(255, 255, 255, 0.87);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
     background-size: cover;
-    background-position: center;
-    margin: 0;
-    padding: 20px; /* This padding is around the entire page content */
-    box-sizing: border-box;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)) url('../assets/register-bg.jpg') center;
+    box-sizing: border-box; /* Keep this */
+    padding: 130px 20px 20px;
 }
 
-/*
-The .register-background and .register-container CSS rules
-and the rest of your CSS remain the same as per the previous update.
-No changes needed there for this specific adjustment.
-*/
+.register-background { /* Make sure this is still present in your CSS */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+}
 
+
+/* --- Registration Container (adjustments) --- */
 .register-container {
-    background-color: rgba(30, 30, 30, 0.92);
-    padding: 20px 40px;
-    border-radius: 8px;
+    background-color: rgba(30, 30, 30, 0.93); /* Slightly adjusted opacity */
+    padding: 35px 45px; /* Increased padding */
+    border-radius: 10px; /* Slightly more rounded */
     border-top: 4px solid #d64b17;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7); /* Enhanced shadow */
     text-align: left;
-    max-width: 500px;
+    max-width: 500px; /* Or adjust as preferred */
     width: 100%;
     animation: fadeIn 0.8s ease-out;
 }
 
-/* --- Header Section --- */
+/* --- Header Section (updated) --- */
 .register-container header {
     text-align: center;
-    margin-bottom: 30px; /* Keeps the space below the header p tag */
-    margin-top: 0;       /* ADD THIS: Explicitly remove any top margin from the header block */
+    margin-bottom: 35px; /* Increased space */
+    margin-top: 0;
+}
+
+.register-logo {
+    width: 60px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 15px; /* Space between logo and title */
+    opacity: 0.9;
 }
 
 .register-container header h1 {
-    font-size: 2.2rem;
-    margin-bottom: 8px;  /* Keeps the space below the h1 title */
+    font-size: 2.0rem; /* Adjusted for balance with logo */
+    margin-bottom: 10px; /* Increased space to p */
     color: #ffffff;
     font-weight: 600;
-    margin-top: 0;       /* ADD THIS: Remove default browser top margin for h1 */
+    margin-top: 0;
 }
-
-/* The rest of your CSS remains the same */
 
 .register-container header p {
-    font-size: 0.95rem;
-    color: #cccccc; /* Lighter grey for better contrast on the darker container */
-    margin-bottom: 0; /* No margin if it's the last element in header */
+    font-size: 0.9rem;
+    color: #b0b0b0; /* Lighter grey for subheading */
+    margin-bottom: 0;
 }
 
-/* --- Registration Form --- */
+/* --- Registration Form (updated gap) --- */
 .register-form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Increased gap between form elements */
+    gap: 25px; /* Increased gap for better separation */
 }
 
-.register-form input {
-    padding: 14px 16px; /* Increased padding for a more comfortable feel */
+/* --- Input Group Styling (NEW) --- */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group .input-icon {
+    position: absolute;
+    left: 18px; /* Adjusted for padding */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d; /* Icon color */
+    pointer-events: none;
+    line-height: 0; /* Helps center SVGs */
+    z-index: 1; /* Ensures icon is above input bg potentially */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 16px 18px 16px 50px; /* Top/Bottom, Right, Left (for icon) */
     font-size: 1rem;
-    border: 1px solid #333333; /* Darker, more subtle border */
-    border-radius: 6px; /* Consistent, slightly rounded corners */
-    background-color: #1f1f1f; /* Darker input background for better contrast with text */
+    border: 1px solid #383838;
+    border-radius: 8px; /* Slightly more rounded */
+    background-color: #222222; /* Darker, distinct input background */
     color: #ffffff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for focus */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    line-height: 1.4; /* Adjust for text centering */
+    box-sizing: border-box;
 }
 
-.register-form input::placeholder {
-    color: #777777; /* Subtler placeholder text */
-    opacity: 1; /* Ensure placeholder is visible (for Firefox) */
+/* Floating Label Styling (NEW) */
+.input-group label {
+    position: absolute;
+    left: 50px; /* Aligned with where input text starts */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888888; /* Placeholder-like color */
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    padding: 0 4px; /* Horizontal padding for when label is "up" */
+    white-space: nowrap;
 }
 
-.register-form input:focus {
-    border-color: #d64b17; /* Accent color for border on focus */
-    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.3); /* Glow effect on focus */
-    outline: none; /* Remove default browser outline */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label { /*:not(:placeholder-shown) is key for pre-filled/autofilled */
+    top: 0px; /* Position above the input border */
+    transform: translateY(-50%) scale(0.85); /* Move up and shrink */
+    left: 42px; /* Adjust left position when floated */
+    color: #d64b17; /* Accent color for active label */
+    background-color: #222222; /* Match input background to "cut out" the border */
+    font-weight: 500;
+}
+/* Required for input elements to not have a default placeholder that conflicts */
+.input-group input::placeholder {
+    color: transparent; /* Make actual placeholder invisible */
 }
 
-/* --- Submit Button --- */
-.register-form button {
-    padding: 14px;
-    font-size: 1.05rem; /* Slightly larger font size */
-    font-weight: 600; /* Bolder text */
-    background-color: #d64b17; /* Primary accent color */
+
+/* Handle Autofill Background and Text Color (NEW) */
+.input-group input:-webkit-autofill,
+.input-group input:-webkit-autofill:hover,
+.input-group input:-webkit-autofill:focus,
+.input-group input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #222222 inset !important; /* Match input background */
+    -webkit-text-fill-color: #ffffff !important; /* Desired text color */
+    caret-color: #ffffff !important; /* Cursor color */
+    font-size: 1rem !important; /* Ensure font size consistency */
+}
+
+/* Ensure label floats correctly with autofilled inputs */
+.input-group input:-webkit-autofill + label {
+    top: 0px;
+    transform: translateY(-50%) scale(0.85);
+    left: 42px;
+    color: #d64b17;
+    background-color: #222222;
+    font-weight: 500;
+}
+
+.input-group input:focus {
+    border-color: #d64b17;
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25); /* Softer focus ring */
+    outline: none;
+}
+
+/* Password Toggle Button (NEW) */
+.password-toggle {
+    position: absolute;
+    right: 15px; /* Position inside the input field */
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888888; /* Muted color */
+    cursor: pointer;
+    padding: 5px;
+    line-height: 0; /* Helps vertically align SVG */
+    outline: none;
+}
+
+.password-toggle:hover svg,
+.password-toggle:focus svg {
+    color: #d64b17; /* Accent color on hover/focus */
+}
+
+.password-toggle svg {
+    width: 22px; /* Icon size */
+    height: 22px;
+    color: currentColor; /* Inherits color from button */
+}
+
+/* --- Submit Button (updated class name and style) --- */
+.submit-button { /* Renamed from .register-form button */
+    padding: 15px; /* Slightly more padding */
+    font-size: 1.0rem; /* Standardized size */
+    font-weight: 600;
+    background-color: #d64b17;
     color: white;
     border: none;
-    border-radius: 6px; /* Consistent with input fields */
+    border-radius: 8px; /* Consistent with inputs */
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    margin-top: 10px; /* Space above the button */
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-top: 20px; /* More space above button */
+    text-transform: uppercase;
+    letter-spacing: 0.8px; /* Wider letter spacing */
 }
 
-.register-form button:hover {
-    background-color: #c04015; /* Slightly darker shade on hover */
-    transform: translateY(-2px); /* Subtle lift effect */
-    box-shadow: 0 4px 10px rgba(214, 75, 23, 0.3); /* Shadow effect on hover */
+.submit-button:hover {
+    background-color: #c04015;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(214, 75, 23, 0.3);
 }
 
-.register-form button:active {
-    background-color: #a53710; /* Darker shade for active/click state */
-    transform: translateY(0); /* Reset lift effect */
-    box-shadow: none; /* Remove shadow on active */
+.submit-button:active {
+    background-color: #a53710;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(214, 75, 23, 0.2);
 }
 
-/* --- Outcome Message --- */
+/* --- Outcome Message (as before) --- */
 .outcome {
     text-align: center;
     font-size: 0.9rem;
-    color: #ff4d4d; /* Error color, unchanged */
-    margin-top: 15px; /* More space for the message */
-    min-height: 1.2em; /* Reserve space to prevent layout shift when message appears */
+    color: #ff4d4d; /* Error color */
+    margin-top: 20px; /* Increased space */
+    min-height: 1.2em;
+    line-height: 1.4;
 }
 
-/* --- Keyframes for Animation --- */
+/* --- Form Footer (NEW) --- */
+.form-footer {
+    margin-top: 30px; /* More space above footer */
+    text-align: center;
+    font-size: 0.88rem; /* Slightly larger */
+    color: #a0a0a0; /* Footer text color */
+}
+
+.form-footer a {
+    color: #d64b17; /* Accent color for links */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+    color: #e55f29; /* Lighter orange on hover */
+}
+
+.form-footer .terms {
+    font-size: 0.8rem;
+    color: #777777;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+/* --- Keyframes for Animation (as before) --- */
 @keyframes fadeIn {
     from {
         opacity: 0;

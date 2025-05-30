@@ -1,0 +1,266 @@
+/* src/client/css/LoginPage.css */
+
+/* Ensure html, body reset is at the top if not already in a global CSS file */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: #000000; /* Fallback background */
+}
+
+/* --- General Page Setup --- */
+.login-page { /* Changed from .register-page */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
+    color: rgba(255, 255, 255, 0.87);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg'); /* Assuming same background */
+    background-size: cover;
+    background-position: center;
+    box-sizing: border-box;
+    /* Adjusted padding for fixed navbar */
+    padding-top: 130px; /* Navbar height (e.g., 110px from navbar.css) + desired gap (e.g., 20px) */
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+}
+
+.login-background { /* Changed from .register-background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* --- Login Container --- */
+.login-container { /* Changed from .register-container */
+    background-color: rgba(30, 30, 30, 0.93);
+    padding: 35px 45px;
+    border-radius: 10px;
+    border-top: 4px solid #d64b17; /* Accent color */
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+    text-align: left;
+    max-width: 480px; /* Slightly adjusted or keep as 500px */
+    width: 100%;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* --- Header Section --- */
+.login-container header { /* Adjusted selector */
+    text-align: center;
+    margin-bottom: 35px;
+    margin-top: 0;
+}
+
+.login-logo { /* New class for login logo */
+    width: 60px;
+    height: auto;
+    margin-bottom: 15px;
+    opacity: 0.9;
+}
+
+.login-container header h1 { /* Adjusted selector */
+    font-size: 2.0rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+.login-container header p { /* Adjusted selector */
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    margin-bottom: 0;
+}
+
+/* --- Login Form --- */
+.login-form { /* Changed from .register-form */
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Consistent gap */
+}
+
+/* --- Shared Styles (These can be copied directly from RegisterPage.css or moved to a common .css file) --- */
+/* .input-group, .input-group .input-icon, .input-group input, */
+/* .input-group label, .input-group input:focus + label, */
+/* .input-group input:not(:placeholder-shown) + label, */
+/* .input-group input::placeholder, */
+/* .input-group input:-webkit-autofill related styles, */
+/* .input-group input:focus, */
+/* .password-toggle, .password-toggle svg, */
+/* .submit-button and its :hover, :active states, */
+/* .outcome, */
+/* .form-footer, .form-footer a, .form-footer .terms (if used) */
+/* @keyframes fadeIn */
+/* --- Copy these shared styles from your updated RegisterPage.css --- */
+/* For this example, I'll list a few key ones to ensure they are considered */
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    line-height: 0;
+    z-index: 1;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 16px 18px 16px 50px;
+    font-size: 1rem;
+    border: 1px solid #383838;
+    border-radius: 8px;
+    background-color: #222222;
+    color: #ffffff;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+.input-group input::placeholder { /* Important for floating label with :not(:placeholder-shown) */
+    color: transparent;
+}
+
+.input-group label {
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888888;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    padding: 0 4px;
+    white-space: nowrap;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: 0px;
+    transform: translateY(-50%) scale(0.85);
+    left: 42px;
+    color: #d64b17;
+    background-color: #222222; /* Match input background */
+    font-weight: 500;
+}
+
+.input-group input:-webkit-autofill,
+.input-group input:-webkit-autofill:hover,
+.input-group input:-webkit-autofill:focus,
+.input-group input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #222222 inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #ffffff !important;
+    font-size: 1rem !important;
+}
+
+.input-group input:-webkit-autofill + label {
+    top: 0px;
+    transform: translateY(-50%) scale(0.85);
+    left: 42px;
+    color: #d64b17;
+    background-color: #222222;
+    font-weight: 500;
+}
+
+.input-group input:focus {
+    border-color: #d64b17;
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
+    outline: none;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888888;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 0;
+    outline: none;
+}
+.password-toggle:hover svg,
+.password-toggle:focus svg {
+    color: #d64b17;
+}
+.password-toggle svg {
+    width: 22px;
+    height: 22px;
+    color: currentColor;
+}
+
+.submit-button {
+    padding: 15px;
+    font-size: 1.0rem;
+    font-weight: 600;
+    background-color: #d64b17;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+.submit-button:hover {
+    background-color: #c04015;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(214, 75, 23, 0.3);
+}
+.submit-button:active {
+    background-color: #a53710;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(214, 75, 23, 0.2);
+}
+
+.outcome {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ff4d4d; /* Default error color */
+    margin-top: 20px;
+    min-height: 1.2em;
+    line-height: 1.4;
+}
+
+.form-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.88rem;
+    color: #a0a0a0;
+}
+.form-footer p {
+    margin-bottom: 8px; /* Space between lines in footer */
+}
+.form-footer a {
+    color: #d64b17;
+    text-decoration: none;
+    font-weight: 500;
+}
+.form-footer a:hover {
+    text-decoration: underline;
+    color: #e55f29;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
