@@ -46,7 +46,8 @@ const LoginPage = () => {
             // If login is successful, auth.js redirects. If it fails, it throws an error.
             // So, we might not even reach here if successful and redirected by auth.js.
             // Setting a success outcome here is mainly for if auth.js's redirect is delayed or removed.
-            setOutcome('Login successful! Redirecting...');
+            setOutcome(<span style={{ color: 'green' }}>Login successful! Redirecting...</span>);
+
         } catch (err) {
             // The login function in auth.js should throw an error with a message
             const errorMessage = err && err.message ? err.message : 'Login failed. Please check your credentials.';
