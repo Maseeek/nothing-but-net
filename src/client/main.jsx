@@ -6,6 +6,7 @@ import Home from './pages/Home.jsx';
 import Results from './pages/Results.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/Login.jsx';
+import Profile from './pages/Profile.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
@@ -16,6 +17,7 @@ function Main() {
                 <Route path="/results" element={<Results />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path={"/profile"} element={<Profile />} />
             </Routes>
         </BrowserRouter>
     );
