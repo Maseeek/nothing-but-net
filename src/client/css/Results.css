@@ -1,20 +1,21 @@
 .results-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 30px;
-    text-align: center;
-    font-family: 'Roboto', sans-serif;
-    color: #333;
-    background: linear-gradient(135deg, #fdfbfb, #ebedee);
-    border-radius: 12px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
+    color: rgba(255, 255, 255, 0.87);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
+    background-size: cover; /* Ensure the background covers the entire area */
+    box-sizing: border-box; /* Keep this */
+    padding: 130px 20px 20px;
 }
 
 .results-container h1 {
     font-size: 3rem;
     margin-bottom: 25px;
-    color: #c14c1f;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    color: #e0e0e0; /* Slightly lighter text for headings */
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5); /* Subtle shadow for text */
 }
 
 .results-summary {
@@ -25,25 +26,25 @@
 }
 
 .result-card {
-    background: linear-gradient(135deg, #ffffff, #f3f3f3);
-    border: 1px solid #ddd;
+    background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
+    border: 1px solid #444; /* Dark border for cards */
     border-radius: 12px;
     padding: 25px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.7); /* Darker shadow for cards */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .result-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.9); /* Enhanced shadow on hover */
 }
 
 .result-card h2 {
     font-size: 1.8rem;
     margin-bottom: 15px;
-    color: #b0401c;
+    color: #e36125; /* Orange highlight for headings */
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -52,16 +53,16 @@
     font-size: 1.1rem;
     margin: 8px 0;
     line-height: 1.6;
-    color: #555;
+    color: #ddd; /* Light grey for text */
 }
 
 .result-card strong {
-    color: #222;
+    color: #fff; /* White for emphasis */
 }
 
 .result-card p:last-child {
     font-weight: bold;
-    color: #c14c1f;
+    color: #e36125; /* Orange for important text */
 }
 
 @media (max-width: 768px) {

@@ -5,8 +5,10 @@
     box-sizing: border-box;
 }
 
+
+
 .analysis-results {
-    margin-top: 40px;
+    margin-top: 100px;
     padding: 40px;
     background-color: #1e1e2f; /* Dark background to match the theme */
     border-radius: 16px;
