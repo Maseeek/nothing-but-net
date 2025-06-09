@@ -6,13 +6,14 @@ import math
 import json
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from pymongo import MongoClient
+import datetime
 
 # RUNNING ON PORT 5000
 
 cv2.setUseOptimized(True)
 
 # PYTHON PROGRAM TO PROCESS VIDEO AND DETERMINE BASKETBALL OUTCOMES
-# MAX_FRAMES = 1750 # optimal for my initial video
 MAX_FRAMES = 5000
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -23,7 +24,11 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Import your existing functions from main.py
+# MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')
+db = client['your_database_name']
+sessions_collection = db['sessions']
+
 dist = lambda x1, y1, x2, y2: (x1-x2)**2 + (y1-y2)**2
 
 def findBall(frame, prevCircle, radius):
@@ -176,6 +181,7 @@ def analyze_video(videoPath, hoopLeft, hoopRight, max_frames, accuracy=0.15):
     }
 
     return result
+
 @app.route('/upload-and-analyze', methods=['POST'])
 def upload_and_analyze():
     if 'video' not in request.files:
@@ -218,6 +224,31 @@ def upload_and_analyze():
             'success': False,
             'error': str(e)
         }), 500
+
+@app.route('/api/session', methods=['POST'])
+def save_session():
+    try:
+        data = request.json
+        print("Incoming session data:", request.json)
+        # Validate input
+        required_fields = [
+            'userId', 'makes', 'misses', 'longestStreak', 'average_angle',
+            'average_make_angle', 'average_miss_angle', 'fg_percentage',
+            'shot_angles', 'shots_results', 'total_shots'
+        ]
+        if not all(field in data for field in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        # Add session date
+        data['sessionDate'] = datetime.datetime.now()
+
+        # Save to MongoDB
+        sessions_collection.insert_one(data)
+
+        return jsonify({'message': 'Session recorded successfully!'}), 201
+    except Exception as e:
+        print(f"Error saving session: {e}")
+        return jsonify({'error': 'Server error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
