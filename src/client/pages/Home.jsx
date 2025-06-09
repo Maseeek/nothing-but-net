@@ -100,11 +100,10 @@ function LandingPage(){
         <div className={"landing-page"}>
             <div className={"background-video-form"}>
                 <video className={"background-video"} src={"src/client/assets/backgroundvideo.mp4"} autoPlay loop muted />
-                <h1 className={"welcome-message"}>Welcome to NOTHINGBUTNET</h1>
-
-                {/*<img className={"nbn-logo"} src={"src/client/assets/nbn logo transparent.png"} alt="NBN Logo" />*/}
-                {/*<p className={"welcome-info"}>NothingButNet</p>*/}
-
+                <div className={"welcome"}>
+                <h1 className={"welcome-message"}>Never Lose Count Again</h1>
+                <p className={"welcome-info"}>Just upload your video. Our AI does the rest.</p>
+                </div>
             </div>
             <MainPage />
         </div>

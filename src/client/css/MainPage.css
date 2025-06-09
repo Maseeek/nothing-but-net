@@ -50,7 +50,6 @@
     -webkit-text-fill-color: transparent;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3); /* Softer shadow */
     filter: brightness(250%);
-    max-width: ;
     background-size: 100% auto;
     background-position: center;
     margin-top: 180px;
@@ -144,10 +143,7 @@
     transform: none;
 }
 
-/* Unused styles from original MainPage.css for .welcome-info and .nbn-logo can be kept or removed if not used */
-.welcome-info{
-    /* ... */
-}
-.nbn-logo {
-    /* ... */
+
+.welcome{
+    margin-top: 32vh;
 }
