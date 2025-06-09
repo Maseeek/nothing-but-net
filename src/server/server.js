@@ -1,12 +1,5 @@
-// Instead of:
-// require('dotenv').config();
-// const express = require('express');
-// const mongoose = require('mongoose');
-// ... etc.
-
-// Use:
 import dotenv from 'dotenv';
-dotenv.config(); // Call config if it's a function provided by the default export
+dotenv.config();
 
 import express from 'express';
 import mongoose from 'mongoose';
@@ -14,63 +7,46 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import helmet from 'helmet';
 import cors from 'cors';
-import { body, validationResult } from 'express-validator'; // Assuming these are named exports
+import { body, validationResult } from 'express-validator';
 import path from 'path';
-import { fileURLToPath } from 'url'; // Needed for __dirname equivalent in ES modules
+import { fileURLToPath } from 'url';
 
-// For __dirname equivalent in ES modules:
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ... rest of your server.js code, ensuring all require calls are converted
-
-// Initialize Express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ========================================
-// ✏️ CONFIGURATION (Update these values)
-// ========================================
-const MONGODB_URI = process.env.MONGODB_URI; // ✏️ Replace with your DB URI
-const JWT_SECRET = process.env.JWT_SECRET; // ✏️ Use a strong secret in production
+const MONGODB_URI = process.env.MONGODB_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// ========================================
-// Middleware
-// ========================================
-app.use(helmet()); // Security headers
+app.use(helmet());
 const allowedOrigins = [
-    'http://localhost:3000',    // Your backend's origin
-    'http://localhost:63342',   // WebStorm's preview server
-    'http://localhost:63343',   // WebStorm's preview server
-    'http://localhost:5173',    // <<< ADD THIS LINE for your Vite dev server
-    process.env.FRONTEND_URL    // Keep this if you use it for deployed frontend
+    'http://localhost:3000',
+    'http://localhost:63342',
+    'http://localhost:63343',
+    'http://localhost:5173',
+    process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
     origin: function(origin, callback) {
-        // allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.error('CORS error: Origin not allowed:', origin); // Log blocked origins
+            console.error('CORS error: Origin not allowed:', origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true
 }));
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 
-// ========================================
-// Database Connection
-// ========================================
 mongoose.connect(MONGODB_URI)
     .then(() => console.log('✅ Connected to MongoDB'))
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// ========================================
-// User Model
-// ========================================
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true, trim: true, minlength: 3 },
     email: { type: String, unique: true, required: true, lowercase: true, match: /^\S+@\S+\.\S+$/ },
@@ -81,14 +57,35 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// ========================================
-// Routes
-// ========================================
+const sessionSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    makes: { type: Number, required: true, default: 0 },
+    misses: { type: Number, required: true, default: 0 },
+    longestStreak: { type: Number, required: true, default: 0 },
+    sessionDate: { type: Date, default: Date.now }
+});
 
-// ► Health Check
+const Session = mongoose.model('Session', sessionSchema);
+
+const calculateLongestStreak = (makes, misses) => {
+    const attempts = Array(makes).fill(1).concat(Array(misses).fill(0));
+    let currentStreak = 0;
+    let longestStreak = 0;
+
+    for (const attempt of attempts) {
+        if (attempt === 1) {
+            currentStreak++;
+            longestStreak = Math.max(longestStreak, currentStreak);
+        } else {
+            currentStreak = 0;
+        }
+    }
+
+    return longestStreak;
+};
+
 app.get('/', (req, res) => res.send('Server is running 🚀'));
 
-// ► Register
 app.post('/api/register',
     [
         body('username').trim().isLength({ min: 3 }),
@@ -96,17 +93,14 @@ app.post('/api/register',
         body('password').isLength({ min: 6 })
     ],
     async (req, res) => {
-        // Validate input
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         try {
-            // Check for existing user
             if (await User.findOne({ $or: [{ username: req.body.username }, { email: req.body.email }] })) {
                 return res.status(400).json({ error: 'Username or email already exists' });
             }
 
-            // Create user
             const user = new User({
                 username: req.body.username,
                 email: req.body.email,
@@ -123,22 +117,17 @@ app.post('/api/register',
     }
 );
 
-
-// ► Login
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Find user
         const user = await User.findOne({ username });
         if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-        // Check password
         if (!await bcrypt.compare(password, user.password)) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Generate JWT token (expires in 1 hour) and include emailVerified
         const token = jwt.sign(
             { userId: user._id, username: user.username, emailVerified: user.emailVerified },
             JWT_SECRET,
@@ -152,19 +141,15 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// ► Protected Profile Route
 app.get('/api/profile', async (req, res) => {
     try {
-        // Get token from header
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) return res.status(401).json({ error: 'No token provided' });
 
-        // Verify token
         const decoded = jwt.verify(token, JWT_SECRET);
         const user = await User.findById(decoded.userId).select('-password');
         if (!user) return res.status(404).json({ error: 'User not found' });
 
-        // Include emailVerified in the response
         res.json({
             userId: user._id,
             username: user.username,
@@ -176,20 +161,95 @@ app.get('/api/profile', async (req, res) => {
     }
 });
 
+app.post('/api/session', async (req, res) => {
+    try {
+        const {
+            userId, makes, misses, longestStreak, average_angle, average_make_angle,
+            average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots
+        } = req.body;
 
+        // Log incoming request data
+        console.log("Incoming session data:", req.body);
 
-// Serve static files from /client
+        // Validate input
+        if (!userId || makes == null || misses == null || longestStreak == null ||
+            average_angle == null || average_make_angle == null || average_miss_angle == null ||
+            fg_percentage == null || !Array.isArray(shot_angles) || !Array.isArray(shots_results) ||
+            total_shots == null) {
+            console.error("Validation error: Missing required fields");
+            return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        // Save session data to the database
+        const session = new Session({
+            userId, makes, misses, longestStreak, average_angle, average_make_angle,
+            average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots, sessionDate: new Date()
+        });
+        await session.save();
+
+        // Log saved session data
+        console.log("Session saved successfully:", session);
+
+        res.status(201).json({ message: "Session recorded successfully!", session });
+    } catch (err) {
+        console.error("Session recording error:", err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.get('/api/longest-streak/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const sessions = await Session.find({ userId }).sort({ longestStreak: -1 }).limit(1);
+        if (!sessions.length) {
+            return res.status(404).json({ error: 'No sessions found for this user' });
+        }
+
+        res.json({ longestStreak: sessions[0].longestStreak });
+    } catch (err) {
+        console.error('Longest streak retrieval error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+app.get('/api/field-goal-percentage/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const stats = await Session.aggregate([
+            { $match: { userId: mongoose.Types.ObjectId(userId) } },
+            {
+                $group: {
+                    _id: null,
+                    totalMakes: { $sum: '$makes' },
+                    totalMisses: { $sum: '$misses' }
+                }
+            }
+        ]);
+
+        if (!stats.length) {
+            return res.status(404).json({ error: 'No sessions found for this user' });
+        }
+
+        const { totalMakes, totalMisses } = stats[0];
+        const totalAttempts = totalMakes + totalMisses;
+        const fgPercentage = totalAttempts > 0 ? (totalMakes / totalAttempts) * 100 : 0;
+
+        res.json({ fieldGoalPercentage: fgPercentage.toFixed(2) });
+
+    } catch (err) {
+        console.error('Field goal percentage error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 app.use(express.static(path.join(__dirname, '../client')));
 
-// Handle SPA routing (place after other routes)
-// More specific catch-all route
 app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
-// ========================================
-// Start Server
-// ========================================
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Connected to MongoDB: ${MONGODB_URI}`);
