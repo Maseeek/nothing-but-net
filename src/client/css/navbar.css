@@ -126,8 +126,7 @@ a:hover svg {
 }
 
 #auth-btn{
-    margin:0px;
-    padding:0px;
+    cursor: pointer ;
 }
 
 #logo{

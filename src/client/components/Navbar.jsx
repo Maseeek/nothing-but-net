@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import '../css/navbar.css';
 import nbnLogo from '../assets/nbnlight.png';
-import nbnTitle from '../assets/nbn close letters transparent.png';
+import {isLoggedIn, logout} from "../js/auth.js";
+
 
 function HomeButton() {
     return (
@@ -29,10 +30,20 @@ function ProfileButton({ onClick }) {
     );
 }
 
+
+
 function DropdownMenu({ isVisible }) {
+    const handleAuthClick = () => {
+        if (isLoggedIn()) {
+            logout(); // Call the logout function
+        } else {
+            window.location.href = './login'; // Redirect to login page
+        }
+    };
+
     return (
         <div id="dropdown-menu" className={`dropdown-menu ${isVisible ? 'visible' : 'hidden'}`}>
-            <a href="./profile.html" className="dropdown-item">
+            <a href="./profile" className="dropdown-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -40,7 +51,7 @@ function DropdownMenu({ isVisible }) {
                 </svg>
                 Profile
             </a>
-            <a href="statistics.html" className="dropdown-item">
+            <a href="statistics" className="dropdown-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -49,7 +60,7 @@ function DropdownMenu({ isVisible }) {
                 </svg>
                 Statistics
             </a>
-            <a href="settings.html" className="dropdown-item">
+            <a href="settings" className="dropdown-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="3"></circle>
@@ -58,10 +69,31 @@ function DropdownMenu({ isVisible }) {
                 </svg>
                 Settings
             </a>
-            <a id="auth-btn" className="dropdown-item"></a>
+            <a id="auth-btn" className="dropdown-item" onClick={handleAuthClick}>
+                {isLoggedIn() ? (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Logout
+                    </>
+                ) : (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Login
+                    </>
+                )}
+            </a>
         </div>
     );
 }
+
 
 function Navbar() {
     const [isDropdownVisible, setDropdownVisible] = useState(false);

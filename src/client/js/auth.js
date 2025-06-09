@@ -40,7 +40,7 @@ async function login(username, password) {
         // The redirect will still happen from here on success.
         // The LoginPage.jsx success message might flash briefly.
         setTimeout(() => {
-            window.location.href = 'profile.html'; // Consider using React Router's navigate for SPA consistency if login is called from a component that has access to it.
+            window.location.href = 'profile'; // Consider using React Router's navigate for SPA consistency if login is called from a component that has access to it.
         }, 1000);
 
         return data; // Optionally return data if needed by a caller that doesn't rely on the redirect.
@@ -116,8 +116,6 @@ async function register(username, email, password, confirmPassword) {
     }
 }
 
-// Make sure login and other functions are also correctly exported
-// export { login, register, isLoggedIn, ... };
 
 // Auth state functions
 function isLoggedIn() {
@@ -126,7 +124,7 @@ function isLoggedIn() {
 
 function requireAuth() {
     if (!isLoggedIn()) {
-        window.location.href = 'login.html';
+        window.location.href = 'login';
     }
 }
 
@@ -150,7 +148,7 @@ function getCurrentUser() {
 
 function logout() {
     localStorage.removeItem('authToken');
-    window.location.href = 'login.html';
+    window.location.href = 'login';
 
     // Optional: Notify server
     fetch(`${API_BASE}/api/logout`, { method: 'POST' })
@@ -187,7 +185,7 @@ function updateAuthUI() {
             Login
         `;
         authButton.onclick = () => {
-            window.location.href = 'login.html';
+            window.location.href = 'login';
         };
     }
 }
