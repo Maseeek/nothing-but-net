@@ -21,15 +21,9 @@ body {
     min-height: 100%;
     font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
     color: rgba(255, 255, 255, 0.87);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg'); /* Assuming same background */
-    background-size: cover;
-    background-position: center;
-    box-sizing: border-box;
-    /* Adjusted padding for fixed navbar */
-    padding-top: 130px; /* Navbar height (e.g., 110px from navbar.css) + desired gap (e.g., 20px) */
-    padding-right: 20px;
-    padding-bottom: 20px;
-    padding-left: 20px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
+    box-sizing: border-box; /* Keep this */
+    padding: 130px 20px 20px;
 }
 
 .login-background { /* Changed from .register-background */
