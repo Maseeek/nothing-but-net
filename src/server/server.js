@@ -10,6 +10,8 @@ import cors from 'cors';
 import { body, validationResult } from 'express-validator';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import Analysis from './models/Analysis.js';
+import User from './models/User.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -251,6 +253,41 @@ app.get('/api/field-goal-percentage/:userId', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
+
+
+app.post('/api/analyses', requireAuthSession, async (req, res) => {
+    try {
+        const { totalShots, madeShots, fgPercentage } = req.body;
+        const userId = req.user._id; // Get user ID from our auth middleware
+
+        const newAnalysis = new Analysis({
+            userId,
+            totalShots,
+            madeShots,
+            fgPercentage
+        });
+
+        await newAnalysis.save();
+        res.status(201).json({ message: 'Analysis saved successfully!', analysis: newAnalysis });
+
+    } catch (err) {
+        console.error('Error saving analysis:', err);
+        res.status(500).json({ error: 'Failed to save analysis.' });
+    }
+});
+
+// ► Get all analyses for the logged-in user
+app.get('/api/analyses', requireAuthSession, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const analyses = await Analysis.find({ userId }).sort({ date: -1 }); // Get latest first
+        res.status(200).json(analyses);
+    } catch (err) {
+        console.error('Error fetching analyses:', err);
+        res.status(500).json({ error: 'Failed to retrieve analyses.' });
+    }
+});
+
 
 app.use(express.static(path.join(__dirname, '../client')));
 
