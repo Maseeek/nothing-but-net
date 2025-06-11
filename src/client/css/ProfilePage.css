@@ -2,7 +2,7 @@
 .profile-page {
     width: 100%;
     min-height: 100vh;
-    padding-top: 130px; /* Navbar height (~110px) + gap (20px) */
+    padding-top: 10px; /* Navbar height (~110px) + gap (20px) */
     padding-bottom: 50px;
     padding-left: 20px;
     padding-right: 20px;
@@ -219,15 +219,20 @@
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* MODIFICATION START */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjusted minmax to allow smaller cards */
+    /* MODIFICATION END */
     gap: 20px;
     margin-bottom: 40px;
 }
 
 .stat-card {
     background: linear-gradient(145deg, rgba(43, 43, 63, 0.7), rgba(30, 30, 47, 0.8));
-    padding: 25px 20px;
+    /* MODIFICATION START */
+    padding: 20px 15px; /* Reduced padding to make the card smaller */
+    /* MODIFICATION END */
     border-radius: 10px;
+    width:100%;
     text-align: center;
     border-bottom: 4px solid #d64b17;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -249,13 +254,13 @@
 
 .stat-card p {
     margin: 0;
-    font-size: 2.8rem;
+    font-size: 2.4rem;
     font-weight: 600;
     color: #ffffff;
-    line-height: 1;
+    line-height: 1.1;
 }
 .stat-card p span {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin-left: 2px;
     color: #d64b17;
 }
