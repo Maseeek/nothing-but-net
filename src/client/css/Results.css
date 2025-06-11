@@ -1,49 +1,77 @@
-/* In: src/client/css/Results.css */
-
-.results-page {
-    width: 100%;
-    min-height: 100vh;
-    padding-top: 130px; /* Adjust for Navbar */
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    background-color: #121212;
-    color: #f0f0f0;
-}
-
 .results-container {
-    width: 100%;
-    max-width: 700px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
+    color: rgba(255, 255, 255, 0.87);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
+    background-size: cover; /* Ensure the background covers the entire area */
+    box-sizing: border-box; /* Keep this */
+    padding: 130px 20px 20px;
 }
 
 .results-container h1 {
-    font-size: 2.5rem;
-    color: #ffffff;
-    margin-bottom: 30px;
+    font-size: 3rem;
+    margin-bottom: 25px;
+    color: #e0e0e0; /* Slightly lighter text for headings */
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5); /* Subtle shadow for text */
 }
 
-.results-content {
-    background-color: rgba(30, 30, 47, 0.8);
+.results-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+}
+
+.result-card {
+    background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
+    border: 1px solid #444; /* Dark border for cards */
     border-radius: 12px;
-    padding: 40px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    padding: 25px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.7); /* Darker shadow for cards */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* NEW: Style for error and loading messages */
-.error-message,
-.loading-message {
-    color: #ff4d4d; /* Use the standard error color */
-    background-color: rgba(255, 77, 77, 0.1);
-    border: 1px solid #ff4d4d;
-    padding: 20px;
-    border-radius: 8px;
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.9); /* Enhanced shadow on hover */
+}
+
+.result-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #e36125; /* Orange highlight for headings */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.result-card p {
     font-size: 1.1rem;
-    font-weight: 500;
+    margin: 8px 0;
+    line-height: 1.6;
+    color: #ddd; /* Light grey for text */
 }
 
-.loading-message {
-    color: #b0b0b0; /* Use a more neutral color for loading */
-    background-color: rgba(176, 176, 176, 0.1);
-    border-color: #3a3a5a;
+.result-card strong {
+    color: #fff; /* White for emphasis */
+}
+
+.result-card p:last-child {
+    font-weight: bold;
+    color: #e36125; /* Orange for important text */
+}
+
+@media (max-width: 768px) {
+    .results-summary {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .result-card {
+        max-width: 100%;
+    }
 }

@@ -3,7 +3,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { Line, Doughnut } from 'react-chartjs-2';
 import Navbar from '../components/Navbar.jsx';
 import Loading from '../components/Loading.jsx';
-import { getCurrentUser } from '../js/auth.js';
+import { getCurrentUser } from '../js/auth.js'; // Import getCurrentUser
 import './../css/ProfilePage.css';
 
 // Register Chart.js components we will use
@@ -89,30 +89,81 @@ const SecuritySettings = () => {
 
 // --- SUB-COMPONENT: My Analyses Tab (with Stats and Charts) ---
 const AnalysesHistory = () => {
-    const [analyses, setAnalyses] = useState([]);
+    const [sessions, setSessions] = useState([]); // Renamed from analyses to sessions
     const [loading, setLoading] = useState(true);
+    const [performanceSummary, setPerformanceSummary] = useState({
+        overallLongestStreak: 0,
+        progressSummary: "Analyze more videos to see your progress trend!"
+    });
 
     useEffect(() => {
-        const fetchAnalyses = async () => {
+        const fetchSessions = async () => { // Renamed function
             try {
-                const response = await fetch('/api/analyses');
-                if (!response.ok) throw new Error('Failed to fetch analyses.');
+                const currentUser = getCurrentUser();
+                const userId = currentUser?.userId;
+
+                if (!userId) {
+                    console.error('User ID is missing. Cannot fetch sessions.');
+                    setLoading(false);
+                    return;
+                }
+
+                // Fetch data from the sessions endpoint
+                const response = await fetch(`http://localhost:3000/api/sessions/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include auth token
+                    }
+                });
+                if (!response.ok) {
+                    // Check if response is 404 (No sessions found), handle gracefully
+                    if (response.status === 404) {
+                        console.log('No sessions found for this user yet.');
+                        setSessions([]); // Set to empty array
+                        setLoading(false);
+                        return;
+                    }
+                    throw new Error('Failed to fetch sessions.');
+                }
                 const data = await response.json();
-                setAnalyses(data);
+
+                // Sort sessions by date to ensure correct chronological order for progress
+                const sortedSessions = data.sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate));
+                setSessions(sortedSessions);
+
+                // Calculate overall longest streak
+                const overallLongestStreak = sortedSessions.reduce((maxStreak, session) =>
+                    Math.max(maxStreak, session.longestStreak || 0), 0 // Use longestStreak (camelCase from schema)
+                );
+
+                // Determine textual progress summary
+                let progressSummary = "Analyze more videos to see your progress trend!";
+                if (sortedSessions.length >= 2) {
+                    const firstSessionFg = sortedSessions[0].fg_percentage || 0;
+                    const lastSessionFg = sortedSessions[sortedSessions.length - 1].fg_percentage || 0;
+                    if (lastSessionFg > firstSessionFg) {
+                        progressSummary = `Great progress! Your FG% has improved from ${firstSessionFg.toFixed(1)}% to ${lastSessionFg.toFixed(1)}%.`;
+                    } else if (lastSessionFg < firstSessionFg) {
+                        progressSummary = `Your FG% went from ${firstSessionFg.toFixed(1)}% to ${lastSessionFg.toFixed(1)}%. Keep practicing!`;
+                    } else {
+                        progressSummary = `Your FG% has remained consistent at ${firstSessionFg.toFixed(1)}%.`;
+                    }
+                }
+                setPerformanceSummary({ overallLongestStreak, progressSummary });
+
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching sessions:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchAnalyses();
-    }, []);
+        fetchSessions(); // Call the renamed function
+    }, []); // Only run once on component mount
 
     if (loading) {
         return <div className="stats-loading">Loading Statistics...</div>;
     }
 
-    if (analyses.length === 0) {
+    if (sessions.length === 0) { // Check sessions length
         return (
             <div className="profile-tab-content">
                 <h3>My Analyses</h3>
@@ -124,19 +175,19 @@ const AnalysesHistory = () => {
         );
     }
 
-    // Process data for charts and aggregate stats
-    const totalShots = analyses.reduce((sum, a) => sum + a.totalShots, 0);
-    const totalMade = analyses.reduce((sum, a) => sum + a.madeShots, 0);
+    // Process data for charts and aggregate stats from sessions
+    const totalShots = sessions.reduce((sum, s) => sum + (s.total_shots || 0), 0); // Use total_shots
+    const totalMade = sessions.reduce((sum, s) => sum + (s.makes || 0), 0); // Use makes
     const careerFgPct = totalShots > 0 ? ((totalMade / totalShots) * 100).toFixed(1) : 0;
-    const bestSessionPct = Math.max(0, ...analyses.map(a => a.fgPercentage));
+    const bestSessionPct = Math.max(0, ...sessions.map(s => s.fg_percentage || 0)); // Use fg_percentage
 
     // Chart data and options
     const lineChartData = {
-        labels: analyses.map(a => new Date(a.date).toLocaleDateString()).reverse(),
+        labels: sessions.map(s => new Date(s.sessionDate).toLocaleDateString()), // Use sessionDate
         datasets: [{
-            label: 'Shooting % Per Session',
-            data: analyses.map(a => a.fgPercentage).reverse(),
-            borderColor: '#d64b17',
+            label: 'Field Goal % Per Session',
+            data: sessions.map(s => s.fg_percentage || 0), // Use fg_percentage
+            borderColor: '#d64b17', // A distinct orange for the line chart
             backgroundColor: 'rgba(214, 75, 23, 0.2)',
             fill: true,
             tension: 0.4,
@@ -152,7 +203,7 @@ const AnalysesHistory = () => {
         datasets: [{
             data: [totalMade, totalShots - totalMade],
             backgroundColor: ['#4ade80', '#ef4444'], // Professional green and red
-            borderColor: '#1e1e2f',
+            borderColor: '#1e1e2f', // Dark background for border
             borderWidth: 4,
             hoverOffset: 4
         }]
@@ -169,11 +220,24 @@ const AnalysesHistory = () => {
                 bodyFont: { size: 12 },
                 padding: 10,
                 cornerRadius: 4,
+                callbacks: {
+                    label: function(context) {
+                        return `${context.dataset.label}: ${context.raw}%`;
+                    }
+                }
             }
         },
         scales: {
-            x: { ticks: { color: '#b0b0b0' }, grid: { color: 'rgba(176, 176, 176, 0.1)' } },
-            y: { ticks: { color: '#b0b0b0', callback: value => `${value}%` }, grid: { color: 'rgba(176, 176, 176, 0.1)' } }
+            x: {
+                ticks: { color: '#b0b0b0' },
+                grid: { color: 'rgba(176, 176, 176, 0.1)' }
+            },
+            y: {
+                ticks: { color: '#b0b0b0', callback: value => `${value}%` },
+                grid: { color: 'rgba(176, 176, 176, 0.1)' },
+                beginAtZero: true,
+                max: 100, // Ensure Y-axis goes up to 100%
+            }
         }
     };
 
@@ -188,6 +252,14 @@ const AnalysesHistory = () => {
                 bodyFont: { size: 12 },
                 padding: 10,
                 cornerRadius: 4,
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.raw;
+                        const percentage = ((value / (totalShots || 1)) * 100).toFixed(1);
+                        return `${label}: ${value} (${percentage}%)`;
+                    }
+                }
             }
         },
         cutout: '60%',
@@ -207,19 +279,28 @@ const AnalysesHistory = () => {
                     <p>{totalShots}</p>
                 </div>
                 <div className="stat-card">
-                    <h4>Best Session</h4>
+                    <h4>Best Session FG%</h4>
                     <p>{bestSessionPct.toFixed(1)}<span>%</span></p>
                 </div>
+                <div className="stat-card">
+                    <h4>Overall Longest Streak</h4>
+                    <p>{performanceSummary.overallLongestStreak}</p>
+                </div>
+            </div>
+
+            {/* Progress Summary */}
+            <div className="progress-summary-card">
+                <p>{performanceSummary.progressSummary}</p>
             </div>
 
             {/* Charts Section */}
             <div className="charts-grid">
                 <div className="chart-container line-chart">
-                    <h4>Performance Over Time</h4>
+                    <h4>FG% Performance Over Time</h4>
                     <Line options={lineChartOptions} data={lineChartData} />
                 </div>
                 <div className="chart-container doughnut-chart">
-                    <h4>Career Shot Summary</h4>
+                    <h4>Career Shot Distribution</h4>
                     <Doughnut data={doughnutChartData} options={doughnutChartOptions} />
                 </div>
             </div>
