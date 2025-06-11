@@ -206,6 +206,21 @@ app.get('/api/longest-streak/:userId', async (req, res) => {
     }
 });
 
+app.get('/api/sessions/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const sessions = await Session.find({ userId });
+        if (!sessions.length) {
+            return res.status(404).json({ error: 'No sessions found for this user' });
+        }
+
+        res.json(sessions);
+    } catch (err) {
+        console.error('Error fetching sessions:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 app.get('/api/field-goal-percentage/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
