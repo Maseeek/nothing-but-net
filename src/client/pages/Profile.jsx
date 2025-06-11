@@ -244,9 +244,9 @@ const Profile = () => {
                     <p>No stats available.</p>
                 )}
                 <div className="charts-container">
-                    <canvas id="shot-scores-bar-chart" style={{ height: '300px' }}></canvas>
-                    <canvas id="fg-percentage-pie-chart" style={{ height: '300px', marginTop: '20px' }}></canvas>
-                    <canvas id="fg-percentage-line-chart" style={{ height: '300px', marginTop: '20px' }}></canvas>
+                    <canvas id="shot-scores-bar-chart"></canvas>
+                    <canvas id="fg-percentage-pie-chart"></canvas>
+                    <canvas id="fg-percentage-line-chart"></canvas>
                 </div>
             </div>
         </div>
