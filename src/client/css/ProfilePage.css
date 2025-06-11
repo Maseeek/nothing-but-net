@@ -1,0 +1,322 @@
+/* General Page Layout */
+.profile-page {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 130px; /* Navbar height (~110px) + gap (20px) */
+    padding-bottom: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    background-color: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.profile-container {
+    width: 100%;
+    max-width: 900px; /* Increased max-width for dashboard */
+    background-color: rgba(30, 30, 47, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+    color: #f0f0f0;
+    padding: 30px 40px;
+    animation: fadeIn 0.6s ease-out;
+    border-top: 4px solid #d64b17;
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #3a3a5a;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #d64b17, #c14c1f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.user-info h2 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.user-info p {
+    margin: 4px 0 0;
+    font-size: 1rem;
+    color: #b0b0b0;
+}
+
+/* Profile Tab Navigation */
+.profile-nav {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    border-bottom: 1px solid #3a3a5a;
+}
+
+.profile-nav button {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #b0b0b0;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    margin-bottom: -1px; /* Overlap border for seamless look */
+}
+
+.profile-nav button:hover {
+    color: #ffffff;
+}
+
+.profile-nav button.active {
+    color: #ffffff;
+    border-bottom-color: #d64b17;
+}
+
+/* Profile Content Area */
+.profile-content {
+    margin-top: 30px;
+}
+
+.profile-tab-content h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #3a3a5a;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.details-grid label {
+    font-weight: 500;
+    color: #b0b0b0;
+}
+
+.details-grid span {
+    font-size: 1rem;
+    color: #f0f0f0;
+}
+
+/* Input Fields */
+.profile-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 1px solid #383838;
+    border-radius: 6px;
+    background-color: #222222;
+    color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-input:focus {
+    border-color: #d64b17;
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
+    outline: none;
+}
+
+/* Action Buttons */
+.profile-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    background-color: #d64b17;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.profile-action-btn:hover {
+    background-color: #c04015;
+    transform: translateY(-2px);
+}
+
+/* Security Form & Danger Zone */
+.security-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+}
+.security-form label {
+    margin-bottom: -5px;
+}
+
+.divider {
+    border: none;
+    height: 1px;
+    background-color: #3a3a5a;
+    margin: 40px 0;
+}
+
+.danger-zone h4 {
+    color: #ef4444; /* Red for danger */
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.danger-zone p {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+    max-width: 500px;
+    line-height: 1.5;
+}
+.btn-danger {
+    background-color: #b91c1c;
+}
+.btn-danger:hover {
+    background-color: #991b1b;
+}
+
+/* --- NEW: Statistics Dashboard Styles --- */
+
+.stats-loading, .history-placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 1.2rem;
+    color: #b0b0b0;
+    background-color: rgba(43, 43, 63, 0.4);
+    border: 2px dashed #3a3a5a;
+    border-radius: 8px;
+}
+.history-placeholder span {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: linear-gradient(145deg, rgba(43, 43, 63, 0.7), rgba(30, 30, 47, 0.8));
+    padding: 25px 20px;
+    border-radius: 10px;
+    text-align: center;
+    border-bottom: 4px solid #d64b17;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.stat-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #b0b0b0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1;
+}
+.stat-card p span {
+    font-size: 1.5rem;
+    margin-left: 2px;
+    color: #d64b17;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: stretch;
+}
+
+.chart-container {
+    background-color: rgba(43, 43, 63, 0.4);
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.chart-container h4 {
+    margin: 0 0 25px 0;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #f0f0f0;
+    font-weight: 500;
+}
+
+.line-chart {
+    height: 400px;
+}
+.doughnut-chart {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 850px) {
+    .charts-grid {
+        grid-template-columns: 1fr; /* Stack charts on smaller screens */
+    }
+}
+@media (max-width: 600px) {
+    .profile-container {
+        padding: 20px;
+    }
+    .profile-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    .details-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .details-grid label {
+        margin-bottom: -10px;
+    }
+}
