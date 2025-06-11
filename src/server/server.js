@@ -62,27 +62,20 @@ const sessionSchema = new mongoose.Schema({
     makes: { type: Number, required: true, default: 0 },
     misses: { type: Number, required: true, default: 0 },
     longestStreak: { type: Number, required: true, default: 0 },
+    average_angle: { type: Number, required: true },
+    average_make_angle: { type: Number, required: true },
+    average_miss_angle: { type: Number, required: true },
+    fg_percentage: { type: Number, required: true },
+    shot_angles: { type: [Number], required: true },
+    shots_results: { type: [Number], required: true },
+    total_shots: { type: Number, required: true },
     sessionDate: { type: Date, default: Date.now }
 });
 
+// {"average_angle":35.84,"average_make_angle":31.67,"average_miss_angle":38.62,"fg_percentage":50,"longest_streak":3,"makes":3,"misses":3,"shot_angles":[0,41.77895978449951,21.56201347203147,35.1120111844222,39.28940686250036,41.455233544405125],"shots_results":[1,1,1,0,0,0],"total_shots":6}
+
 const Session = mongoose.model('Session', sessionSchema);
 
-const calculateLongestStreak = (makes, misses) => {
-    const attempts = Array(makes).fill(1).concat(Array(misses).fill(0));
-    let currentStreak = 0;
-    let longestStreak = 0;
-
-    for (const attempt of attempts) {
-        if (attempt === 1) {
-            currentStreak++;
-            longestStreak = Math.max(longestStreak, currentStreak);
-        } else {
-            currentStreak = 0;
-        }
-    }
-
-    return longestStreak;
-};
 
 app.get('/', (req, res) => res.send('Server is running 🚀'));
 
@@ -164,7 +157,7 @@ app.get('/api/profile', async (req, res) => {
 app.post('/api/session', async (req, res) => {
     try {
         const {
-            userId, makes, misses, longestStreak, average_angle, average_make_angle,
+            userId, makes, misses, longest_streak, average_angle, average_make_angle,
             average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots
         } = req.body;
 
@@ -172,7 +165,7 @@ app.post('/api/session', async (req, res) => {
         console.log("Incoming session data:", req.body);
 
         // Validate input
-        if (!userId || makes == null || misses == null || longestStreak == null ||
+        if (!userId || makes == null || misses == null || longest_streak == null ||
             average_angle == null || average_make_angle == null || average_miss_angle == null ||
             fg_percentage == null || !Array.isArray(shot_angles) || !Array.isArray(shots_results) ||
             total_shots == null) {
@@ -182,7 +175,7 @@ app.post('/api/session', async (req, res) => {
 
         // Save session data to the database
         const session = new Session({
-            userId, makes, misses, longestStreak, average_angle, average_make_angle,
+            userId, makes, misses, longest_streak, average_angle, average_make_angle,
             average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots, sessionDate: new Date()
         });
         await session.save();
