@@ -49,15 +49,29 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log('✅ Connected to MongoDB'))
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
-const userSchema = new mongoose.Schema({
-    username: { type: String, unique: true, required: true, trim: true, minlength: 3 },
-    email: { type: String, unique: true, required: true, lowercase: true, match: /^\S+@\S+\.\S+$/ },
-    password: { type: String, required: true, minlength: 6 },
-    emailVerified: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now }
-});
+// 👇 NEW: Authentication Middleware
+const requireAuthSession = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Authorization token required' });
+    }
 
-const User = mongoose.model('User', userSchema);
+    const token = authHeader.split(' ')[1];
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await User.findById(decoded.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        req.user = user; // Attach user to the request object
+        next(); // Proceed to the next middleware or route handler
+    } catch (err) {
+        console.error('Authentication error:', err);
+        return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+};
+
 
 const sessionSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -73,8 +87,6 @@ const sessionSchema = new mongoose.Schema({
     total_shots: { type: Number, required: true },
     sessionDate: { type: Date, default: Date.now }
 });
-
-// {"average_angle":35.84,"average_make_angle":31.67,"average_miss_angle":38.62,"fg_percentage":50,"longest_streak":3,"makes":3,"misses":3,"shot_angles":[0,41.77895978449951,21.56201347203147,35.1120111844222,39.28940686250036,41.455233544405125],"shots_results":[1,1,1,0,0,0],"total_shots":6}
 
 const Session = mongoose.model('Session', sessionSchema);
 
@@ -163,10 +175,8 @@ app.post('/api/session', async (req, res) => {
             average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots
         } = req.body;
 
-        // Log incoming request data
         console.log("Incoming session data:", req.body);
 
-        // Validate input
         if (!userId || makes == null || misses == null || longest_streak == null ||
             average_angle == null || average_make_angle == null || average_miss_angle == null ||
             fg_percentage == null || !Array.isArray(shot_angles) || !Array.isArray(shots_results) ||
@@ -175,14 +185,12 @@ app.post('/api/session', async (req, res) => {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        // Save session data to the database
         const session = new Session({
             userId, makes, misses, longest_streak, average_angle, average_make_angle,
             average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots, sessionDate: new Date()
         });
         await session.save();
 
-        // Log saved session data
         console.log("Session saved successfully:", session);
 
         res.status(201).json({ message: "Session recorded successfully!", session });
@@ -258,7 +266,7 @@ app.get('/api/field-goal-percentage/:userId', async (req, res) => {
 app.post('/api/analyses', requireAuthSession, async (req, res) => {
     try {
         const { totalShots, madeShots, fgPercentage } = req.body;
-        const userId = req.user._id; // Get user ID from our auth middleware
+        const userId = req.user._id;
 
         const newAnalysis = new Analysis({
             userId,
@@ -276,11 +284,10 @@ app.post('/api/analyses', requireAuthSession, async (req, res) => {
     }
 });
 
-// ► Get all analyses for the logged-in user
 app.get('/api/analyses', requireAuthSession, async (req, res) => {
     try {
         const userId = req.user._id;
-        const analyses = await Analysis.find({ userId }).sort({ date: -1 }); // Get latest first
+        const analyses = await Analysis.find({ userId }).sort({ date: -1 });
         res.status(200).json(analyses);
     } catch (err) {
         console.error('Error fetching analyses:', err);
@@ -297,5 +304,4 @@ app.get(/^(?!\/api).*/, (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Connected to MongoDB: ${MONGODB_URI}`);
 });
