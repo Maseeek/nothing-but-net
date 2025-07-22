@@ -280,10 +280,10 @@ const AnalysesHistory = () => {
                     <h4>Best Session FG%</h4>
                     <p>{bestSessionPct.toFixed(1)}<span>%</span></p>
                 </div>
-                <div className="stat-card">
-                    <h4>Overall Longest Streak</h4>
-                    <p>{performanceSummary.overallLongestStreak}</p>
-                </div>
+                {/*<div className="stat-card">*/}
+                {/*    <h4>Overall Longest Streak</h4>*/}
+                {/*    <p>{performanceSummary.overallLongestStreak}</p>*/}
+                {/*</div>*/}
             </div>
 
             {/* Progress Summary */}
