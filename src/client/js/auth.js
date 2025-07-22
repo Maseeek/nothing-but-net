@@ -138,6 +138,7 @@ function getCurrentUser() {
         return {
             userId: payload.userId,
             username: payload.username,
+            email: payload.email,
             expires: new Date(payload.exp * 1000),
             verified: payload.emailVerified
         };
