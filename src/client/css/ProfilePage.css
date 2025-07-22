@@ -271,14 +271,15 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 30px;
-    align-items: stretch;
 }
 
 .chart-container {
     background-color: rgba(43, 43, 63, 0.4);
     padding: 25px;
     border-radius: 10px;
+    padding-bottom: 100px;
 }
+
 
 .chart-container h4 {
     margin: 0 0 25px 0;
@@ -286,16 +287,11 @@
     font-size: 1.2rem;
     color: #f0f0f0;
     font-weight: 500;
+    flex-shrink: 0; /* Prevents the title from shrinking */
 }
 
-.line-chart {
-    height: 400px;
-}
-.doughnut-chart {
-    height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.line-chart, .doughnut-chart {
+    height: 450px; /* <-- ADJUST THIS VALUE AS NEEDED */
 }
 
 /* Animation */

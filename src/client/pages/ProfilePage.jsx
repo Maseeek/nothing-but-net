@@ -49,8 +49,6 @@ const ProfileDetails = ({ user }) => {
                     <span>{user.email}</span>
                 )}
 
-                <label>Date Joined</label>
-                <span>{new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             </div>
             <button className="profile-action-btn" onClick={handleEdit}>
                 <EditIcon /> {isEditing ? 'Save Changes' : 'Edit Profile'}
