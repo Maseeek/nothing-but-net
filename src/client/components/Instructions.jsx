@@ -20,7 +20,7 @@ const Instructions = ({ onClose }) => {
                         <ul>
                             <li><strong>Use a Tripod:</strong> The camera must be completely still.</li>
                             <li><strong>Clear View:</strong> The hoop, backboard, and ball's flight must be visible.</li>
-                            <li><strong>Good Lighting:</strong> Record with the sun behind the camera.</li>
+                            <li><strong>Good Lighting:</strong> Record with a clear background so that there is high contrast with the ball.</li>
                         </ul>
                     </div>
 
