@@ -122,6 +122,11 @@ function isLoggedIn() {
     return !!localStorage.getItem('authToken');
 }
 
+function isEmailVerified(){
+    const user = getCurrentUser();
+    return user ? user.verified : false;
+}
+
 function requireAuth() {
     if (!isLoggedIn()) {
         window.location.href = 'login';
@@ -246,6 +251,7 @@ export {
     login,
     register,
     isLoggedIn,
+    isEmailVerified,
     requireAuth,
     getCurrentUser,
     logout,

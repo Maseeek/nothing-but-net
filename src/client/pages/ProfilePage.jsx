@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import Loading from '../components/Loading.jsx';
 import { getCurrentUser } from '../js/auth.js'; // Import getCurrentUser
 import './../css/ProfilePage.css';
+import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
 
 // Register Chart.js components we will use
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
@@ -42,7 +43,7 @@ const ProfileDetails = ({ user }) => {
                     <span>{user.username}</span>
                 )}
 
-                <label>Email Address</label>
+                <label>Email Address<QuestionMarkIcon className="not-verified"></QuestionMarkIcon></label>
                 {isEditing ? (
                     <input type="email" name="email" value={formData.email} onChange={handleChange} className="profile-input" />
                 ) : (

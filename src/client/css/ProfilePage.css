@@ -349,3 +349,10 @@
     content: '🚀';
     font-size: 1.2rem;
 }
+
+.not-verified {
+    color: #984400;
+    height: 20px;
+    align-items: center;
+
+}
