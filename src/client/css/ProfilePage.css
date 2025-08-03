@@ -411,3 +411,84 @@
     visibility: visible;
     opacity: 1;
 }
+
+/* Add this new rule to your ProfilePage.css */
+
+/* Find your existing tooltip CSS and replace it with this block */
+
+.email-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.verification-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.verification-icon {
+    stroke: #888;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 220px;
+    background-color: #1e1e2f;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -110px;
+    border: 1px solid #3a3a5a;
+
+    /*
+      THIS IS THE DISAPPEARING ANIMATION:
+      - It waits 0.5s before starting the fade-out.
+      - The fade-out itself takes 0.2s.
+    */
+    transition: opacity 0.2s ease 0.1s, visibility 0s linear 0.7s;
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1e1e2f transparent transparent transparent;
+}
+
+/* This rule makes the tooltip appear instantly on hover */
+.verification-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s; /* Removes the delay when appearing */
+}
+
+/* --- Your existing button style --- */
+.verify-now-btn {
+    background-color: #d64b17;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.verify-now-btn:hover {
+    background-color: #c04015;
+}

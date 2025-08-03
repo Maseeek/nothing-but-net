@@ -5,8 +5,6 @@ import Navbar from '../components/Navbar.jsx';
 import Loading from '../components/Loading.jsx';
 import { getCurrentUser } from '../js/auth.js'; // Import getCurrentUser
 import './../css/ProfilePage.css';
-import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
-import {isEmailVerified} from "../js/auth.js";
 
 // Register Chart.js components we will use
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
@@ -27,7 +25,7 @@ const VerificationStatusIcon = ({ isVerified }) => {
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <span className="tooltip-text">Your email is not verified. Please check your inbox for a verification link.</span>
+            <span className="tooltip-text">Your email is not verified. <button className={"verify-now-btn"}>Verify now</button></span>
         </div>
     );
 };
