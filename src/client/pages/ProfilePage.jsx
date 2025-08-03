@@ -6,6 +6,7 @@ import Loading from '../components/Loading.jsx';
 import { getCurrentUser } from '../js/auth.js'; // Import getCurrentUser
 import './../css/ProfilePage.css';
 import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
+import {isEmailVerified} from "../js/auth.js";
 
 // Register Chart.js components we will use
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
@@ -13,6 +14,23 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcEleme
 // --- ICONS (Placeholder SVGs) ---
 const UserCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm0-12a3,3,0,1,1-3,3A3,3,0,0,1,12,8Zm0,10a6,6,0,0,1-4.22-1.77,7.83,7.83,0,0,1,8.44,0A6,6,0,0,1,12,18Z"/></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>;
+
+const VerificationStatusIcon = ({ isVerified }) => {
+    if (isVerified) {
+        return null; // Don't show anything if the user is verified
+    }
+
+    return (
+        <div className="verification-tooltip">
+            <svg className="verification-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span className="tooltip-text">Your email is not verified. Please check your inbox for a verification link.</span>
+        </div>
+    );
+};
 
 
 // --- SUB-COMPONENT: Profile Details Tab ---
@@ -43,7 +61,7 @@ const ProfileDetails = ({ user }) => {
                     <span>{user.username}</span>
                 )}
 
-                <label>Email Address<QuestionMarkIcon className="not-verified"></QuestionMarkIcon></label>
+                <label>Email Address <VerificationStatusIcon isVerified={user.verified} /> </label>
                 {isEditing ? (
                     <input type="email" name="email" value={formData.email} onChange={handleChange} className="profile-input" />
                 ) : (

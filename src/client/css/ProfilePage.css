@@ -353,6 +353,61 @@
 .not-verified {
     color: #984400;
     height: 20px;
-    align-items: center;
+}
 
+/* Add these new rules to your ProfilePage.css */
+
+.email-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between email and icon */
+}
+
+/* Tooltip container */
+.verification-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+/* The question mark icon itself */
+.verification-icon {
+    stroke: #888; /* Greyed-out color */
+    cursor: pointer;
+}
+
+/* The tooltip text that appears on hover */
+.tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: #1e1e2f;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%; /* Position above the icon */
+    left: 50%;
+    margin-left: -110px; /* Use half of the width to center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid #3a3a5a;
+}
+
+/* Arrow for the tooltip */
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1e1e2f transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.verification-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
