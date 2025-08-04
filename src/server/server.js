@@ -97,7 +97,6 @@ app.get('/', (req, res) => res.send('Server is running 🚀'));
 
 
 
-// --- Replace your existing /api/register route with this one ---
 app.post('/api/register',
     [
         body('username').trim().isLength({ min: 3 }),
@@ -109,32 +108,44 @@ app.post('/api/register',
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         try {
-            if (await User.findOne({ $or: [{ username: req.body.username }, { email: req.body.email }] })) {
+            // 👇 --- FIX IS HERE: Convert to lowercase before checking --- 👇
+            const { username, email, password } = req.body;
+            const lowerCaseEmail = email.toLowerCase();
+            const lowerCaseUsername = username.toLowerCase();
+
+            // Check if a user with the same lowercase username or email already exists
+            if (await User.findOne({ $or: [{ username: lowerCaseUsername }, { email: lowerCaseEmail }] })) {
                 return res.status(400).json({ error: 'Username or email already exists' });
             }
 
             const user = new User({
-                username: req.body.username,
-                email: req.body.email,
-                password: await bcrypt.hash(req.body.password, 10)
+                username: lowerCaseUsername, // Save as lowercase
+                email: lowerCaseEmail,       // Save as lowercase
+                password: await bcrypt.hash(password, 10)
             });
 
-            // --- NEW VERIFICATION LOGIC ---
+            // --- Email Verification Logic ---
             const token = crypto.randomBytes(32).toString('hex');
             user.verificationToken = token;
-            user.verificationTokenExpires = Date.now() + 3600000; // Expires in 1 hour
-            await user.save();
+            user.verificationTokenExpires = Date.now() + 3600000;
+            await user.save(); // Now this save will be consistent with the check
 
             const verificationLink = `http://localhost:5173/verify-email/${token}`;
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: user.email,
                 subject: 'Welcome to NothingButNet! Please Verify Your Email',
-                html: `<p>Please click this link to verify your email: <a href="${verificationLink}">${verificationLink}</a></p>`
+                html: `
+                    <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
+                        <h2>Welcome to NothingButNet, ${user.username}!</h2>
+                        <p>We're excited to have you. Please click the button below to verify your email address.</p>
+                        <a href="${verificationLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px;">
+                            Verify My Email
+                        </a>
+                    </div>
+                `
             };
-
             await transporter.sendMail(mailOptions);
-            // --- END OF NEW LOGIC ---
 
             res.status(201).json({ message: 'User registered successfully! Please check your email.' });
 
@@ -404,6 +415,7 @@ app.post('/api/verify-email', async (req, res) => {
             {
                 userId: user._id,
                 username: user.username,
+                email: user.email,
                 emailVerified: user.emailVerified // This will now be true
             },
             JWT_SECRET,

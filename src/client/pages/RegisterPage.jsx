@@ -46,7 +46,8 @@ const RegisterPage = () => {
 
         try {
             await register(username, email, password, confirmPassword);
-            setOutcome('Registration successful! Redirecting...');
+            setOutcome(<span style={{ color: 'green' }}>Registration successful! Redirecting...</span>);
+
             setTimeout(() => {
                 window.location.href = '/login'; // Or use React Router for navigation
             }, 1500);
