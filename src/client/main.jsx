@@ -8,6 +8,8 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/Login.jsx';
 import Profile from './pages/Profile.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
+import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx'
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
@@ -19,6 +21,8 @@ function Main() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path={"/profile"} element={<ProfilePage />} />
+                <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+                <Route path="/verification-success" element={<VerificationSuccessPage />} />
             </Routes>
         </BrowserRouter>
     );
