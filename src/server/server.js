@@ -12,6 +12,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import Analysis from './models/Analysis.js';
 import User from './models/User.js';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -292,6 +294,91 @@ app.get('/api/analyses', requireAuthSession, async (req, res) => {
     } catch (err) {
         console.error('Error fetching analyses:', err);
         res.status(500).json({ error: 'Failed to retrieve analyses.' });
+    }
+});
+
+// --- NODEMAILER TRANSPORTER SETUP ---
+// This uses the credentials from your .env file
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+
+// --- NEW API ROUTE: SEND VERIFICATION EMAIL ---
+app.post('/api/send-verification-email', requireAuthSession, async (req, res) => {
+    try {
+        const user = req.user;
+
+        // Generate a random, secure token
+        const token = crypto.randomBytes(32).toString('hex');
+        user.verificationToken = token;
+        // Set the token to expire in 1 hour
+        user.verificationTokenExpires = Date.now() + 3600000; // 1 hour in milliseconds
+        await user.save();
+
+        // Create the verification URL for the email
+        const verificationLink = `http://localhost:5173/verify-email/${token}`; // Adjust for your frontend URL
+
+        // Email content
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: 'Verify Your NothingButNet Account',
+            html: `
+                <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
+                    <h2>Welcome to NothingButNet!</h2>
+                    <p>Please click the button below to verify your email address and activate your account.</p>
+                    <a href="${verificationLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px;">
+                        Verify My Email
+                    </a>
+                    <p style="margin-top: 30px; font-size: 0.9em;">If you did not create this account, you can safely ignore this email.</p>
+                </div>
+            `
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Verification email sent successfully.' });
+
+    } catch (err) {
+        console.error('Error sending verification email:', err);
+        res.status(500).json({ error: 'Server error while sending email.' });
+    }
+});
+
+
+// --- NEW API ROUTE: HANDLE EMAIL VERIFICATION ---
+app.get('/api/verify-email/:token', async (req, res) => {
+    try {
+        const { token } = req.params;
+
+        const user = await User.findOne({
+            verificationToken: token,
+            verificationTokenExpires: { $gt: Date.now() } // Check if token is not expired
+        });
+
+        if (!user) {
+            // This is where you would redirect to a "failed verification" page
+            return res.status(400).send('<h1>Verification failed</h1><p>This link is invalid or has expired.</p>');
+        }
+
+        // Verification successful
+        user.emailVerified = true;
+        user.verificationToken = null;
+        user.verificationTokenExpires = null;
+        await user.save();
+
+        // Redirect to a "success" page on your frontend
+        res.redirect('http://localhost:5173/verification-success');
+
+    } catch (err) {
+        console.error('Email verification error:', err);
+        res.status(500).send('<h1>Error</h1><p>An error occurred during verification.</p>');
     }
 });
 

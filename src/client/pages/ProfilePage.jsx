@@ -15,17 +15,58 @@ const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 2
 
 const VerificationStatusIcon = ({ isVerified }) => {
     if (isVerified) {
-        return null; // Don't show anything if the user is verified
+        return null;
     }
 
+    // This function now calls your backend API
+    const handleVerifyClick = async () => {
+        try {
+            // Get the authentication token from local storage
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('You must be logged in to do that.');
+                return;
+            }
+
+            const response = await fetch('http://localhost:3000/api/send-verification-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include the token for authentication
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Throw an error if the server response was not successful
+                throw new Error(data.error || 'Failed to send verification email.');
+            }
+
+            // Let the user know it was successful
+            alert('A new verification email has been sent to your address!');
+
+        } catch (err) {
+            console.error("Verification error:", err);
+            alert(err.message);
+        }
+    };
+
+    // The rest of the component's JSX remains the same
     return (
         <div className="verification-tooltip">
-            <svg className="verification-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="verification-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <span className="tooltip-text">Your email is not verified. <button className={"verify-now-btn"}>Verify now</button></span>
+            <div className="tooltip-text">
+                <span>Your email is not verified. Check your inbox for a link.</span>
+                <button className="verify-now-btn" onClick={handleVerifyClick}>
+                    Resend Email
+                </button>
+            </div>
         </div>
     );
 };
