@@ -95,6 +95,9 @@ const Session = mongoose.model('Session', sessionSchema);
 
 app.get('/', (req, res) => res.send('Server is running 🚀'));
 
+
+
+// --- Replace your existing /api/register route with this one ---
 app.post('/api/register',
     [
         body('username').trim().isLength({ min: 3 }),
@@ -116,8 +119,24 @@ app.post('/api/register',
                 password: await bcrypt.hash(req.body.password, 10)
             });
 
+            // --- NEW VERIFICATION LOGIC ---
+            const token = crypto.randomBytes(32).toString('hex');
+            user.verificationToken = token;
+            user.verificationTokenExpires = Date.now() + 3600000; // Expires in 1 hour
             await user.save();
-            res.status(201).json({ message: 'User registered successfully!' });
+
+            const verificationLink = `http://localhost:5173/verify-email/${token}`;
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: user.email,
+                subject: 'Welcome to NothingButNet! Please Verify Your Email',
+                html: `<p>Please click this link to verify your email: <a href="${verificationLink}">${verificationLink}</a></p>`
+            };
+
+            await transporter.sendMail(mailOptions);
+            // --- END OF NEW LOGIC ---
+
+            res.status(201).json({ message: 'User registered successfully! Please check your email.' });
 
         } catch (err) {
             console.error('Registration error:', err);
@@ -353,36 +372,54 @@ app.post('/api/send-verification-email', requireAuthSession, async (req, res) =>
 
 
 // --- NEW API ROUTE: HANDLE EMAIL VERIFICATION ---
-app.get('/api/verify-email/:token', async (req, res) => {
+// Find your /api/verify-email/:token route and replace it with this
+
+// Add this new route handler anywhere before your app.listen() call
+
+app.post('/api/verify-email', async (req, res) => {
     try {
-        const { token } = req.params;
+        const { token } = req.body;
+
+        if (!token) {
+            return res.status(400).json({ error: 'Verification token is missing.' });
+        }
 
         const user = await User.findOne({
             verificationToken: token,
-            verificationTokenExpires: { $gt: Date.now() } // Check if token is not expired
+            verificationTokenExpires: { $gt: Date.now() }
         });
 
         if (!user) {
-            // This is where you would redirect to a "failed verification" page
-            return res.status(400).send('<h1>Verification failed</h1><p>This link is invalid or has expired.</p>');
+            return res.status(400).json({ error: 'This link is invalid or has expired.' });
         }
 
         // Verification successful
         user.emailVerified = true;
-        user.verificationToken = null;
-        user.verificationTokenExpires = null;
+        user.verificationToken = undefined;
+        user.verificationTokenExpires = undefined;
         await user.save();
 
-        // Redirect to a "success" page on your frontend
-        res.redirect('http://localhost:5173/verification-success');
+        // Create and send back a NEW token with the updated user info
+        const newToken = jwt.sign(
+            {
+                userId: user._id,
+                username: user.username,
+                emailVerified: user.emailVerified // This will now be true
+            },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).json({
+            message: 'Email verified successfully!',
+            token: newToken
+        });
 
     } catch (err) {
         console.error('Email verification error:', err);
-        res.status(500).send('<h1>Error</h1><p>An error occurred during verification.</p>');
+        res.status(500).json({ error: 'An error occurred during verification.' });
     }
 });
-
-
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.get(/^(?!\/api).*/, (req, res) => {
