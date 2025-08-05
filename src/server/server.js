@@ -136,14 +136,25 @@ app.post('/api/register',
                 to: user.email,
                 subject: 'Welcome to NothingButNet! Please Verify Your Email',
                 html: `
-                    <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
-                        <h2>Welcome to NothingButNet, ${user.username}!</h2>
-                        <p>We're excited to have you. Please click the button below to verify your email address.</p>
-                        <a href="${verificationLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px;">
-                            Verify My Email
-                        </a>
-                    </div>
-                `
+        <div style="background-color: #1e1e2f; color: #f0f0f0; padding: 40px; font-family: Arial, sans-serif; text-align: center; border-radius: 12px;">
+            
+            <img src="https://i.imgur.com/8m1GnbC.png" alt="NothingButNet Logo" style="width: 100px; margin-bottom: 20px;">
+            
+            <h2 style="color: #d64b17;">Welcome to NothingButNet, ${user.username}!</h2>
+            
+            <p style="color: #b0b0b0; font-size: 16px; line-height: 1.5;">
+                We're excited to have you. Please click the button below to verify your email address and activate your account.
+            </p>
+            
+            <a href="${verificationLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px; font-weight: bold;">
+                Verify My Email
+            </a>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #888;">
+                If you did not create this account, you can safely ignore this email. This link will expire in one hour.
+            </p>
+        </div>
+    `
             };
             await transporter.sendMail(mailOptions);
 
@@ -359,13 +370,14 @@ app.post('/api/send-verification-email', requireAuthSession, async (req, res) =>
             to: user.email,
             subject: 'Verify Your NothingButNet Account',
             html: `
-                <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
-                    <h2>Welcome to NothingButNet!</h2>
-                    <p>Please click the button below to verify your email address and activate your account.</p>
-                    <a href="${verificationLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px;">
+                <div style="background-color: #1e1e2f; color: #f0f0f0; padding: 40px; font-family: Arial, sans-serif; text-align: center; border-radius: 12px;">
+                    <img src="https://i.imgur.com/8m1GnbC.png" alt="NothingButNet Logo" style="width: 100px; margin-bottom: 20px;">
+                    <h2 style="color: #d64b17;">Verify Your Email</h2>
+                    <p style="color: #b0b0b0; font-size: 16px; line-height: 1.5;">Please click the button below to verify your email address for your NothingButNet account.</p>
+                    <a href="${verificationLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px; font-weight: bold;">
                         Verify My Email
                     </a>
-                    <p style="margin-top: 30px; font-size: 0.9em;">If you did not create this account, you can safely ignore this email.</p>
+                    <p style="margin-top: 30px; font-size: 12px; color: #888;">This link will expire in one hour.</p>
                 </div>
             `
         };
@@ -457,11 +469,28 @@ app.post('/api/forgot-password', async (req, res) => {
             to: user.email,
             subject: 'Password Reset Request for NothingButNet',
             html: `
-                <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
-                <p>Please click on the following link, or paste it into your browser to complete the process:</p>
-                <a href="${resetLink}">${resetLink}</a>
-                <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
-            `
+        <div style="background-color: #1e1e2f; color: #f0f0f0; padding: 40px; font-family: Arial, sans-serif; text-align: center; border-radius: 12px;">
+            
+            <img src="https://i.imgur.com/8m1GnbC.png" alt="NothingButNet Logo" style="width: 100px; margin-bottom: 20px;">
+            
+            <h2 style="color: #d64b17;">Password Reset Request</h2>
+            
+            <p style="color: #b0b0b0; font-size: 16px; line-height: 1.5;">
+                You are receiving this because you (or someone else) have requested the reset of the password for your account.
+            </p>
+            <p style="color: #b0b0b0; font-size: 16px; line-height: 1.5;">
+                Please click the button below to choose a new password.
+            </p>
+            
+            <a href="${resetLink}" style="background-color: #d64b17; color: white; padding: 15px 25px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 20px; font-weight: bold;">
+                Reset Your Password
+            </a>
+            
+            <p style="margin-top: 30px; font-size: 12px; color: #888;">
+                If you did not request this, please ignore this email. This link will expire in one hour.
+            </p>
+        </div>
+    `
         };
 
         await transporter.sendMail(mailOptions);
