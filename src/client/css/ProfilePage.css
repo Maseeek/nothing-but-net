@@ -235,7 +235,7 @@
     padding: 20px 15px; /* Reduced padding to make the card smaller */
     /* MODIFICATION END */
     border-radius: 10px;
-    width:100%;
+    width:90%;
     text-align: center;
     border-bottom: 4px solid #d64b17;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
