@@ -432,6 +432,74 @@ app.post('/api/verify-email', async (req, res) => {
         res.status(500).json({ error: 'An error occurred during verification.' });
     }
 });
+
+app.post('/api/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() });
+
+        if (!user) {
+            // Important: For security, don't reveal if the email exists or not.
+            // Just send a generic success message.
+            return res.status(200).json({ message: 'If an account with that email exists, a password reset link has been sent.' });
+        }
+
+        // Generate a token
+        const token = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // Expires in 1 hour
+        await user.save();
+
+        // Send the email
+        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: 'Password Reset Request for NothingButNet',
+            html: `
+                <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
+                <p>Please click on the following link, or paste it into your browser to complete the process:</p>
+                <a href="${resetLink}">${resetLink}</a>
+                <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: 'If an account with that email exists, a password reset link has been sent.' });
+
+    } catch (err) {
+        console.error('Forgot password error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+
+// --- 👇 ADD THIS NEW ROUTE: TO HANDLE THE ACTUAL PASSWORD RESET ---
+app.post('/api/reset-password/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() } // Check if the token is not expired
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: 'Password reset token is invalid or has expired.' });
+        }
+
+        // Set the new password
+        user.password = await bcrypt.hash(req.body.password, 10);
+        user.resetPasswordToken = undefined; // Clear the token
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.status(200).json({ message: 'Password has been successfully reset.' });
+
+    } catch (err) {
+        console.error('Reset password error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.get(/^(?!\/api).*/, (req, res) => {
