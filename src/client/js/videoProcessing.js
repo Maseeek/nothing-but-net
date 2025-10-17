@@ -1,4 +1,5 @@
 import { getCurrentUser } from "./auth.js";
+import { API_BASE_URL, ANALYSIS_API_URL } from '../config.js';
 
 export async function sendSessionData(sessionData) {
     try {
@@ -22,7 +23,7 @@ export async function sendSessionData(sessionData) {
             total_shots: sessionData.total_shots
         };
 
-        const response = await fetch("http://localhost:3000/api/session", {
+        const response = await fetch(`${API_BASE_URL}/api/session`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -48,7 +49,7 @@ export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) 
 
     try {
         console.log("Hoop Left:", hoopLeft, "Hoop Right:", hoopRight);
-        const response = await fetch("http://localhost:5000/upload-and-analyze", {
+        const response = await fetch(`${ANALYSIS_API_URL}/upload-and-analyze`, {
             method: "POST",
             body: formData,
         });

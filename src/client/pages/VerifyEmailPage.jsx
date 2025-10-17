@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
+import { API_BASE_URL } from '../config.js';
 
 const VerifyEmailPage = () => {
     const { token } = useParams();
@@ -15,7 +16,7 @@ const VerifyEmailPage = () => {
 
             try {
                 // CHANGED TO A POST REQUEST
-                const response = await fetch(`http://localhost:3000/api/verify-email`, {
+                const response = await fetch(`${API_BASE_URL}/api/verify-email`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: token })
