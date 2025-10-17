@@ -51,12 +51,16 @@ VITE_ANALYSIS_API_URL=http://localhost:5000
 
 1. Copy the example files:
    ```bash
-   cp .env.example .env
+   # Copy server environment variables
+   cp .env.example src/server/.env
+   
+   # Copy client environment variables  
    cp .env.client.example .env
-   cp src/server/.env.example src/server/.env
    ```
 
 2. Update the values in the `.env` files as needed for your local development environment.
+   - Server config: `src/server/.env`
+   - Client config: `.env` (in project root)
 
 3. Start the development server:
    ```bash
