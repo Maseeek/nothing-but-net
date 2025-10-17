@@ -42,15 +42,17 @@ PRODUCTION_FRONTEND_URL=https://your-custom-domain.com  # optional
 
 ## Environment Files
 
-Two types of environment files:
+Two separate environment files are needed:
 
-1. **`.env`** (in project root) - For frontend/Vite
-   - Example: `.env.client.example`
-   - Variables must start with `VITE_`
+1. **Frontend Environment** - `.env` (in project root)
+   - Copy from: `.env.client.example`
+   - Contains: `VITE_API_BASE_URL`, `VITE_ANALYSIS_API_URL`
+   - Variables must start with `VITE_` prefix
 
-2. **`src/server/.env`** - For backend/Express
-   - Example: `.env.example`
-   - Contains database, email, JWT settings
+2. **Backend Environment** - `src/server/.env`
+   - Copy from: `.env.example` (move to src/server/)
+   - Contains: Database, email, JWT, FRONTEND_URL settings
+   - Located in the same directory as server.js
 
 ## Common Deployment Platforms
 
