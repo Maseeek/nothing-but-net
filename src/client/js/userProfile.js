@@ -1,9 +1,10 @@
 // `userProfile.js`
+import { API_BASE_URL } from '../config.js';
 
 async function showUserProfile(userId) {
     try {
         // Fetch user session data
-        const response = await fetch(`http://localhost:3000/api/sessions/${encodeURIComponent(userId)}`);
+        const response = await fetch(`${API_BASE_URL}/api/sessions/${encodeURIComponent(userId)}`);
         const sessions = await response.json();
 
         if (sessions.length > 0) {

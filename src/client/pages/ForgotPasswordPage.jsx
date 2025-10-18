@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar.jsx';
+import { API_BASE_URL } from '../config.js';
 import './../css/Login.css'; // You can reuse the login page styles
 
 const ForgotPasswordPage = () => {
@@ -10,7 +11,7 @@ const ForgotPasswordPage = () => {
         e.preventDefault();
         setMessage('');
         try {
-            const response = await fetch('http://localhost:3000/api/forgot-password', {
+            const response = await fetch(`${API_BASE_URL}/api/forgot-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

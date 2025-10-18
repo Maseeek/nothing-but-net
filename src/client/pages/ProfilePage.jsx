@@ -4,6 +4,7 @@ import { Line, Doughnut } from 'react-chartjs-2';
 import Navbar from '../components/Navbar.jsx';
 import Loading from '../components/Loading.jsx';
 import { getCurrentUser } from '../js/auth.js'; // Import getCurrentUser
+import { API_BASE_URL } from '../config.js';
 import './../css/ProfilePage.css';
 
 // Register Chart.js components we will use
@@ -28,7 +29,7 @@ const VerificationStatusIcon = ({ isVerified }) => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/api/send-verification-email', {
+            const response = await fetch(`${API_BASE_URL}/api/send-verification-email`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ const AnalysesHistory = () => {
                 }
 
                 // Fetch data from the sessions endpoint
-                const response = await fetch(`http://localhost:3000/api/sessions/${userId}`, {
+                const response = await fetch(`${API_BASE_URL}/api/sessions/${userId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include auth token
                     }
