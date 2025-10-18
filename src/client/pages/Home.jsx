@@ -6,6 +6,7 @@ import { sendVideoForAnalysis } from "../js/videoProcessing.js";
 import Loading from "../components/Loading.jsx";
 import Instructions from "../components/Instructions.jsx";
 import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx"; // IMPORT THE NEW ICON
+import backgroundVideo from "../assets/backgroundvideo.mp4";
 
 function MainPage() {
     const [videoFile, setVideoFile] = useState(null);
@@ -111,7 +112,7 @@ function LandingPage(){
     return(
         <div className={"landing-page"}>
             <div className={"background-video-form"}>
-                <video className={"background-video"} src={"src/client/assets/backgroundvideo.mp4"} autoPlay loop muted />
+                <video className={"background-video"} src={backgroundVideo} autoPlay loop muted />
                 <div className={"welcome"}>
                     <h1 className={"welcome-message"}>Never Lose Count Again</h1>
                     <p className={"welcome-info"}>Just upload your video. Our AI does the rest.</p>
