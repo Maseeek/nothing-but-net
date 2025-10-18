@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../js/auth.js'; // Assuming this path is correct
 import Navbar from '../components/Navbar.jsx'; // Assuming this path is correct
 import './../css/RegisterPage.css'; // Ensure this path points to the updated CSS
@@ -29,6 +30,7 @@ const RegisterPage = () => {
     const [outcome, setOutcome] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -49,7 +51,7 @@ const RegisterPage = () => {
             setOutcome(<span style={{ color: 'green' }}>Registration successful! Redirecting...</span>);
 
             setTimeout(() => {
-                window.location.href = '/login'; // Or use React Router for navigation
+                navigate('/login');
             }, 1500);
         } catch (err) {
             const errorMessage = err && err.message ? err.message : 'Registration failed.';
@@ -133,7 +135,7 @@ const RegisterPage = () => {
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>
                     <div className="form-footer">
-                        <p>Already have an account? <a href="/login">Log In</a></p>
+                        <p>Already have an account? <Link to="/login">Log In</Link></p>
                         {/*
                         <p className="terms">
                             By creating an account, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.
