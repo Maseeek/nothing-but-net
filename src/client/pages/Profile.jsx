@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import { isLoggedIn, getCurrentUser } from '../js/auth.js';
+import { API_BASE_URL } from '../config.js';
 import Chart from 'chart.js/auto';
 import "../css/Profile.css";
 
@@ -30,7 +31,7 @@ const Profile = () => {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:3000/api/sessions/${userId}`);
+                const response = await fetch(`${API_BASE_URL}/api/sessions/${userId}`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch sessions: ${response.statusText}`);
                 }

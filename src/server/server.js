@@ -1,6 +1,4 @@
 import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
@@ -18,6 +16,9 @@ import crypto from 'crypto';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load .env file from src/server directory
+dotenv.config({ path: path.join(__dirname, '.env') });
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -30,7 +31,8 @@ const allowedOrigins = [
     'http://localhost:63342',
     'http://localhost:63343',
     'http://localhost:5173',
-    process.env.FRONTEND_URL
+    process.env.FRONTEND_URL,
+    process.env.PRODUCTION_FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
@@ -130,7 +132,8 @@ app.post('/api/register',
             user.verificationTokenExpires = Date.now() + 3600000;
             await user.save(); // Now this save will be consistent with the check
 
-            const verificationLink = `http://localhost:5173/verify-email/${token}`;
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            const verificationLink = `${frontendUrl}/verify-email/${token}`;
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: user.email,
@@ -362,7 +365,8 @@ app.post('/api/send-verification-email', requireAuthSession, async (req, res) =>
         await user.save();
 
         // Create the verification URL for the email
-        const verificationLink = `http://localhost:5173/verify-email/${token}`; // Adjust for your frontend URL
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const verificationLink = `${frontendUrl}/verify-email/${token}`;
 
         // Email content
         const mailOptions = {
@@ -463,7 +467,8 @@ app.post('/api/forgot-password', async (req, res) => {
         await user.save();
 
         // Send the email
-        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const resetLink = `${frontendUrl}/reset-password/${token}`;
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: user.email,

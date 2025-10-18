@@ -1,8 +1,8 @@
-const API_BASE = 'http://localhost:3000';
+import { API_BASE_URL } from '../config.js';
+
+const API_BASE = API_BASE_URL;
 
 // In: src/client/js/auth.js
-
-// (Make sure API_BASE is defined, e.g., const API_BASE = 'http://localhost:3000';)
 
 // Login function with proper error handling and redirect
 async function login(username, password) {
@@ -59,9 +59,6 @@ async function login(username, password) {
 }
 
 // In: src/client/js/auth.js
-
-// (Ensure API_BASE is defined)
-// const API_BASE = 'http://localhost:3000';
 
 async function register(username, email, password, confirmPassword) {
     // The client-side password match is already handled in RegisterPage.jsx before calling this.
