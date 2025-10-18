@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import './css/index.css';
 import Home from './pages/Home.jsx';
 import Results from './pages/Results.jsx';
@@ -9,7 +10,7 @@ import LoginPage from './pages/Login.jsx';
 import Profile from './pages/Profile.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
-import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx'
+import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 
@@ -17,6 +18,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 function Main() {
     return (
         <BrowserRouter>
+            <Analytics />
             <Routes>
                 {/* All routes must be inside here */}
                 <Route path="/" element={<Home />} />
