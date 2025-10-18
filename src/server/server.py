@@ -25,8 +25,9 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
-db = client['your_database_name']
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+client = MongoClient(MONGODB_URI)
+db = client['nbn']
 sessions_collection = db['sessions']
 
 dist = lambda x1, y1, x2, y2: (x1-x2)**2 + (y1-y2)**2
@@ -251,4 +252,5 @@ def save_session():
         return jsonify({'error': 'Server error'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
