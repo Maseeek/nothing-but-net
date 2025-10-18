@@ -1,0 +1,3 @@
+# Netlify SPA fallback
+# All requests that don't match a static file will be served index.html
+/*    /index.html   200
