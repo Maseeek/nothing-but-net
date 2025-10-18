@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import './css/index.css';
 import Home from './pages/Home.jsx';
 import Results from './pages/Results.jsx';
@@ -29,6 +30,7 @@ function Main() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             </Routes>
+            <Analytics />
         </BrowserRouter>
     );
 }
