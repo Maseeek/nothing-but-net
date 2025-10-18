@@ -18,6 +18,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 function Main() {
     return (
         <BrowserRouter>
+            <Analytics />
             <Routes>
                 {/* All routes must be inside here */}
                 <Route path="/" element={<Home />} />
@@ -30,7 +31,6 @@ function Main() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             </Routes>
-            <Analytics />
         </BrowserRouter>
     );
 }
