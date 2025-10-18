@@ -10,7 +10,7 @@ import LoginPage from './pages/Login.jsx';
 import Profile from './pages/Profile.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
-import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx'
+import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 
