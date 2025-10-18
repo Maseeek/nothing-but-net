@@ -6,6 +6,16 @@
 <!--    <link rel="icon" type="image/png" href="./src/assets/nbnlight.png" sizes="48x48" />-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>nothingbutnet</title>
+    <script>
+      // GitHub Pages SPA fallback - restore redirected path
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect.replace(location.origin, ''));
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
