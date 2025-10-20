@@ -76,16 +76,16 @@ VITE_ANALYSIS_API_URL=http://localhost:5000
 
 ## Production Deployment
 
-### Render Deployment (Recommended)
+### Render Deployment (Recommended - FREE TIER)
 
-This project is configured for deployment on Render using the `render.yaml` Blueprint.
+This project is configured for deployment on Render using the `render.yaml` Blueprint with **FREE tier services**.
 
 #### Prerequisites
-- A [Render](https://render.com) account
-- A MongoDB database (you can use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) free tier)
-- Email credentials (Gmail recommended)
+- A [Render](https://render.com) account (**FREE** - no credit card required)
+- A MongoDB database (you can use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) **FREE tier M0**)
+- Email credentials (Gmail recommended - **FREE**)
 
-#### Steps to Deploy
+#### Steps to Deploy on FREE Tier
 
 1. **Fork/Push this repository to GitHub**
 
@@ -94,12 +94,13 @@ This project is configured for deployment on Render using the `render.yaml` Blue
    - Click "New" → "Blueprint"
    - Connect your GitHub repository
    - Render will automatically detect the `render.yaml` file
+   - Both services will be created on the **FREE tier** (`plan: free`)
 
 3. **Configure Environment Variables:**
    
-   The Blueprint will create two web services:
-   - `nbnc-backend` (Node.js server)
-   - `nbnc-video-processor` (Python server)
+   The Blueprint will create two web services on **FREE tier**:
+   - `nbnc-backend` (Node.js server) - FREE tier
+   - `nbnc-video-processor` (Python server) - FREE tier
 
    Set the following environment variables for **nbnc-backend**:
    ```
@@ -116,7 +117,7 @@ This project is configured for deployment on Render using the `render.yaml` Blue
    ```
 
 4. **Deploy:**
-   - Render will automatically build and deploy both services
+   - Render will automatically build and deploy both services on **FREE tier**
    - The backend will be available at: `https://nbnc-backend.onrender.com`
    - The video processor will be available at: `https://nbnc-video-processor.onrender.com`
 
@@ -127,12 +128,27 @@ This project is configured for deployment on Render using the `render.yaml` Blue
    VITE_ANALYSIS_API_URL=https://nbnc-video-processor.onrender.com
    ```
 
-#### Important Notes for Render
+#### Important Notes for Render FREE Tier
 
-- **Free Tier Limitation:** Free tier services on Render spin down after 15 minutes of inactivity and may take 30+ seconds to restart. Consider upgrading to a paid plan for production.
-- **MongoDB Atlas:** Use MongoDB Atlas for a cloud database. The free tier (M0) is sufficient for development.
-- **Email Setup:** For Gmail, you need to create an [App Password](https://support.google.com/accounts/answer/185833) instead of using your regular password.
-- **CORS:** Make sure to add your frontend URL to the `FRONTEND_URL` environment variable for proper CORS configuration.
+✅ **FREE Tier Features:**
+- Both services run on FREE tier (plan: free)
+- No credit card required
+- 512 MB RAM per service
+- 750 hours/month runtime per service
+- Automatic HTTPS
+- Automatic deployments from Git
+
+⚠️ **FREE Tier Behavior:**
+- Services spin down after 15 minutes of inactivity (this is normal)
+- First request after spin down takes 30-50 seconds (cold start)
+- Subsequent requests are fast until next spin down
+- Perfect for development, testing, and hobby projects
+
+💡 **Tips:**
+- **MongoDB Atlas:** Use MongoDB Atlas FREE tier (M0) for cloud database (512 MB storage)
+- **Email Setup:** For Gmail, create an [App Password](https://support.google.com/accounts/answer/185833) (not regular password)
+- **CORS:** Add your frontend URL to the `FRONTEND_URL` environment variable
+- **Cost:** Everything remains **$0/month** on FREE tier
 
 ### Alternative Deployment Options
 
