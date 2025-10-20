@@ -1,9 +1,10 @@
 services:
-  # Node.js Backend Service
+  # Node.js Backend Service (Free Tier)
   - type: web
     name: nbnc-backend
     runtime: node
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: node src/server/server.js
     envVars:
@@ -23,11 +24,12 @@ services:
         sync: false
     healthCheckPath: /
 
-  # Python Video Processing Service
+  # Python Video Processing Service (Free Tier)
   - type: web
     name: nbnc-video-processor
     runtime: python
     env: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python src/server/server.py
     envVars:
