@@ -150,11 +150,33 @@ This project is configured for deployment on Render using the `render.yaml` Blue
 - **CORS:** Add your frontend URL to the `FRONTEND_URL` environment variable
 - **Cost:** Everything remains **$0/month** on FREE tier
 
-### Alternative Deployment Options
+### Frontend Deployment on Vercel (FREE - Recommended)
 
-#### Frontend Deployment
+📖 **For complete step-by-step instructions, see [VERCEL_FRONTEND_SETUP.md](VERCEL_FRONTEND_SETUP.md)**
 
-1. Set the environment variables on your hosting platform (Vercel, Netlify, etc.):
+**Quick Summary:**
+1. Sign up for Vercel (FREE)
+2. Import your GitHub repository
+3. Set environment variables in Vercel dashboard:
+   ```
+   VITE_API_BASE_URL=https://nbnc-backend-xxxx.onrender.com
+   VITE_ANALYSIS_API_URL=https://nbnc-video-processor-xxxx.onrender.com
+   ```
+4. Deploy (automatic build and deployment)
+5. Update backend `FRONTEND_URL` with your Vercel URL
+
+**Vercel FREE tier includes:**
+- Unlimited deployments
+- Automatic HTTPS
+- Preview deployments for PRs
+- 100 GB bandwidth/month
+- **Cost: $0/month**
+
+### Alternative Frontend Deployment Options
+
+If you prefer other platforms:
+
+1. Set the environment variables on your hosting platform (Netlify, etc.):
    ```
    VITE_API_BASE_URL=https://your-api-domain.com
    VITE_ANALYSIS_API_URL=https://your-analysis-api-domain.com

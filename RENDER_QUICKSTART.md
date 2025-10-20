@@ -60,19 +60,23 @@ Both services are configured to use Render's **free tier** (`plan: free`):
 
 ## Next Steps
 
-After deployment:
-1. Note your backend URLs from Render dashboard
-2. Update your frontend deployment with:
-   ```
-   VITE_API_BASE_URL=https://nbnc-backend-xxx.onrender.com
-   VITE_ANALYSIS_API_URL=https://nbnc-video-processor-xxx.onrender.com
-   ```
-3. Test the endpoints to ensure they're working
+After backend deployment:
+1. Note your backend URLs from Render dashboard:
+   - `https://nbnc-backend-xxx.onrender.com`
+   - `https://nbnc-video-processor-xxx.onrender.com`
+
+2. **Deploy the frontend to Vercel:**
+   - 📖 See **[VERCEL_FRONTEND_SETUP.md](VERCEL_FRONTEND_SETUP.md)** for complete frontend setup
+   - Configure environment variables with your backend URLs
+   - Update backend `FRONTEND_URL` with your Vercel URL
+
+3. Test the complete application
 
 ## Need Help?
 
 📖 **Documentation:**
 - **[MONGODB_SETUP_GUIDE.md](MONGODB_SETUP_GUIDE.md)** - Complete MongoDB setup walkthrough
+- **[VERCEL_FRONTEND_SETUP.md](VERCEL_FRONTEND_SETUP.md)** - Deploy frontend on Vercel
 - **[RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md)** - Detailed Render deployment guide
 
 **RENDER_DEPLOYMENT.md includes:**
