@@ -177,6 +177,9 @@ You should see: "Server is running 🚀"
 
 ### MongoDB Atlas Setup (FREE Tier)
 
+📖 **For detailed step-by-step instructions with screenshots, see [MONGODB_SETUP_GUIDE.md](MONGODB_SETUP_GUIDE.md)**
+
+**Quick Summary:**
 1. Create a **FREE M0 cluster** at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a database user with password
 3. Whitelist Render's IP addresses (or use `0.0.0.0/0` for all IPs)
@@ -189,6 +192,8 @@ You should see: "Server is running 🚀"
 - Shared RAM
 - No credit card required
 - Perfect for development and small projects
+
+**Need help?** See the complete [MongoDB Setup Guide](MONGODB_SETUP_GUIDE.md) for detailed instructions.
 
 ### Gmail Setup (FREE)
 

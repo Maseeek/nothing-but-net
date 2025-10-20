@@ -14,6 +14,7 @@ This repository is now configured for easy deployment to Render using **100% fre
 
 ### 1. Prerequisites
 - Create a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) database (**FREE M0 tier** available)
+  - 📖 See **[MONGODB_SETUP_GUIDE.md](MONGODB_SETUP_GUIDE.md)** for detailed step-by-step instructions
 - Get a Gmail App Password for email functionality ([instructions](https://support.google.com/accounts/answer/185833))
 
 ### 2. Deploy to Render (FREE)
@@ -70,10 +71,13 @@ After deployment:
 
 ## Need Help?
 
-See **RENDER_DEPLOYMENT.md** for:
+📖 **Documentation:**
+- **[MONGODB_SETUP_GUIDE.md](MONGODB_SETUP_GUIDE.md)** - Complete MongoDB setup walkthrough
+- **[RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md)** - Detailed Render deployment guide
+
+**RENDER_DEPLOYMENT.md includes:**
 - Detailed step-by-step instructions
 - Troubleshooting guide
-- MongoDB Atlas setup
 - Gmail configuration
 - Free tier information
 
