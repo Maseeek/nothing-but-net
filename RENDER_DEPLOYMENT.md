@@ -108,20 +108,7 @@ If you prefer to deploy services individually on the FREE tier:
 
 ## Post-Deployment Configuration
 
-### 1. Update Frontend Environment Variables
-
-After deploying the backend services, update your frontend deployment with the new backend URLs:
-
-```env
-VITE_API_BASE_URL=https://nbnc-backend-xxxx.onrender.com
-VITE_ANALYSIS_API_URL=https://nbnc-video-processor-xxxx.onrender.com
-```
-
-### 2. Update CORS Settings
-
-Make sure the `FRONTEND_URL` environment variable in your backend matches your actual frontend URL for proper CORS configuration.
-
-### 3. Test Your Deployment
+### 1. Test Your Backend Deployment
 
 Visit your backend URL to verify it's running:
 ```
@@ -129,6 +116,34 @@ https://nbnc-backend-xxxx.onrender.com/
 ```
 
 You should see: "Server is running 🚀"
+
+### 2. Deploy Frontend to Vercel
+
+📖 **See [VERCEL_FRONTEND_SETUP.md](VERCEL_FRONTEND_SETUP.md) for complete frontend deployment guide.**
+
+Quick summary:
+1. Sign up for Vercel (FREE)
+2. Import your GitHub repository
+3. Set environment variables:
+   ```
+   VITE_API_BASE_URL=https://nbnc-backend-xxxx.onrender.com
+   VITE_ANALYSIS_API_URL=https://nbnc-video-processor-xxxx.onrender.com
+   ```
+4. Deploy (automatic)
+
+### 3. Update Backend CORS Settings
+
+After deploying frontend:
+1. Get your Vercel URL (e.g., `https://nbnc-xxxx.vercel.app`)
+2. Update `FRONTEND_URL` in Render backend environment variables
+3. Backend will automatically redeploy with new CORS settings
+
+### 4. Test Complete Application
+
+- Visit your Vercel frontend URL
+- Test user registration and login
+- Test video upload and processing
+- Check browser console for any CORS errors
 
 ## Environment Variables Reference
 
@@ -286,14 +301,15 @@ On FREE tier:
 
 ## Next Steps
 
-After successful FREE tier deployment:
-1. Test all API endpoints
-2. Verify email sending works
-3. Test video upload and processing
-4. Monitor performance and logs
-5. Set up automated backups for MongoDB (Atlas M0 includes automatic backups)
-6. Configure custom domains (optional, FREE on Render)
-7. Set up monitoring via Render Dashboard
+After successful FREE tier backend deployment:
+1. **Deploy Frontend:** Follow [VERCEL_FRONTEND_SETUP.md](VERCEL_FRONTEND_SETUP.md) to deploy on Vercel
+2. Test all API endpoints
+3. Verify email sending works
+4. Test video upload and processing
+5. Monitor performance and logs
+6. Set up automated backups for MongoDB (Atlas M0 includes automatic backups)
+7. Configure custom domains (optional, FREE on both Render and Vercel)
+8. Set up monitoring via Render and Vercel Dashboards
 
 ## Cost Summary
 
