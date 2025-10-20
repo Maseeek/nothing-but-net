@@ -1,0 +1,40 @@
+services:
+  # Node.js Backend Service (Free Tier)
+  - type: web
+    name: nbnc-backend
+    runtime: node
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/server/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+    healthCheckPath: /
+
+  # Python Video Processing Service (Free Tier)
+  - type: web
+    name: nbnc-video-processor
+    runtime: python
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python src/server/server.py
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+    healthCheckPath: /
