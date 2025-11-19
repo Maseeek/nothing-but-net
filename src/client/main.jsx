@@ -13,6 +13,7 @@ import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
 import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
@@ -30,6 +31,7 @@ function Main() {
                 <Route path="/verification-success" element={<VerificationSuccessPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
             </Routes>
         </BrowserRouter>
     );
