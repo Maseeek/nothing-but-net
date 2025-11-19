@@ -1,37 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap');
+
 .nav-container {
     display: flex;
-    justify-content: space-between; /* Adjusts spacing between title and buttons */
+    justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background-color: #1e1e2f;
+    padding: 15px 30px;
+    background: rgba(30, 30, 47, 0.85); /* Glassmorphism background */
+    backdrop-filter: blur(10px); /* Blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
     color: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: fixed; /* Fixes the navbar at the top */
-    top: 0; /* Ensures it stays at the top */
-    left: 0; /* Aligns it to the left edge */
-    width: 100%; /* Makes it span the full width */
-    z-index: 500; /* Ensures it stays above other elements */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 500;
     font-family: "Cal Sans", 'Arial', sans-serif;
-
+    box-sizing: border-box;
 }
 
-.nav-options{
-    justify-content: end;
+.nav-options {
+    justify-content: flex-end;
     display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .nav-title {
     display: flex;
     align-items: center;
-    gap: 10px; /* Adds spacing between the logo and the title */
-    margin-left: 15px; /* Adds spacing from the left edge */
+    gap: 12px;
     font-family: 'Cal Sans', sans-serif;
+    cursor: pointer;
 }
 
 .nav-title:hover {
     color: #c14c1f;
-    /*transform: scale(1.1);*/
 }
 
 /* Home button */
@@ -45,12 +50,14 @@
     align-items: center;
     gap: 8px;
     transition: transform 0.3s ease, color 0.3s ease;
-    /*margin-left: 0px; !* Add spacing from the left edge *!*/
+    padding: 8px;
+    border-radius: 50%;
 }
 
 .home-btn:hover {
     color: #c14c1f;
     transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Profile button */
@@ -64,88 +71,108 @@
     align-items: center;
     gap: 8px;
     transition: transform 0.3s ease, color 0.3s ease;
-    margin-right: 50px; /* Add spacing from the right edge */
+    padding: 8px;
+    border-radius: 50%;
 }
 
 .profile-btn:hover {
     color: #c14c1f;
     transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Dropdown menu */
 .dropdown-menu {
     position: absolute;
-    top: 60px;
+    top: 70px;
     right: 30px;
-    background-color: #2a2a3d;
-    border-radius: 8px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background: rgba(42, 42, 61, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     display: none;
     flex-direction: column;
-    min-width: 180px;
+    min-width: 200px;
     z-index: 1000;
     overflow: hidden;
-    margin:30px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .dropdown-menu.visible {
     display: flex;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInDown 0.3s ease forwards;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dropdown-item {
-    padding: 12px 20px;
-    color: #ffffff;
+    padding: 14px 24px;
+    color: #e0e0e0;
     text-decoration: none;
     font-size: 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    gap: 14px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
 }
 
 .dropdown-item:hover {
-    background-color: #c14c1f;
-    color: #ffffff;
-
+    background-color: rgba(193, 76, 31, 0.2);
+    color: #c14c1f;
 }
 
 .dropdown-item:hover svg {
-    stroke: #ffffff; /* Keep the stroke color white on hover */
+    stroke: #c14c1f;
 }
 
 /* SVG icons */
 button svg,
 a svg {
-    stroke: #ffffff;
+    stroke: currentColor;
     transition: stroke 0.3s ease;
 }
 
-button:hover svg,
-a:hover svg {
-    stroke: #f15d15;
+#auth-btn {
+    cursor: pointer;
 }
 
-#auth-btn{
-    cursor: pointer ;
+#logo {
+    transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-#logo{
-    transition-duration: 0.3s;
-}
-
-#logo:hover{
+#logo:hover {
     filter: drop-shadow(0 0 0.4em #c14c1f);
-    scale: 1.05;
+    transform: scale(1.05);
 }
 
-#nbntitle{
-    transition-duration: 0.3s;
+#nbntitle {
+    transition: color 0.3s ease, filter 0.3s ease;
+    margin: 0;
 }
 
-#nbntitle:hover{
+#nbntitle:hover {
     filter: drop-shadow(0 0 0.4em #c14c1f);
     color: #c14c1f;
-    /*scale: 1.1;*/
 }
 
 
@@ -156,9 +183,16 @@ a:hover svg {
         align-items: flex-start;
         padding: 15px;
     }
+    
+    .nav-options {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
 
     .dropdown-menu {
-        top: 50px;
+        top: 60px;
         right: 15px;
+        width: calc(100% - 30px);
     }
 }
