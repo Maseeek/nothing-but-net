@@ -25,7 +25,9 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
+# MongoDB connection
+MONGO_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+client = MongoClient(MONGO_URI)
 db = client['your_database_name']
 sessions_collection = db['sessions']
 
