@@ -5,12 +5,20 @@ import "./../css/Results.css"; // This now points to the combined CSS file
 function Results() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showAngle, setShowAngle] = useState(true);
 
     useEffect(() => {
         const storedData = sessionStorage.getItem("analysisResults");
         if (storedData) {
             setData(JSON.parse(storedData));
         }
+
+        // Load settings
+        const storedShowAngle = localStorage.getItem('nbn_settings_showAngle');
+        if (storedShowAngle !== null) {
+            setShowAngle(JSON.parse(storedShowAngle));
+        }
+
         setLoading(false);
     }, []);
 
@@ -57,10 +65,12 @@ function Results() {
                                     <h4>Longest Streak</h4>
                                     <p>{longest_streak}</p>
                                 </div>
-                                <div className="stat-card">
-                                    <h4>Avg. Angle</h4>
-                                    <p>{average_angle}<span>°</span></p>
-                                </div>
+                                {showAngle && (
+                                    <div className="stat-card">
+                                        <h4>Avg. Angle</h4>
+                                        <p>{average_angle}<span>°</span></p>
+                                    </div>
+                                )}
                             </div>
 
                             {/* --- Shot Sequence Section --- */}
@@ -82,6 +92,7 @@ function Results() {
                     )}
                 </main>
             </div>
+
         </div>
     );
 }

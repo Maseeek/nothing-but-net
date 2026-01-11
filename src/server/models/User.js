@@ -36,6 +36,14 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpires: {
         type: Date,
         default: null
+    },
+    isPro: {
+        type: Boolean,
+        default: false
+    },
+    stripeCustomerId: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
 

@@ -5,7 +5,7 @@ import { Session } from './server.js' // Import your Session model
 // Function to retrieve all sessions for a user
 export async function getSessionsByUser(userId) {
     try {
-        return await Session.find({ userId }).sort({ sessionDate: -1 });
+        return await Session.find({ userId }).sort({ sessionDate: -1 }).lean();
     } catch (error) {
         console.error('Error retrieving sessions:', error);
         throw error;
@@ -47,10 +47,13 @@ export async function getFieldGoalPercentage(userId) {
     }
 }
 
-// Function to prepare data for graphs
 export async function getGraphData(userId) {
     try {
-        const sessions = await getSessionsByUser(userId);
+        const sessions = await Session.find({ userId })
+            .select('sessionDate makes misses fg_percentage')
+            .sort({ sessionDate: -1 })
+            .lean();
+
         return sessions.map(session => ({
             date: session.sessionDate,
             makes: session.makes,

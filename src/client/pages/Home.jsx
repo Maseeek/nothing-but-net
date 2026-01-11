@@ -5,20 +5,19 @@ import Coordinates from "../components/Coordinates.jsx";
 import { sendVideoForAnalysis } from "../js/videoProcessing.js";
 import Loading from "../components/Loading.jsx";
 import Instructions from "../components/Instructions.jsx";
-import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx"; // IMPORT THE NEW ICON
+import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
+import VideoUpload from "../components/VideoUpload.jsx";
 import backgroundVideo from "../assets/backgroundvideo.mp4";
 
-function MainPage() {
+function HomeContent() {
     const [videoFile, setVideoFile] = useState(null);
     const [image, setImage] = useState(null);
     const [coordinates, setCoordinates] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    // Move state for the instructions pop-up here
     const [showInstructions, setShowInstructions] = useState(false);
+    const [currentStep, setCurrentStep] = useState('upload'); // 'upload' or 'coordinates'
 
-    // ... (keep all your existing functions like handleVideoUpload, etc.)
-    const handleVideoUpload = (event) => {
-        const file = event.target.files[0];
+    const handleVideoSelect = (file) => {
         if (file) {
             setVideoFile(file);
             extractFirstFrame(file);
@@ -36,7 +35,16 @@ function MainPage() {
             const context = canvas.getContext("2d");
             context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
             setImage(canvas.toDataURL());
+            // Auto-transition to coordinates step after frame extraction
+            setCurrentStep('coordinates');
         };
+    };
+
+    const handleBackToUpload = () => {
+        setVideoFile(null);
+        setImage(null);
+        setCoordinates([]);
+        setCurrentStep('upload');
     };
 
     const handleCoordinatesChange = (newCoordinates) => {
@@ -60,7 +68,7 @@ function MainPage() {
 
 
     return (
-        <div className="main-page">
+        <div className="main-page glass">
             {/* Conditionally render the pop-up from this component */}
             {showInstructions && <Instructions onClose={() => setShowInstructions(false)} />}
 
@@ -68,39 +76,25 @@ function MainPage() {
                 <Loading />
             ) : (
                 <>
-                    {/* 👇 New container for the upload button and icon 👇 */}
-                    <div className="upload-container">
-                        <form className="video-form">
-                            <label htmlFor="videoInput">UPLOAD VIDEO</label>
-                            <input
-                                type="file"
-                                id="videoInput"
-                                accept="video/*"
-                                onChange={handleVideoUpload}
+                    <h2 className="section-title">Upload & Analyze</h2>
+
+                    {currentStep === 'upload' ? (
+                        <div className="upload-section step-transition">
+                            <VideoUpload onVideoSelect={handleVideoSelect} />
+
+                            <button className="instructions-btn" onClick={() => setShowInstructions(true)} title="How to use">
+                                <QuestionMarkIcon className="icon" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="coordinates-section step-transition">
+                            <Coordinates
+                                imageUrl={image}
+                                videoFile={videoFile}
+                                onCoordinatesChange={handleCoordinatesChange}
+                                onBack={handleBackToUpload}
                             />
-                        </form>
-
-                        {/* 👇 CHANGE THIS PART 👇 */}
-                        <button className="instructions-btn" onClick={() => setShowInstructions(true)}>
-                            <QuestionMarkIcon className="icon" />
-                        </button>
-                    </div>
-
-                    {image && (
-                        <Coordinates
-                            imageUrl={image}
-                            videoFile={videoFile}
-                            onCoordinatesChange={handleCoordinatesChange}
-                        />
-                    )}
-                    {coordinates.length === 2 && (
-                        <button
-                            className="analyze-button"
-                            onClick={handleAnalyzeResults}
-                            disabled={isAnalyzing}
-                        >
-                            Analyze Results
-                        </button>
+                        </div>
                     )}
                 </>
             )}
@@ -108,17 +102,22 @@ function MainPage() {
     );
 }
 
-function LandingPage(){
-    return(
-        <div className={"landing-page"}>
-            <div className={"background-video-form"}>
-                <video className={"background-video"} src={backgroundVideo} autoPlay loop muted />
-                <div className={"welcome"}>
-                    <h1 className={"welcome-message"}>Never Lose Count Again</h1>
-                    <p className={"welcome-info"}>Just upload your video. Our AI does the rest.</p>
+function LandingPage() {
+    return (
+        <div className="landing-page">
+            <div className="background-video-form">
+                <video className="background-video" src={backgroundVideo} autoPlay loop muted playsInline />
+                <div className="video-overlay"></div>
+
+                <div className="landing-content-wrapper">
+                    <div className="welcome">
+                        <h1 className="welcome-message">Never Lose Count Again</h1>
+                        <p className="welcome-info">Just upload your video. Our AI does the rest.</p>
+                    </div>
+
+                    <HomeContent />
                 </div>
             </div>
-            <MainPage />
         </div>
     )
 }

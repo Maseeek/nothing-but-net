@@ -1,19 +1,21 @@
 /* src/client/css/MainPage.css */
-@import url('https://fonts.googleapis.com/css2?family=Cal+Sans:wght@400&display=swap');
 
 .landing-page {
     position: relative;
     width: 100%;
     height: 100vh;
-    padding-top: 110px;
+    /* Fixed viewport height */
+    /* overflow: hidden; */
+    /* Disable scrolling */
+    padding-top: 0;
+    /* Reset padding */
     box-sizing: border-box;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     text-align: center;
-    margin-top: 20px;
 }
 
 .background-video-form {
@@ -32,138 +34,369 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    z-index: -2;
+    margin: 0;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(18, 18, 18, 0.4) 0%, rgba(18, 18, 18, 0.9) 80%);
     z-index: -1;
-    opacity: 0.4;
-    margin:0;
+    pointer-events: none;
+}
+
+.welcome {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .welcome-message {
     position: relative;
     z-index: 2;
-    font-size: 5em;
+    font-size: 10vh;
+    /* Responsive font size */
+    font-weight: 700;
+    /* Bold */
+    margin: 0;
+    /* Remove default browser margins */
+
+    /* The Text Gradient Magic */
     color: transparent;
     background-image: url("../assets/gradient.jpg");
+    /* verify path */
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+
+    /* Glow & Brightness */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
     filter: brightness(250%);
+    /* Makes the dark gradient pop */
     background-size: 100% auto;
     background-position: center;
-    margin-top: 180px;
-    margin-bottom: 30px;
-    transition: filter 0.3s ease-in-out;
+
     cursor: default;
+    transition: filter 0.3s ease-in-out;
 }
 
 .welcome-message:hover {
     filter: brightness(180%);
+    /* Dim slightly on hover */
 }
 
-.main-page {
+.welcome-info {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    font-size: 1.5rem;
+    /* Slightly larger for tagline */
+    margin-top: 20px;
+    background-image: url("../assets/gradient.jpg");
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: brightness(250%);
+    /* Makes the dark gradient pop */
+    background-size: 100% auto;
+    background-position: center;
+
+    font-family: var(--font-heading);
+    /* Same font as title */
+    font-weight: 600;
+    /* Bold */
+    color: #ff4800;
+    filter: brightness(250%);
+    /* Makes the dark gradient pop */
+    /* Vibrant Orange */
+
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    /* Optional: nice touch for taglines */
+}
+
+/* Glass Container for Main Content */
+.main-page {
+    /* Extending .glass class properties */
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 25px;
-    margin-top: 20px;
-    max-width: 550px;
+    padding: 40px;
+    max-width: 700px;
+    /* Slightly wider for the drop zone */
     width: 90%;
-    border-radius: 12px;
     box-sizing: border-box;
+    animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.welcome{
-    margin-top: 32vh;
+.section-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
 }
 
-/* --- Combined Upload and Instructions Button Area --- */
-
-.upload-container {
+/* Upload Section */
+.upload-section {
+    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: stretch; /* Makes both buttons the same height */
-    gap: 15px; /* Space between the buttons */
-    margin-bottom: 20px;
+    flex-direction: column;
+    /* Stacked layout by default */
+    align-items: stretch;
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
-/* Remove styling from the form wrapper itself */
-.video-form {
-    display: flex;
-}
-
-/* This is the main "UPLOAD VIDEO" button */
-.video-form label {
-    display: block;
-    font-family: "Cal Sans", serif;
-    font-size: 1.4rem;
-    color: #ffffff;
-    background-color: #d64b17;
-    padding: 12px 25px;
-    border-radius: 8px;
+/* Video Upload Component Styles */
+.video-upload-zone {
+    flex-grow: 1;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
+    position: relative;
+    overflow: hidden;
+    text-align: center;
 
-.video-form label:hover {
-    background-color: #ba471b;
-    transform: scale(1.03);
-}
-
-.video-form input[type="file"] {
-    display: none;
-}
-
-/* This is the new button for the icon */
-.instructions-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #d64b17; /* Same color */
-    padding: 12px;
-    border-radius: 8px; /* Same shape */
+    min-height: 200px;
+}
+
+.video-upload-zone:hover,
+.video-upload-zone.dragging {
+    border-color: var(--accent-color);
+    background: rgba(214, 75, 23, 0.05);
+    /* Very subtle tint */
+    box-shadow: 0 0 20px rgba(214, 75, 23, 0.1);
+}
+
+.hidden-input {
+    display: none;
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    /* Let clicks pass to container */
+}
+
+.upload-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.video-upload-zone:hover .upload-icon-wrapper {
+    transform: scale(1.1);
+    background: rgba(214, 75, 23, 0.2);
+}
+
+.upload-icon {
+    width: 30px;
+    height: 30px;
+    stroke: #ffffff;
+    transition: stroke 0.3s ease;
+}
+
+.video-upload-zone:hover .upload-icon {
+    stroke: #ffffff;
+}
+
+.upload-title {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.upload-desc {
+    margin: 0 0 10px 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.upload-formats {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.drag-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(214, 75, 23, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    animation: fadeIn 0.2s ease;
+}
+
+.drag-overlay p {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Selected Video Status */
+.video-selected-status {
+    width: 100%;
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2ecc71;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.video-selected-status span {
+    flex-grow: 1;
+    text-align: left;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.reset-video-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+.reset-video-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(0);
+}
+
+/* Instructions Button Styling updates */
+.instructions-btn {
+    position: absolute;
+    /* Floating positioned relative to main-page */
+    top: 20px;
+    right: 20px;
+    background: transparent;
     border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    padding: 8px;
+    color: #ffffff;
+    transition: all 0.3s ease;
 }
 
 .instructions-btn:hover {
-    background-color: #ba471b;
-    transform: scale(1.03);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
 }
 
-/* Style for the SVG icon itself inside the button */
+/* Adjust main page for the absolute button */
+.main-page {
+    position: relative;
+}
+
 .instructions-btn .icon {
-    width: 28px;
-    height: 28px;
-    stroke: #ffffff; /* White icon color */
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
 }
 
+/* Coordinates & Analyze  */
+.coordinates-section,
+.analyze-button {
+    width: 100%;
+    margin-top: 20px;
+}
 
-/* --- Analyze Results Button --- */
+.coordinates-section {
+    display: flex;
+    justify-content: center;
+}
 
 .analyze-button {
-    padding: 12px 28px;
-    font-size: 1.1rem;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    background-color: #e36125;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 15px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    /* margin-top: 30px; */
 }
-.analyze-button:hover {
-    background-color: #c14c1f;
-    transform: scale(1.05);
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.analyze-button:disabled {
-    background-color: #555;
-    color: #999;
-    cursor: not-allowed;
-    transform: none;
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.step-transition {
+    animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-page {
+        width: 95%;
+        padding: 25px;
+    }
+
+    .video-upload-zone {
+
+        min-height: 150px;
+    }
+}
+
+.demo-link-btn {
+    margin-top: 50px !important;
+}
+
+.landing-content-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    /* Removed padding-top for perfect centering in 100vh */
 }

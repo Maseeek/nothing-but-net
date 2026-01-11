@@ -14,7 +14,8 @@
     z-index: 1000;
     box-sizing: border-box;
     /* Use padding to push the content down from the navbar */
-    padding: 120px 20px 20px 20px; /* 100px for navbar + 20px space */
+    padding: 120px 20px 20px 20px;
+    /* 100px for navbar + 20px space */
 }
 
 .popup-content {
@@ -25,7 +26,7 @@
     width: 100%;
     max-width: 800px;
     position: relative;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
     /* Set a max-height that accounts for the top/bottom padding of the overlay */
     max-height: calc(100vh - 140px);
@@ -38,14 +39,17 @@
 .popup-content::-webkit-scrollbar {
     width: 8px;
 }
+
 .popup-content::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
 }
+
 .popup-content::-webkit-scrollbar-thumb {
     background-color: #d64b17;
     border-radius: 10px;
 }
+
 .popup-content::-webkit-scrollbar-thumb:hover {
     background-color: #e36125;
 }
@@ -57,7 +61,7 @@
     right: 25px;
     background: none;
     border: none;
-    color: #aaa;
+    color: #ffffff;
     font-size: 2.5rem;
     cursor: pointer;
     line-height: 1;
@@ -150,6 +154,7 @@
     .steps-container {
         grid-template-columns: 1fr;
     }
+
     .popup-content {
         padding: 30px 25px;
     }

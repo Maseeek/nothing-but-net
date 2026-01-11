@@ -11,8 +11,8 @@ import './../css/ProfilePage.css';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
 
 // --- ICONS (Placeholder SVGs) ---
-const UserCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm0-12a3,3,0,1,1-3,3A3,3,0,0,1,12,8Zm0,10a6,6,0,0,1-4.22-1.77,7.83,7.83,0,0,1,8.44,0A6,6,0,0,1,12,18Z"/></svg>;
-const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>;
+const UserCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm0-12a3,3,0,1,1-3,3A3,3,0,0,1,12,8Zm0,10a6,6,0,0,1-4.22-1.77,7.83,7.83,0,0,1,8.44,0A6,6,0,0,1,12,18Z" /></svg>;
+const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>;
 
 const VerificationStatusIcon = ({ isVerified }) => {
     if (isVerified) {
@@ -278,7 +278,7 @@ const AnalysesHistory = () => {
                 padding: 10,
                 cornerRadius: 4,
                 callbacks: {
-                    label: function(context) {
+                    label: function (context) {
                         return `${context.dataset.label}: ${context.raw}%`;
                     }
                 }
@@ -310,7 +310,7 @@ const AnalysesHistory = () => {
                 padding: 10,
                 cornerRadius: 4,
                 callbacks: {
-                    label: function(context) {
+                    label: function (context) {
                         const label = context.label || '';
                         const value = context.raw;
                         const percentage = ((value / (totalShots || 1)) * 100).toFixed(1);
@@ -375,19 +375,65 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const userData = await getCurrentUser();
-                if (userData) {
-                    setUser(userData);
-                } else {
+                // Fetch fresh user data from the server
+                const token = localStorage.getItem('authToken');
+                if (!token) {
                     window.location.href = '/login';
+                    return;
                 }
+
+                // Check for session_id in URL (Stripe redirect)
+                const urlParams = new URLSearchParams(window.location.search);
+                const sessionId = urlParams.get('session_id');
+
+                if (sessionId) {
+                    console.log("Stripe redirect detected. Verifying payment...");
+                    // Optional: You could show a specific loading state here
+                }
+
+                let attempts = 0;
+                const maxAttempts = sessionId ? 5 : 1; // Poll if coming from Stripe
+                const intervalTime = 2000; // 2 seconds
+
+                const pollProfile = async () => {
+                    attempts++;
+                    const response = await fetch(`${API_BASE_URL}/api/profile`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error('Failed to fetch profile');
+                    }
+
+                    const userData = await response.json();
+
+                    // If we are looking for a PRO upgrade and it's not there yet, keep polling
+                    if (sessionId && !userData.isPro && attempts < maxAttempts) {
+                        console.log(`Polling for PRO status... Attempt ${attempts}`);
+                        setTimeout(pollProfile, intervalTime);
+                    } else {
+                        setUser(userData);
+                        setLoading(false);
+                        // Clean up URL if successful
+                        if (sessionId && userData.isPro) {
+                            // window.history.replaceState({}, document.title, window.location.pathname);
+                            // alert("Payment successful! You are now a PRO member.");
+                        }
+                    }
+                };
+
+                await pollProfile();
+
             } catch (error) {
                 console.error("Failed to fetch user data, redirecting.", error);
-                window.location.href = '/login';
-            } finally {
                 setLoading(false);
             }
         };
+
         fetchUserData();
     }, []);
 
@@ -402,14 +448,42 @@ const ProfilePage = () => {
     return (
         <div className="profile-page">
             <Navbar />
-            <div className="profile-container">
+            <div className="profile-container glass">
                 <header className="profile-header">
                     <div className="avatar">
                         <span className="avatar-initial">{user.username.charAt(0).toUpperCase()}</span>
                     </div>
                     <div className="user-info">
-                        <h2>{user.username}</h2>
+                        <h2>
+                            {user.username}
+                            {user.isPro && <span className="pro-badge">PRO</span>}
+                        </h2>
                         <p>{user.email}</p>
+                        {!user.isPro && (
+                            <button className="upgrade-btn" onClick={async () => {
+                                try {
+                                    const token = localStorage.getItem('authToken');
+                                    const res = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': `Bearer ${token}`
+                                        }
+                                    });
+                                    const data = await res.json();
+                                    if (data.url) {
+                                        window.location.href = data.url;
+                                    } else {
+                                        alert('Failed to start checkout');
+                                    }
+                                } catch (e) {
+                                    console.error(e);
+                                    alert('Error starting checkout');
+                                }
+                            }}>
+                                Upgrade to PRO
+                            </button>
+                        )}
                     </div>
                 </header>
 

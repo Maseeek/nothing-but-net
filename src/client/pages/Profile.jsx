@@ -51,29 +51,36 @@ const Profile = () => {
                     return;
                 }
 
-                const totalMakes = sessionData.reduce((sum, session) => sum + (session.makes || 0), 0);
-                const totalMisses = sessionData.reduce((sum, session) => sum + (session.misses || 0), 0);
-                const totalShots = totalMakes + totalMisses;
-                const fgPercentage = totalShots > 0 ? (totalMakes / totalShots) * 100 : 0;
-
-                // Calculate overall longest streak
-                const overallLongestStreak = sessionData.reduce((maxStreak, session) =>
-                    Math.max(maxStreak, session.longest_streak || 0), 0
-                );
-
-                // Determine progress summary
+                let totalMakes = 0;
+                let totalMisses = 0;
+                let overallLongestStreak = 0;
                 let progressSummary = "Analyze more videos to see your progress trend!";
-                if (sessionData.length >= 2) {
-                    const firstSessionFg = sessionData[0].fg_percentage || 0;
-                    const lastSessionFg = sessionData[sessionData.length - 1].fg_percentage || 0;
-                    if (lastSessionFg > firstSessionFg) {
-                        progressSummary = `Great job! Your field goal percentage has improved from ${firstSessionFg.toFixed(2)}% to ${lastSessionFg.toFixed(2)}% over your sessions.`;
-                    } else if (lastSessionFg < firstSessionFg) {
-                        progressSummary = `Your field goal percentage has changed from ${firstSessionFg.toFixed(2)}% to ${lastSessionFg.toFixed(2)}% over your sessions. Keep practicing!`;
-                    } else {
-                        progressSummary = `Your field goal percentage has remained consistent at ${firstSessionFg.toFixed(2)}% across your sessions.`;
+
+                if (sessionData.length > 0) {
+                    for (const session of sessionData) {
+                        totalMakes += (session.makes || 0);
+                        totalMisses += (session.misses || 0);
+                        if ((session.longest_streak || 0) > overallLongestStreak) {
+                            overallLongestStreak = session.longest_streak;
+                        }
+                    }
+
+                    // Progress Summary Logic
+                    if (sessionData.length >= 2) {
+                        const firstSessionFg = sessionData[0].fg_percentage || 0;
+                        const lastSessionFg = sessionData[sessionData.length - 1].fg_percentage || 0;
+                        if (lastSessionFg > firstSessionFg) {
+                            progressSummary = `Great job! Your field goal percentage has improved from ${firstSessionFg.toFixed(2)}% to ${lastSessionFg.toFixed(2)}% over your sessions.`;
+                        } else if (lastSessionFg < firstSessionFg) {
+                            progressSummary = `Your field goal percentage has changed from ${firstSessionFg.toFixed(2)}% to ${lastSessionFg.toFixed(2)}% over your sessions. Keep practicing!`;
+                        } else {
+                            progressSummary = `Your field goal percentage has remained consistent at ${firstSessionFg.toFixed(2)}% across your sessions.`;
+                        }
                     }
                 }
+
+                const totalShots = totalMakes + totalMisses;
+                const fgPercentage = totalShots > 0 ? (totalMakes / totalShots) * 100 : 0;
 
                 setUserStats({
                     totalMakes,
@@ -98,10 +105,17 @@ const Profile = () => {
 
     useEffect(() => {
         if (sessions.length > 0 && userStats) { // Ensure userStats is also available
-            const labels = sessions.map(session => new Date(session.sessionDate).toLocaleDateString());
-            const makesData = sessions.map(session => session.makes || 0);
-            const missesData = sessions.map(session => session.misses || 0);
-            const fgPercentageData = sessions.map(session => session.fg_percentage || 0);
+            const labels = [];
+            const makesData = [];
+            const missesData = [];
+            const fgPercentageData = [];
+
+            sessions.forEach(session => {
+                labels.push(new Date(session.sessionDate).toLocaleDateString());
+                makesData.push(session.makes || 0);
+                missesData.push(session.misses || 0);
+                fgPercentageData.push(session.fg_percentage || 0);
+            });
 
             const shotCanvas = document.getElementById('shot-scores-bar-chart');
             const fgCanvas = document.getElementById('fg-percentage-pie-chart');
