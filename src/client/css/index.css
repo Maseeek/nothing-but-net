@@ -117,14 +117,20 @@ button {
   color: white;
   cursor: pointer;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3);
+  /* box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3); */
   transition: all 0.3s ease;
 }
 
 button:hover {
-  background: linear-gradient(145deg, #e66025, #a03d17);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(255, 90, 30, 0.5);
+
+  /* background: linear-gradient(145deg, #e66025, #a03d17); */
+  /* change the svg color */
+  /* & svg {
+    fill: var(--accent-color);
+  } */
+
+  /* transform: translateY(-1px) scale(1.02); */
+  /* box-shadow: 0 6px 20px rgba(255, 90, 30, 0.5); */
 }
 
 button:focus,
