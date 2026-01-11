@@ -113,7 +113,7 @@
 
 .home-btn:hover svg,
 .profile-btn:hover svg {
-    stroke: var(--accent-color);
+    /* stroke: var(--accent-color); */
     /* filter: drop-shadow(0 0 5px rgba(214, 75, 23, 0.5)); */
 }
 

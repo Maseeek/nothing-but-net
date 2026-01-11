@@ -112,7 +112,7 @@ function LandingPage() {
                 <div className="landing-content-wrapper">
                     <div className="welcome">
                         <h1 className="welcome-message">Never Lose Count Again</h1>
-                        <p className="welcome-info">Just upload your video. Our AI does the rest.</p>
+                        <p className="welcome-info">Automatic shot tracking. Get your FG% and shooting angle.</p>
                     </div>
 
                     <HomeContent />

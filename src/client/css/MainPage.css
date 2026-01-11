@@ -50,7 +50,7 @@
 }
 
 .welcome {
-    margin-top: 0;
+    margin-top: 32vh;
     margin-bottom: 0;
 }
 
@@ -67,10 +67,12 @@
     /* The Text Gradient Magic */
     color: transparent;
     background-image: url("../assets/gradient.jpg");
+    color: var(--text-primary);
     /* verify path */
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-weight: bolder;
 
     /* Glow & Brightness */
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
@@ -91,9 +93,9 @@
 .welcome-info {
     position: relative;
     z-index: 2;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     /* Slightly larger for tagline */
-    margin-top: 20px;
+    margin-top: 10px;
     background-image: url("../assets/gradient.jpg");
     background-clip: text;
     -webkit-background-clip: text;
@@ -101,21 +103,21 @@
     filter: brightness(250%);
     /* Makes the dark gradient pop */
     background-size: 100% auto;
+    /* bold */
+    font-weight: 1000;
     background-position: center;
 
-    font-family: var(--font-heading);
+    /* font-family: var(--text-primary); */
     /* Same font as title */
-    font-weight: 600;
+    font-weight: 1000;
     /* Bold */
     color: #ff4800;
-    filter: brightness(250%);
+    filter: brightness(150%);
     /* Makes the dark gradient pop */
     /* Vibrant Orange */
 
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     letter-spacing: 0.05em;
-    text-transform: uppercase;
-    /* Optional: nice touch for taglines */
 }
 
 /* Glass Container for Main Content */
