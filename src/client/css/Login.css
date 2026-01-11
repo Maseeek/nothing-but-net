@@ -1,7 +1,7 @@
 /* src/client/css/LoginPage.css */
 
-/* Ensure html, body reset is at the top if not already in a global CSS file */
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -10,24 +10,22 @@ html, body {
 }
 
 body {
-    background-color: #000000; /* Fallback background */
+    background-color: var(--bg-page);
 }
 
 /* --- General Page Setup --- */
-.login-page { /* Changed from .register-page */
+.login-page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100%;
-    font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
-    color: rgba(255, 255, 255, 0.87);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
-    background-size: cover;
-    box-sizing: border-box; /* Keep this */
-    padding: 130px 20px 20px;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    box-sizing: border-box;
+    padding: 80px 20px 20px;
 }
 
-.login-background { /* Changed from .register-background */
+.login-background {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,69 +33,49 @@ body {
     flex-grow: 1;
 }
 
-/* --- Login Container --- */
-.login-container { /* Changed from .register-container */
-    background-color: rgba(30, 30, 30, 0.93);
-    padding: 35px 45px;
-    border-radius: 10px;
-    border-top: 4px solid #d64b17; /* Accent color */
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+/* --- Login Container (Glass) --- */
+.login-container {
+    padding: 40px 50px;
     text-align: left;
-    max-width: 480px; /* Slightly adjusted or keep as 500px */
+    max-width: 480px;
     width: 100%;
     animation: fadeIn 0.8s ease-out;
 }
 
 /* --- Header Section --- */
-.login-container header { /* Adjusted selector */
+.login-container header {
     text-align: center;
     margin-bottom: 35px;
-    margin-top: 0;
 }
 
-.login-logo { /* New class for login logo */
+.login-logo {
     width: 60px;
     height: auto;
     margin-bottom: 15px;
     opacity: 0.9;
 }
 
-.login-container header h1 { /* Adjusted selector */
+.login-container header h1 {
+    font-family: var(--font-heading);
     font-size: 2.0rem;
     margin-bottom: 10px;
-    color: #ffffff;
-    font-weight: 600;
-    margin-top: 0;
+    color: var(--text-primary);
+    font-weight: 700;
 }
 
-.login-container header p { /* Adjusted selector */
+.login-container header p {
     font-size: 0.9rem;
-    color: #b0b0b0;
-    margin-bottom: 0;
+    color: var(--text-secondary);
 }
 
 /* --- Login Form --- */
-.login-form { /* Changed from .register-form */
+.login-form {
     display: flex;
     flex-direction: column;
-    gap: 25px; /* Consistent gap */
+    gap: 25px;
 }
 
-/* --- Shared Styles (These can be copied directly from RegisterPage.css or moved to a common .css file) --- */
-/* .input-group, .input-group .input-icon, .input-group input, */
-/* .input-group label, .input-group input:focus + label, */
-/* .input-group input:not(:placeholder-shown) + label, */
-/* .input-group input::placeholder, */
-/* .input-group input:-webkit-autofill related styles, */
-/* .input-group input:focus, */
-/* .password-toggle, .password-toggle svg, */
-/* .submit-button and its :hover, :active states, */
-/* .outcome, */
-/* .form-footer, .form-footer a, .form-footer .terms (if used) */
-/* @keyframes fadeIn */
-/* --- Copy these shared styles from your updated RegisterPage.css --- */
-/* For this example, I'll list a few key ones to ensure they are considered */
-
+/* --- Input Group Styling --- */
 .input-group {
     position: relative;
     display: flex;
@@ -119,15 +97,17 @@ body {
     width: 100%;
     padding: 16px 18px 16px 50px;
     font-size: 1rem;
-    border: 1px solid #383838;
-    border-radius: 8px;
-    background-color: #222222;
-    color: #ffffff;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
     line-height: 1.4;
     box-sizing: border-box;
+    font-family: var(--font-body);
 }
-.input-group input::placeholder { /* Important for floating label with :not(:placeholder-shown) */
+
+.input-group input::placeholder {
     color: transparent;
 }
 
@@ -144,41 +124,24 @@ body {
     white-space: nowrap;
 }
 
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
     top: 0px;
     transform: translateY(-50%) scale(0.85);
     left: 42px;
-    color: #d64b17;
-    background-color: #222222; /* Match input background */
+    color: var(--accent-color);
+    background-color: var(--bg-input);
     font-weight: 500;
-}
-
-.input-group input:-webkit-autofill,
-.input-group input:-webkit-autofill:hover,
-.input-group input:-webkit-autofill:focus,
-.input-group input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #222222 inset !important;
-    -webkit-text-fill-color: #ffffff !important;
-    caret-color: #ffffff !important;
-    font-size: 1rem !important;
-}
-
-.input-group input:-webkit-autofill + label {
-    top: 0px;
-    transform: translateY(-50%) scale(0.85);
-    left: 42px;
-    color: #d64b17;
-    background-color: #222222;
-    font-weight: 500;
+    border-radius: 4px;
 }
 
 .input-group input:focus {
-    border-color: #d64b17;
+    border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
     outline: none;
 }
 
+/* Password Toggle */
 .password-toggle {
     position: absolute;
     right: 15px;
@@ -189,73 +152,79 @@ body {
     color: #888888;
     cursor: pointer;
     padding: 5px;
-    line-height: 0;
-    outline: none;
 }
-.password-toggle:hover svg,
-.password-toggle:focus svg {
-    color: #d64b17;
-}
-.password-toggle svg {
-    width: 22px;
-    height: 22px;
-    color: currentColor;
+
+.password-toggle:hover svg {
+    color: var(--accent-color);
 }
 
 .submit-button {
-    padding: 15px;
-    font-size: 1.0rem;
+    padding: 16px;
+    font-size: 1.1rem;
     font-weight: 600;
-    background-color: #d64b17;
+    font-family: var(--font-heading);
+    background-color: var(--accent-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    margin-top: 20px;
+    transition: all 0.2s ease;
+    margin-top: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3);
 }
+
 .submit-button:hover {
-    background-color: #c04015;
+    background-color: var(--accent-color-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(214, 75, 23, 0.3);
-}
-.submit-button:active {
-    background-color: #a53710;
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(214, 75, 23, 0.2);
+    box-shadow: 0 6px 20px rgba(214, 75, 23, 0.4);
 }
 
 .outcome {
     text-align: center;
     font-size: 0.9rem;
-    color: #ff4d4d; /* Default error color */
+    color: #ff4d4d;
     margin-top: 20px;
     min-height: 1.2em;
-    line-height: 1.4;
 }
 
 .form-footer {
     margin-top: 30px;
     text-align: center;
-    font-size: 0.88rem;
-    color: #a0a0a0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
 }
-.form-footer p {
-    margin-bottom: 8px; /* Space between lines in footer */
-}
+
 .form-footer a {
-    color: #d64b17;
+    color: var(--accent-color);
     text-decoration: none;
     font-weight: 500;
 }
+
 .form-footer a:hover {
+    color: var(--accent-color-hover);
     text-decoration: underline;
-    color: #e55f29;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .login-page {
+        padding: 80px 10px 10px;
+    }
+
+    .login-container {
+        padding: 30px 20px;
+    }
 }

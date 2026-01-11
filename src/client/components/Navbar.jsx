@@ -133,7 +133,6 @@ function Navbar() {
             <div className="nav-title">
                 <img id="logo" src={nbnLogo} alt="NBN Logo" height="80" />
                 <h2 id="nbntitle">nothingbutnet</h2>
-                {/*<img id={"nbntitle"} src={nbnTitle} alt="NBN Title" height={80}/>*/}
             </div>
             <div className={"nav-options"}>
                 <HomeButton />

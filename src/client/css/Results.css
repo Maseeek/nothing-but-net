@@ -6,10 +6,12 @@
     padding-bottom: 50px;
     padding-left: 20px;
     padding-right: 20px;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
+
+    background: var(--bg-page);
     background-size: cover;
+    background-color: var(--bg-page);
+
     box-sizing: border-box;
-    background-color: #121212;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -18,33 +20,39 @@
 .results-container {
     width: 100%;
     max-width: 900px;
-    background-color: rgba(30, 30, 47, 0.9);
-    border-radius: 12px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-    color: #f0f0f0;
+
+    background: var(--bg-card);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 24px;
+
+    color: var(--text-primary);
     padding: 30px 40px;
-    animation: fadeIn 0.6s ease-out;
-    border-top: 4px solid #d64b17;
+    animation: fadeIn 0.8s ease-out;
+    border-top: 4px solid var(--accent-color);
 }
 
 /* --- Header --- */
 .results-header {
     text-align: center;
     padding-bottom: 25px;
-    border-bottom: 1px solid #3a3a5a;
+    border-bottom: 1px solid var(--border-color);
     margin-bottom: 30px;
 }
 
 .results-header h1 {
     font-size: 2.5rem;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0 0 10px 0;
+    font-family: var(--font-heading);
 }
 
 .results-header p {
     font-size: 1.1rem;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     margin: 0;
 }
 
@@ -57,56 +65,65 @@
 }
 
 .stat-card {
-    background: linear-gradient(145deg, rgba(43, 43, 63, 0.7), rgba(30, 30, 47, 0.8));
+    background: var(--bg-nav);
     padding: 20px 15px;
-    border-radius: 10px;
+    border-radius: 16px;
     text-align: center;
-    border-bottom: 4px solid #d64b17;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-bottom: 4px solid var(--accent-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border-color);
 }
+
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 25px rgba(214, 75, 23, 0.2);
+    border-color: rgba(214, 75, 23, 0.3);
 }
 
 .stat-card h4 {
     margin: 0 0 10px 0;
     font-size: 1rem;
     font-weight: 500;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-family: var(--font-heading);
 }
 
 .stat-card p {
     margin: 0;
     font-size: 2.4rem;
-    font-weight: 600;
-    color: #ffffff;
+    font-weight: 700;
+    color: var(--text-primary);
     line-height: 1.1;
+    font-family: var(--font-heading);
 }
+
 .stat-card p span {
     font-size: 1.3rem;
     margin-left: 2px;
-    color: #d64b17;
+    color: var(--accent-color);
 }
 
 /* --- Shot Sequence --- */
 .shot-sequence-container {
-    background-color: rgba(43, 43, 63, 0.4);
+    background-color: var(--bg-nav);
+    /* Translucent inner container */
     padding: 25px;
-    border-radius: 10px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
 }
 
 .shot-sequence-container h3 {
     text-align: center;
     font-size: 1.4rem;
-    font-weight: 500;
-    color: #f0f0f0;
+    font-weight: 600;
+    color: var(--text-primary);
     margin: 0 0 25px 0;
-    border-bottom: 1px solid #3a3a5a;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 15px;
+    font-family: var(--font-heading);
 }
 
 .shot-sequence {
@@ -126,9 +143,10 @@
     font-size: 1rem;
     font-weight: bold;
     color: white;
-    box-shadow: inset 0 -3px 4px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease;
 }
+
 .shot-bubble:hover {
     transform: scale(1.1);
 }
@@ -146,14 +164,21 @@
     text-align: center;
     padding: 60px 20px;
     font-size: 1.2rem;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     background-color: rgba(43, 43, 63, 0.4);
-    border: 2px dashed #3a3a5a;
-    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
 }
 
 /* --- Animation --- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
