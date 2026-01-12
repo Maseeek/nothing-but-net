@@ -5,20 +5,21 @@ import Coordinates from "../components/Coordinates.jsx";
 import { sendVideoForAnalysis } from "../js/videoProcessing.js";
 import Loading from "../components/Loading.jsx";
 import Instructions from "../components/Instructions.jsx";
-import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx"; // IMPORT THE NEW ICON
-import backgroundVideo from "../assets/backgroundvideo.mp4";
+import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
+import VideoUpload from "../components/VideoUpload.jsx";
 
-function MainPage() {
+
+
+
+function HomeContent() {
     const [videoFile, setVideoFile] = useState(null);
     const [image, setImage] = useState(null);
     const [coordinates, setCoordinates] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    // Move state for the instructions pop-up here
     const [showInstructions, setShowInstructions] = useState(false);
+    const [showCoordinates, setShowCoordinates] = useState(false);
 
-    // ... (keep all your existing functions like handleVideoUpload, etc.)
-    const handleVideoUpload = (event) => {
-        const file = event.target.files[0];
+    const handleVideoSelect = (file) => {
         if (file) {
             setVideoFile(file);
             extractFirstFrame(file);
@@ -31,94 +32,97 @@ function MainPage() {
         videoElement.onloadedmetadata = () => { videoElement.currentTime = 1; };
         videoElement.onseeked = () => {
             const canvas = document.createElement("canvas");
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
+            // Limit resolution for performance
+            const MAX_DIM = 720;
+            let w = videoElement.videoWidth;
+            let h = videoElement.videoHeight;
+            if (w > MAX_DIM || h > MAX_DIM) {
+                const ratio = Math.min(MAX_DIM / w, MAX_DIM / h);
+                w *= ratio;
+                h *= ratio;
+            }
+
+            canvas.width = w;
+            canvas.height = h;
             const context = canvas.getContext("2d");
-            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            setImage(canvas.toDataURL());
+            context.drawImage(videoElement, 0, 0, w, h);
+            setImage(canvas.toDataURL('image/jpeg', 0.85)); // Optimized format
+            setShowCoordinates(true);
         };
+    };
+
+    const handleBackToUpload = () => {
+        setVideoFile(null);
+        setImage(null);
+        setCoordinates([]);
+        setShowCoordinates(false);
     };
 
     const handleCoordinatesChange = (newCoordinates) => {
         setCoordinates(newCoordinates);
     };
 
-    const handleAnalyzeResults = async () => {
-        if (coordinates.length === 2) {
-            setIsAnalyzing(true);
-            try {
-                await sendVideoForAnalysis(videoFile, coordinates[0], coordinates[1]);
-            } catch (error) {
-                console.error("Error during analysis:", error);
-            } finally {
-                setIsAnalyzing(false);
-            }
-        } else {
-            alert("Please select exactly two coordinates.");
-        }
-    };
-
+    // Note: handleAnalyzeResults is defined in Coordinates component now/handled there or passed down? 
+    // Checking previous code: Coordinates called sendVideoForAnalysis directly. 
+    // And Home.jsx also had handleAnalyzeResults but it wasn't passed to Coordinates in the previous snippets?
+    // Wait, in the previous code for Home.jsx (Step 22), Coordinates was passed:
+    // imageUrl, videoFile, onCoordinatesChange, onBack.
+    // Coordinates component (Step 8) HAS its own handleAnalyzeResults.
+    // So Home.jsx's handleAnalyzeResults (Lines 54-67) was seemingly UNUSED or redundant if Coordinates handles it.
+    // Let's verify if Coordinates uses validation from Home.
+    // Coordinates (Step 8) line 46 defines handleAnalyzeResults and uses sendVideoForAnalysis.
+    // So Home.jsx lines 54-67 are likely dead code or from older version. I will remove them to clean up.
 
     return (
-        <div className="main-page">
-            {/* Conditionally render the pop-up from this component */}
+        <>
+            {/* Instructions Overlay */}
             {showInstructions && <Instructions onClose={() => setShowInstructions(false)} />}
 
-            {isAnalyzing ? (
-                <Loading />
-            ) : (
-                <>
-                    {/* 👇 New container for the upload button and icon 👇 */}
-                    <div className="upload-container">
-                        <form className="video-form">
-                            <label htmlFor="videoInput">UPLOAD VIDEO</label>
-                            <input
-                                type="file"
-                                id="videoInput"
-                                accept="video/*"
-                                onChange={handleVideoUpload}
-                            />
-                        </form>
+            {/* Global Loading Overlay if analyzing happening in Home (not currently used but kept for structure) */}
+            {isAnalyzing && <Loading />}
 
-                        {/* 👇 CHANGE THIS PART 👇 */}
-                        <button className="instructions-btn" onClick={() => setShowInstructions(true)}>
-                            <QuestionMarkIcon className="icon" />
-                        </button>
-                    </div>
-
-                    {image && (
-                        <Coordinates
-                            imageUrl={image}
-                            videoFile={videoFile}
-                            onCoordinatesChange={handleCoordinatesChange}
-                        />
-                    )}
-                    {coordinates.length === 2 && (
-                        <button
-                            className="analyze-button"
-                            onClick={handleAnalyzeResults}
-                            disabled={isAnalyzing}
-                        >
-                            Analyze Results
-                        </button>
-                    )}
-                </>
+            {/* Coordinates Overlay */}
+            {showCoordinates && (
+                <Coordinates
+                    imageUrl={image}
+                    videoFile={videoFile}
+                    onCoordinatesChange={handleCoordinatesChange}
+                    onBack={handleBackToUpload}
+                />
             )}
-        </div>
+
+            {/* Main Content - Always visible underneath */}
+            <div className="main-page glass">
+                <h2 className="section-title">Upload & Analyze</h2>
+
+                <div className="upload-section">
+                    <VideoUpload onVideoSelect={handleVideoSelect} />
+
+                    <button className="instructions-btn" onClick={() => setShowInstructions(true)} title="How to use">
+                        <QuestionMarkIcon className="icon" />
+                    </button>
+                </div>
+            </div>
+        </>
     );
 }
 
-function LandingPage(){
-    return(
-        <div className={"landing-page"}>
-            <div className={"background-video-form"}>
-                <video className={"background-video"} src={backgroundVideo} autoPlay loop muted />
-                <div className={"welcome"}>
-                    <h1 className={"welcome-message"}>Never Lose Count Again</h1>
-                    <p className={"welcome-info"}>Just upload your video. Our AI does the rest.</p>
+function LandingPage() {
+    return (
+        <div className="landing-page">
+            <div className="background-video-form">
+
+                <div className="video-overlay"></div>
+
+                <div className="landing-content-wrapper">
+                    <div className="welcome">
+                        <h1 className="welcome-message">Never Lose Count Again</h1>
+                        <p className="welcome-info">Automatic shot tracking. Get your FG% and shooting angle.</p>
+                    </div>
+
+                    <HomeContent />
                 </div>
             </div>
-            <MainPage />
         </div>
     )
 }

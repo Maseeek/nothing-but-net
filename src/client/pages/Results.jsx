@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import "./../css/Results.css"; // This now points to the combined CSS file
 
 function Results() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showAngle, setShowAngle] = useState(true);
 
     useEffect(() => {
         const storedData = sessionStorage.getItem("analysisResults");
         if (storedData) {
             setData(JSON.parse(storedData));
         }
+
+        // Load settings
+        const storedShowAngle = localStorage.getItem('nbn_settings_showAngle');
+        if (storedShowAngle !== null) {
+            setShowAngle(JSON.parse(storedShowAngle));
+        }
+
         setLoading(false);
     }, []);
 
@@ -27,8 +36,16 @@ function Results() {
     return (
         <div className="results-page">
             <Navbar />
-            <div className="results-container">
+            <div className="results-container glass">
                 <header className="results-header">
+                    <div className="gradient-bar" style={{
+                        width: '80px',
+                        height: '6px',
+                        background: 'linear-gradient(90deg, var(--accent-color), #c14c1f)',
+                        borderRadius: '3px',
+                        margin: '0 auto 20px auto',
+                        boxShadow: '0 0 15px rgba(214, 75, 23, 0.6)'
+                    }}></div>
                     <h1>Analysis Complete</h1>
                     <p>Here is the breakdown of your shooting session.</p>
                 </header>
@@ -57,10 +74,12 @@ function Results() {
                                     <h4>Longest Streak</h4>
                                     <p>{longest_streak}</p>
                                 </div>
-                                <div className="stat-card">
-                                    <h4>Avg. Angle</h4>
-                                    <p>{average_angle}<span>°</span></p>
-                                </div>
+                                {showAngle && (
+                                    <div className="stat-card">
+                                        <h4>Avg. Angle</h4>
+                                        <p>{average_angle}<span>°</span></p>
+                                    </div>
+                                )}
                             </div>
 
                             {/* --- Shot Sequence Section --- */}
@@ -78,11 +97,23 @@ function Results() {
                                     ))}
                                 </div>
                             </div>
+
+
+                            {/* --- Action Buttons --- */}
+                            <div className="results-actions">
+                                <Link to="/" className="action-btn secondary">
+                                    Analyze New Video
+                                </Link>
+                                <Link to="/profile" className="action-btn primary">
+                                    View Profile
+                                </Link>
+                            </div>
                         </>
                     )}
                 </main>
             </div>
-        </div>
+
+        </div >
     );
 }
 

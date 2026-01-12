@@ -1,7 +1,7 @@
-/* Add these new rules and update existing ones in your RegisterPage.css */
+/* src/client/css/RegisterPage.css */
 
-/* Ensure html, body reset is at the top if not already in a global CSS file */
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -10,82 +10,78 @@ html, body {
 }
 
 body {
-    background-color: #000000; /* Fallback background */
+    /* background-color: var(--bg-page); */
 }
 
-/* --- General Page Setup (mostly as before) --- */
+/* --- General Page Setup --- */
 .register-page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100%;
-    font-family: "Cal Sans", Avenir, Helvetica, Arial, sans-serif;
-    color: rgba(255, 255, 255, 0.87);
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
-    box-sizing: border-box; /* Keep this */
-    padding: 130px 20px 20px;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    box-sizing: border-box;
+    padding: 80px 20px 20px;
 }
 
-.register-background { /* Make sure this is still present in your CSS */
+.register-background {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     flex-grow: 1;
-    padding: 0;
-    margin: 0;
 }
 
-
-/* --- Registration Container (adjustments) --- */
+/* --- Register Container (Glass) --- */
 .register-container {
-    background-color: rgba(30, 30, 30, 0.93); /* Slightly adjusted opacity */
-    padding: 35px 45px; /* Increased padding */
-    border-radius: 10px; /* Slightly more rounded */
-    border-top: 4px solid #d64b17;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7); /* Enhanced shadow */
+    background: var(--bg-card);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border-radius: 24px;
+    padding: 40px 50px;
     text-align: left;
-    max-width: 500px; /* Or adjust as preferred */
+    max-width: 500px;
     width: 100%;
     animation: fadeIn 0.8s ease-out;
 }
 
-/* --- Header Section (updated) --- */
+/* --- Header Section --- */
 .register-container header {
     text-align: center;
-    margin-bottom: 35px; /* Increased space */
-    margin-top: 0;
+    margin-bottom: 35px;
 }
 
 .register-logo {
-    width: 60px; /* Adjust size as needed */
+    width: 60px;
     height: auto;
-    margin-bottom: 15px; /* Space between logo and title */
+    margin-bottom: 15px;
     opacity: 0.9;
 }
 
 .register-container header h1 {
-    font-size: 2.0rem; /* Adjusted for balance with logo */
-    margin-bottom: 10px; /* Increased space to p */
-    color: #ffffff;
-    font-weight: 600;
-    margin-top: 0;
+    font-family: var(--font-heading);
+    font-size: 2.0rem;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-weight: 700;
 }
 
 .register-container header p {
     font-size: 0.9rem;
-    color: #b0b0b0; /* Lighter grey for subheading */
-    margin-bottom: 0;
+    color: var(--text-secondary);
 }
 
-/* --- Registration Form (updated gap) --- */
+/* --- Register Form --- */
 .register-form {
     display: flex;
     flex-direction: column;
-    gap: 25px; /* Increased gap for better separation */
+    gap: 25px;
 }
 
-/* --- Input Group Styling (NEW) --- */
+/* --- Input Group Styling --- */
 .input-group {
     position: relative;
     display: flex;
@@ -94,182 +90,155 @@ body {
 
 .input-group .input-icon {
     position: absolute;
-    left: 18px; /* Adjusted for padding */
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d; /* Icon color */
+    color: #6c757d;
     pointer-events: none;
-    line-height: 0; /* Helps center SVGs */
-    z-index: 1; /* Ensures icon is above input bg potentially */
+    line-height: 0;
+    z-index: 1;
 }
 
 .input-group input {
     width: 100%;
-    padding: 16px 18px 16px 50px; /* Top/Bottom, Right, Left (for icon) */
+    padding: 16px 18px 16px 50px;
     font-size: 1rem;
-    border: 1px solid #383838;
-    border-radius: 8px; /* Slightly more rounded */
-    background-color: #222222; /* Darker, distinct input background */
-    color: #ffffff;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    line-height: 1.4; /* Adjust for text centering */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    line-height: 1.4;
     box-sizing: border-box;
+    font-family: var(--font-body);
 }
 
-/* Floating Label Styling (NEW) */
+.input-group input::placeholder {
+    color: transparent;
+}
+
 .input-group label {
     position: absolute;
-    left: 50px; /* Aligned with where input text starts */
+    left: 50px;
     top: 50%;
     transform: translateY(-50%);
-    color: #888888; /* Placeholder-like color */
+    color: #888888;
     pointer-events: none;
     transition: all 0.2s ease-in-out;
     background-color: transparent;
-    padding: 0 4px; /* Horizontal padding for when label is "up" */
+    padding: 0 4px;
     white-space: nowrap;
 }
 
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label { /*:not(:placeholder-shown) is key for pre-filled/autofilled */
-    top: 0px; /* Position above the input border */
-    transform: translateY(-50%) scale(0.85); /* Move up and shrink */
-    left: 42px; /* Adjust left position when floated */
-    color: #d64b17; /* Accent color for active label */
-    background-color: #222222; /* Match input background to "cut out" the border */
-    font-weight: 500;
-}
-/* Required for input elements to not have a default placeholder that conflicts */
-.input-group input::placeholder {
-    color: transparent; /* Make actual placeholder invisible */
-}
-
-
-/* Handle Autofill Background and Text Color (NEW) */
-.input-group input:-webkit-autofill,
-.input-group input:-webkit-autofill:hover,
-.input-group input:-webkit-autofill:focus,
-.input-group input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #222222 inset !important; /* Match input background */
-    -webkit-text-fill-color: #ffffff !important; /* Desired text color */
-    caret-color: #ffffff !important; /* Cursor color */
-    font-size: 1rem !important; /* Ensure font size consistency */
-}
-
-/* Ensure label floats correctly with autofilled inputs */
-.input-group input:-webkit-autofill + label {
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
     top: 0px;
     transform: translateY(-50%) scale(0.85);
     left: 42px;
-    color: #d64b17;
-    background-color: #222222;
+    color: var(--accent-color);
+    background-color: var(--bg-input);
     font-weight: 500;
+    border-radius: 4px;
 }
 
 .input-group input:focus {
-    border-color: #d64b17;
-    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25); /* Softer focus ring */
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
     outline: none;
 }
 
-/* Password Toggle Button (NEW) */
+/* Password Toggle */
 .password-toggle {
     position: absolute;
-    right: 15px; /* Position inside the input field */
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: #888888; /* Muted color */
+    color: #888888;
     cursor: pointer;
     padding: 5px;
-    line-height: 0; /* Helps vertically align SVG */
-    outline: none;
 }
 
-.password-toggle:hover svg,
-.password-toggle:focus svg {
-    color: #d64b17; /* Accent color on hover/focus */
+.password-toggle:hover svg {
+    color: var(--accent-color);
 }
 
-.password-toggle svg {
-    width: 22px; /* Icon size */
-    height: 22px;
-    color: currentColor; /* Inherits color from button */
-}
-
-/* --- Submit Button (updated class name and style) --- */
-.submit-button { /* Renamed from .register-form button */
-    padding: 15px; /* Slightly more padding */
-    font-size: 1.0rem; /* Standardized size */
+.submit-button {
+    padding: 16px;
+    font-size: 1.1rem;
     font-weight: 600;
-    background-color: #d64b17;
+    font-family: var(--font-heading);
+    background-color: var(--accent-color);
     color: white;
     border: none;
-    border-radius: 8px; /* Consistent with inputs */
+    border-radius: 12px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    margin-top: 20px; /* More space above button */
+    transition: all 0.2s ease;
+    margin-top: 15px;
     text-transform: uppercase;
-    letter-spacing: 0.8px; /* Wider letter spacing */
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3);
 }
 
 .submit-button:hover {
-    background-color: #c04015;
+    background-color: var(--accent-color-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(214, 75, 23, 0.3);
+    box-shadow: 0 6px 20px rgba(214, 75, 23, 0.4);
 }
 
-.submit-button:active {
-    background-color: #a53710;
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(214, 75, 23, 0.2);
-}
-
-/* --- Outcome Message (as before) --- */
 .outcome {
     text-align: center;
     font-size: 0.9rem;
-    color: #ff4d4d; /* Error color */
-    margin-top: 20px; /* Increased space */
+    color: #ff4d4d;
+    margin-top: 20px;
     min-height: 1.2em;
-    line-height: 1.4;
 }
 
-/* --- Form Footer (NEW) --- */
 .form-footer {
-    margin-top: 30px; /* More space above footer */
+    margin-top: 30px;
     text-align: center;
-    font-size: 0.88rem; /* Slightly larger */
-    color: #a0a0a0; /* Footer text color */
+    font-size: 0.9rem;
+    color: var(--text-secondary);
 }
 
 .form-footer a {
-    color: #d64b17; /* Accent color for links */
+    color: var(--accent-color);
     text-decoration: none;
     font-weight: 500;
 }
 
 .form-footer a:hover {
+    color: var(--accent-color-hover);
     text-decoration: underline;
-    color: #e55f29; /* Lighter orange on hover */
 }
 
 .form-footer .terms {
     font-size: 0.8rem;
-    color: #777777;
+    color: var(--text-secondary);
     margin-top: 15px;
     line-height: 1.5;
+    opacity: 0.7;
 }
 
-/* --- Keyframes for Animation (as before) --- */
 @keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .register-page {
+        padding: 80px 10px 10px;
+    }
+
+    .register-container {
+        padding: 30px 20px;
     }
 }

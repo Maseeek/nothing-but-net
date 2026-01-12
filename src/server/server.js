@@ -12,6 +12,7 @@ import Analysis from './models/Analysis.js';
 import User from './models/User.js';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import Stripe from 'stripe';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,8 @@ const PORT = process.env.PORT || 3000;
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 app.use(helmet());
 const allowedOrigins = [
@@ -47,7 +50,12 @@ app.use(cors({
     },
     credentials: true
 }));
-app.use(express.json());
+// Use JSON parser with verify option to capture raw body for Stripe webhooks
+app.use(express.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 
 mongoose.connect(MONGODB_URI)
     .then(() => console.log('✅ Connected to MongoDB'))
@@ -174,7 +182,10 @@ app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const user = await User.findOne({ username });
+        // Convert input username to lowercase to match registration
+        const lowerCaseUsername = username.toLowerCase();
+
+        const user = await User.findOne({ username: lowerCaseUsername });
         if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
         if (!await bcrypt.compare(password, user.password)) {
@@ -190,7 +201,8 @@ app.post('/api/login', async (req, res) => {
 
     } catch (err) {
         console.error('Login error:', err);
-        res.status(500).json({ error: 'Server error' });
+        // Return the actual error message for debugging purposes
+        res.status(500).json({ error: 'Server error', details: err.message });
     }
 });
 
@@ -206,7 +218,8 @@ app.get('/api/profile', async (req, res) => {
         res.json({
             userId: user._id,
             username: user.username,
-            emailVerified: user.emailVerified
+            emailVerified: user.emailVerified,
+            isPro: user.isPro
         });
     } catch (err) {
         console.error('Profile error:', err);
@@ -266,7 +279,9 @@ app.get('/api/sessions/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
-        const sessions = await Session.find({ userId });
+        const sessions = await Session.find({ userId })
+            .select('sessionDate makes misses longest_streak fg_percentage')
+            .sort({ sessionDate: -1 }); // Added sort for consistency
         if (!sessions.length) {
             return res.status(404).json({ error: 'No sessions found for this user' });
         }
@@ -505,6 +520,88 @@ app.post('/api/forgot-password', async (req, res) => {
         console.error('Forgot password error:', err);
         res.status(500).json({ error: 'Server error' });
     }
+});
+
+// --- NEW API ROUTE: STRIPE CHECKOUT ---
+app.post('/api/create-checkout-session', requireAuthSession, async (req, res) => {
+    try {
+        const user = req.user;
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            customer_email: user.email,
+            client_reference_id: user._id.toString(),
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'NothingButNet PRO Subscription',
+                            description: 'Unlock unlimited video analysis and advanced stats.',
+                        },
+                        unit_amount: 1000, // $10.00
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment', // Use 'subscription' if you set up recurring prices in Dashboard
+            success_url: `${frontendUrl}/profile?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${frontendUrl}/profile`,
+        });
+
+        res.json({ url: session.url });
+    } catch (err) {
+        console.error('Stripe checkout error:', err);
+        res.status(500).json({ error: 'Failed to create checkout session' });
+    }
+});
+
+// --- NEW API ROUTE: STRIPE WEBHOOK ---
+app.post('/api/webhook', async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
+    // console.log("Webhook received. Signature:", sig); // Optional: debug log
+
+    try {
+        event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+    } catch (err) {
+        console.error(`Webhook signature verification failed: ${err.message}`);
+        console.error(`Make sure your .env STRIPE_WEBHOOK_SECRET matches the one from 'stripe listen'`);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    console.log(`Webhook Event Type: ${event.type}`); // Log event type
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const userId = session.client_reference_id;
+        console.log(`Processing checkout.session.completed for user: ${userId}`);
+
+        if (userId) {
+            try {
+                const user = await User.findById(userId);
+                if (user) {
+                    user.isPro = true;
+                    user.stripeCustomerId = session.customer;
+                    await user.save();
+                    console.log(`SUCCESS: User ${user.username} upgraded to PRO via Stripe.`);
+                } else {
+                    console.error(`User not found for ID: ${userId}`);
+                }
+            } catch (error) {
+                console.error('Error updating user status from webhook:', error);
+            }
+        } else {
+            console.error('No client_reference_id found in session.');
+        }
+    }
+
+    res.status(200).send();
 });
 
 

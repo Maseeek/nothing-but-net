@@ -6,10 +6,12 @@
     padding-bottom: 50px;
     padding-left: 20px;
     padding-right: 20px;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95)), url('../assets/register-bg.jpg');
-    background-size: cover;
+
+    /* background: var(--bg-page); */
+    /* background-size: cover; */
+    /* background-color: var(--bg-page); */
+
     box-sizing: border-box;
-    background-color: #121212;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -18,95 +20,124 @@
 .results-container {
     width: 100%;
     max-width: 900px;
-    background-color: rgba(30, 30, 47, 0.9);
-    border-radius: 12px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-    color: #f0f0f0;
-    padding: 30px 40px;
-    animation: fadeIn 0.6s ease-out;
-    border-top: 4px solid #d64b17;
+    color: var(--text-primary);
+    padding: 40px 50px;
+    animation: fadeIn 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+    /* For any internal glows */
 }
 
 /* --- Header --- */
 .results-header {
     text-align: center;
     padding-bottom: 25px;
-    border-bottom: 1px solid #3a3a5a;
+    border-bottom: 1px solid var(--glass-border);
     margin-bottom: 30px;
+    position: relative;
 }
 
 .results-header h1 {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #ffffff;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-primary);
     margin: 0 0 10px 0;
+    font-family: var(--font-heading);
+    letter-spacing: -1px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .results-header p {
     font-size: 1.1rem;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     margin: 0;
 }
 
-/* --- Stat Cards --- */
+/* --- Stat Cards (Liquid Glass Cards) --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 25px;
     margin-bottom: 40px;
 }
 
 .stat-card {
-    background: linear-gradient(145deg, rgba(43, 43, 63, 0.7), rgba(30, 30, 47, 0.8));
-    padding: 20px 15px;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 25px 20px;
+    border-radius: 20px;
     text-align: center;
-    border-bottom: 4px solid #d64b17;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
 }
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
 .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border-color: rgba(214, 75, 23, 0.3);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .stat-card h4 {
-    margin: 0 0 10px 0;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #b0b0b0;
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    font-family: var(--font-heading);
 }
 
 .stat-card p {
     margin: 0;
-    font-size: 2.4rem;
-    font-weight: 600;
-    color: #ffffff;
-    line-height: 1.1;
-}
-.stat-card p span {
-    font-size: 1.3rem;
-    margin-left: 2px;
-    color: #d64b17;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    font-family: var(--font-heading);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* --- Shot Sequence --- */
+.stat-card p span {
+    font-size: 1.4rem;
+    margin-left: 2px;
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* --- Shot Sequence (Glass Bubbles) --- */
 .shot-sequence-container {
-    background-color: rgba(43, 43, 63, 0.4);
-    padding: 25px;
-    border-radius: 10px;
+    background: rgba(20, 20, 25, 0.3);
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .shot-sequence-container h3 {
     text-align: center;
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: #f0f0f0;
-    margin: 0 0 25px 0;
-    border-bottom: 1px solid #3a3a5a;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 30px 0;
+    border-bottom: 1px solid var(--glass-border);
     padding-bottom: 15px;
+    font-family: var(--font-heading);
 }
 
 .shot-sequence {
@@ -116,44 +147,126 @@
     gap: 15px;
 }
 
+/* The Glossy Marbles */
 .shot-bubble {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: white;
-    box-shadow: inset 0 -3px 4px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.2);
-    transition: transform 0.2s ease;
+    position: relative;
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.4),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: default;
+    font-family: var(--font-heading);
 }
+
 .shot-bubble:hover {
-    transform: scale(1.1);
+    transform: scale(1.15) translateY(-2px);
+    z-index: 2;
+}
+
+/* Shine reflection for extra glass effect */
+.shot-bubble::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 15px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(-45deg);
+    filter: blur(1px);
 }
 
 .shot-bubble.make {
-    background: linear-gradient(145deg, #22c55e, #15803d);
+    background: radial-gradient(circle at 30% 30%, #4ade80, #166534);
+    box-shadow:
+        0 5px 15px rgba(22, 101, 52, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .shot-bubble.miss {
-    background: linear-gradient(145deg, #ef4444, #b91c1c);
+    background: radial-gradient(circle at 30% 30%, #f87171, #991b1b);
+    box-shadow:
+        0 5px 15px rgba(153, 27, 27, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Action Buttons (Footer) --- */
+.results-actions {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-btn {
+    padding: 14px 28px;
+    font-size: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, var(--accent-color), #a03d17);
+    color: white;
+    box-shadow: 0 4px 15px rgba(214, 75, 23, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(214, 75, 23, 0.6);
+}
+
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* --- Placeholder for no data --- */
 .results-placeholder {
     text-align: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
     font-size: 1.2rem;
-    color: #b0b0b0;
-    background-color: rgba(43, 43, 63, 0.4);
-    border: 2px dashed #3a3a5a;
-    border-radius: 8px;
+    color: var(--text-secondary);
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 2px dashed var(--glass-border);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
 }
 
 /* --- Animation --- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
