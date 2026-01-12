@@ -59,13 +59,11 @@
     z-index: 2;
     font-size: 10vh;
     /* Responsive font size */
-    font-weight: 700;
     /* Bold */
     margin: 0;
     /* Remove default browser margins */
 
     /* The Text Gradient Magic */
-    color: transparent;
     background-image: url("../assets/gradient.jpg");
     color: var(--text-primary);
     /* verify path */
@@ -100,7 +98,6 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: brightness(250%);
     /* Makes the dark gradient pop */
     background-size: 100% auto;
     /* bold */
@@ -109,7 +106,6 @@
 
     /* font-family: var(--text-primary); */
     /* Same font as title */
-    font-weight: 1000;
     /* Bold */
     color: #ff4800;
     filter: brightness(150%);
