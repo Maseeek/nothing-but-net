@@ -7,7 +7,7 @@ import Loading from "../components/Loading.jsx";
 import Instructions from "../components/Instructions.jsx";
 import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
 import VideoUpload from "../components/VideoUpload.jsx";
-import backgroundVideo from "../assets/backgroundvideo.mp4";
+import LiquidEther from "../components/LiquidEther/LiquidEther.jsx";
 
 function HomeContent() {
     const [videoFile, setVideoFile] = useState(null);
@@ -106,7 +106,19 @@ function LandingPage() {
     return (
         <div className="landing-page">
             <div className="background-video-form">
-                <video className="background-video" src={backgroundVideo} autoPlay loop muted playsInline />
+                <LiquidEther
+                    mouseForce={20}
+                    cursorSize={100}
+                    isViscous={true}
+                    viscous={30}
+                    colors={["#ffd214", "#ff5805", "#ff4606"]}
+                    autoDemo
+                    autoSpeed={0.5}
+                    autoIntensity={2.2}
+                    isBounce={false}
+                    resolution={0.5}
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -2 }}
+                />
                 <div className="video-overlay"></div>
 
                 <div className="landing-content-wrapper">

@@ -3,55 +3,26 @@
 .landing-page {
     position: relative;
     width: 100%;
-    height: 100vh;
-    /* Fixed viewport height */
-    /* overflow: hidden; */
-    /* Disable scrolling */
-    padding-top: 0;
-    /* Reset padding */
+    min-height: 100vh;
+    padding: 80px 0;
     box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
 }
 
 .background-video-form {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     z-index: 0;
 }
 
-.background-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -2;
-    margin: 0;
-}
 
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, rgba(18, 18, 18, 0.4) 0%, rgba(18, 18, 18, 0.9) 80%);
-    z-index: -1;
-    pointer-events: none;
-}
 
 .welcome {
-    margin-top: 32vh;
-    margin-bottom: 0;
+    margin-top: 10vh;
+    margin-bottom: 40px;
 }
 
 .welcome-message {
@@ -131,6 +102,7 @@
     /* Slightly wider for the drop zone */
     width: 90%;
     box-sizing: border-box;
+    margin-bottom: 60px;
     animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -388,7 +360,7 @@
 }
 
 .demo-link-btn {
-    margin-top: 50px !important;
+    /* margin-top: 50px !important; */
 }
 
 .landing-content-wrapper {
