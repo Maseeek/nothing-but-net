@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import "../css/Coordinates.css";
 import { sendVideoForAnalysis } from "../js/videoProcessing.js";
 import Loading from "../components/Loading.jsx";
@@ -9,7 +9,7 @@ function Coordinates({ imageUrl, videoFile, onBack }) {
     const [coordinates, setCoordinates] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const imageRef = useRef(null);
+    const [imgElement, setImgElement] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,7 +20,7 @@ function Coordinates({ imageUrl, videoFile, onBack }) {
     const handleImageClick = (event) => {
         if (coordinates.length < 2) {
             const rect = event.target.getBoundingClientRect();
-            const image = imageRef.current;
+            const image = imgElement;
 
             if (!image) {
                 console.error("Image reference is not available.");
@@ -100,40 +100,46 @@ function Coordinates({ imageUrl, videoFile, onBack }) {
                     </h2>
                     <div className="image-wrapper">
                         <img
-                            ref={imageRef}
+                            ref={setImgElement}
                             src={imageUrl}
                             alt="Selectable"
                             onClick={handleImageClick}
                             className="selectable-image"
                         />
-                        {coordinates.map((coord, index) => (
-                            <div
-                                key={index}
-                                className="coordinate-point"
-                                style={{
-                                    left: `${(coord.x / imageRef.current.naturalWidth) * imageRef.current.offsetWidth}px`,
-                                    top: `${(coord.y / imageRef.current.naturalHeight) * imageRef.current.offsetHeight}px`,
-                                }}
-                            >
-                                {index === 0 ? "L" : "R"}
-                            </div>
-                        ))}
+                        {coordinates.map((coord, index) => {
+                            if (!imgElement) return null;
+                            return (
+                                <div
+                                    key={index}
+                                    className="coordinate-point"
+                                    style={{
+                                        left: `${(coord.x / imgElement.naturalWidth) * imgElement.offsetWidth}px`,
+                                        top: `${(coord.y / imgElement.naturalHeight) * imgElement.offsetHeight}px`,
+                                    }}
+                                >
+                                    {index === 0 ? "L" : "R"}
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="button-group">
-                        <button
-                            className="back-button"
-                            onClick={onBack}
-                            title="Back to upload"
-                        >
-                            <ArrowLeft />
-                        </button>
-                        <button
-                            className="reset-button"
-                            onClick={handleReset}
-                            disabled={coordinates.length === 0}
-                        >
-                            <RotateCcw />
-                        </button>
+                        <div className="secondary-actions">
+                            <button
+                                className="back-button"
+                                onClick={onBack}
+                                title="Back to upload"
+                            >
+                                <ArrowLeft color="white" size={24} />
+                            </button>
+                            <button
+                                className="reset-button"
+                                onClick={handleReset}
+                                disabled={coordinates.length === 0}
+                                title="Reset points"
+                            >
+                                <RotateCcw color="white" size={24} />
+                            </button>
+                        </div>
                         <button
                             className="analyze-button"
                             onClick={handleAnalyzeResults}

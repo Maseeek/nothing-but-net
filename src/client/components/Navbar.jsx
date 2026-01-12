@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/navbar.css';
 import nbnLogo from '../assets/nbnlight.png';
 import { isLoggedIn, logout } from "../js/auth.js";
 
 
-function HomeButton() {
+const HomeButton = memo(function HomeButton() {
     return (
         <Link to="/">
             <button className="home-btn">
@@ -17,9 +17,9 @@ function HomeButton() {
             </button>
         </Link>
     );
-}
+});
 
-function ProfileButton({ onClick }) {
+const ProfileButton = memo(function ProfileButton({ onClick }) {
     return (
         <button id="profile-button" className="profile-btn" onClick={onClick}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -29,20 +29,18 @@ function ProfileButton({ onClick }) {
             </svg>
         </button>
     );
-}
+});
 
-
-
-function DropdownMenu({ isVisible }) {
+const DropdownMenu = memo(function DropdownMenu({ isVisible }) {
     const navigate = useNavigate();
 
-    const handleAuthClick = () => {
+    const handleAuthClick = useCallback(() => {
         if (isLoggedIn()) {
-            logout(); // Call the logout function
+            logout();
         } else {
-            navigate('/login'); // Redirect to login page
+            navigate('/login');
         }
-    };
+    }, [navigate]);
 
     return (
         <div id="dropdown-menu" className={`dropdown-menu ${isVisible ? 'visible' : 'hidden'}`}>
@@ -95,7 +93,7 @@ function DropdownMenu({ isVisible }) {
             </a>
         </div>
     );
-}
+});
 
 
 function Navbar() {
@@ -103,9 +101,9 @@ function Navbar() {
     const dropdownRef = useRef(null);
     const buttonRef = useRef(null);
 
-    const toggleDropdown = () => {
+    const toggleDropdown = useCallback(() => {
         setDropdownVisible((prev) => !prev);
-    };
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {

@@ -182,7 +182,10 @@ app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const user = await User.findOne({ username });
+        // Convert input username to lowercase to match registration
+        const lowerCaseUsername = username.toLowerCase();
+
+        const user = await User.findOne({ username: lowerCaseUsername });
         if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
         if (!await bcrypt.compare(password, user.password)) {
@@ -198,7 +201,8 @@ app.post('/api/login', async (req, res) => {
 
     } catch (err) {
         console.error('Login error:', err);
-        res.status(500).json({ error: 'Server error' });
+        // Return the actual error message for debugging purposes
+        res.status(500).json({ error: 'Server error', details: err.message });
     }
 });
 

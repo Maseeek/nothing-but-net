@@ -27,7 +27,6 @@
     color: var(--text-primary);
     padding: 30px 40px;
     animation: fadeIn 0.8s ease-out;
-    border-top: 4px solid var(--accent-color);
     margin-bottom: 120px;
 }
 
@@ -134,7 +133,7 @@
     color: var(--text-primary);
 }
 
-/* Input Fields */
+/* OLD Input Fields - Kept for compatibility but superseded by input-group below */
 .profile-input {
     width: 100%;
     padding: 12px 16px;
@@ -142,12 +141,85 @@
     border: 1px solid var(--border-color);
     border-radius: 12px;
     background-color: var(--bg-input);
-    /* Use slightly lighter/nav bg for inputs */
     color: var(--text-primary);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .profile-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
+    outline: none;
+}
+
+/* --- Input Group Styling (From Login.css) --- */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* Ensure it takes full width of grid cell */
+}
+
+.input-group.full-width {
+    width: 100%;
+}
+
+.input-group .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    line-height: 0;
+    z-index: 1;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 16px 18px 16px 50px;
+    /* Space for icon */
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    line-height: 1.4;
+    box-sizing: border-box;
+    font-family: var(--font-body);
+}
+
+.input-group input::placeholder {
+    color: transparent;
+}
+
+.input-group label {
+    position: absolute;
+    left: 50px;
+    /* Aligned with text start */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888888;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    padding: 0 4px;
+    white-space: nowrap;
+}
+
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
+    top: 0px;
+    transform: translateY(-50%) scale(0.85);
+    left: 42px;
+    color: var(--accent-color);
+    background-color: var(--bg-input);
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.input-group input:focus {
     border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
     outline: none;
@@ -182,12 +254,14 @@
 .security-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 25px;
+    /* Increased gap for floating labels */
     max-width: 400px;
 }
 
 .security-form label {
-    margin-bottom: -5px;
+    /* Reset label styles for floating labels */
+    margin-bottom: 0;
 }
 
 .divider {

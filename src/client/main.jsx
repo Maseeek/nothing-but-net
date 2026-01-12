@@ -15,11 +15,30 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 
+
+import LiquidEther from './components/LiquidEther/LiquidEther.jsx';
+
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
     return (
         <BrowserRouter>
             <Analytics />
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2 }}>
+                <LiquidEther
+                    mouseForce={20}
+                    cursorSize={100}
+                    isViscous={true}
+                    viscous={30}
+                    colors={["#ffd214", "#ff5805", "#ff4606"]}
+                    autoDemo={true}
+                    autoSpeed={0.5}
+                    autoIntensity={2.2}
+                    isBounce={false}
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', pointerEvents: 'none' }}></div>
+            </div>
+
             <Routes>
                 {/* All routes must be inside here */}
                 <Route path="/" element={<Home />} />
