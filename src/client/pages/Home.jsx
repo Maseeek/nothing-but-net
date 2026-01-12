@@ -111,12 +111,14 @@ function LandingPage() {
                     cursorSize={100}
                     isViscous={true}
                     viscous={30}
+                    iterationsViscous={12}
+                    iterationsPoisson={12}
                     colors={["#ffd214", "#ff5805", "#ff4606"]}
                     autoDemo
                     autoSpeed={0.5}
                     autoIntensity={2.2}
                     isBounce={false}
-                    resolution={0.5}
+                    resolution={0.4}
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -2 }}
                 />
                 <div className="video-overlay"></div>

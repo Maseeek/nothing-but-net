@@ -47,8 +47,8 @@
 
     /* Glow & Brightness */
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    filter: brightness(250%);
-    /* Makes the dark gradient pop */
+    filter: brightness(200%);
+    /* Reduced brightness for performance */
     background-size: 100% auto;
     background-position: center;
 
@@ -83,8 +83,8 @@
     font-weight: 1000;
     /* Bold */
     color: #ff4800;
-    filter: brightness(150%);
-    /* Makes the dark gradient pop */
+    filter: brightness(180%);
+    /* Reduced brightness for performance */
     /* Vibrant Orange */
 
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
