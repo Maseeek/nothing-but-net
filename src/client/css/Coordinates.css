@@ -1,16 +1,18 @@
 .coordinates-container {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    /* background-color: rgba(0, 0, 0, 0.85); */
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     pointer-events: auto;
-    padding: 20px;
+    padding: 10px;
+    /* Reduced padding for mobile */
     box-sizing: border-box;
 }
 
@@ -23,22 +25,38 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     border-radius: 24px;
 
-    padding: 30px;
+    padding: 20px;
     text-align: center;
     color: var(--text-primary);
-    max-width: 90%;
-    width: 700px;
-    max-height: 85vh;
+    width: 95%;
+    /* Responsive width */
+    max-width: 700px;
+    max-height: 90vh;
+    /* Allow more height */
     overflow-y: auto;
     animation: fadeIn 0.6s ease-out;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
+}
+
+/* Custom Scrollbar for the modal content */
+.coordinates-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.coordinates-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.coordinates-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
 }
 
 .coordinates-content h2 {
     font-size: 1.5rem;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     color: var(--text-primary);
     font-family: var(--font-heading);
     font-weight: 600;
@@ -53,8 +71,10 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: white;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     box-shadow: 0 0 15px rgba(214, 75, 23, 0.4);
+    align-self: center;
+    /* Center strictly */
 }
 
 .image-wrapper {
@@ -64,9 +84,9 @@
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.3s ease;
-    max-width: 100%;
+    width: 100%;
+    /* Flex constraint */
     max-height: 50vh;
-    /* Limit image height to fit modal */
 }
 
 .image-wrapper:hover {
@@ -74,11 +94,11 @@
 }
 
 .selectable-image {
-    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Ensure image fits */
     max-height: 50vh;
-    /* Match wrapper constraint */
-    height: auto;
-    width: auto;
     border: 3px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
     cursor: crosshair;
@@ -93,6 +113,7 @@
 .coordinate-point {
     position: absolute;
     width: 32px;
+    /* Fixed size for points */
     height: 32px;
     background: linear-gradient(145deg, var(--accent-color), #c14c1f);
     color: #ffffff;
@@ -104,9 +125,11 @@
     justify-content: center;
     transform: translate(-50%, -50%);
     pointer-events: none;
+    /* Ignore clicks so user can click other points if needed, though mostly visual here */
     box-shadow: 0 0 20px rgba(214, 75, 23, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5);
     border: 2px solid rgba(255, 255, 255, 0.3);
     animation: pointPulse 2s ease-in-out infinite;
+    z-index: 10;
 }
 
 @keyframes pointPulse {
@@ -123,159 +146,170 @@
     }
 }
 
-.coordinates-list {
-    text-align: left;
-    margin-top: 20px;
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    /* Spread sections apart */
+    align-items: center;
+    margin-top: 15px;
+    gap: 15px;
+    width: 100%;
 }
 
-.coordinates-list h3 {
-    margin-bottom: 15px;
-    color: #f0f0f0;
-    font-size: 1.6rem;
-}
-
-.coordinates-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.coordinates-list li {
-    font-size: 1.4rem;
-    color: #d1d1d1;
-    margin-bottom: 10px;
+.secondary-actions {
+    display: flex;
+    gap: 15px;
 }
 
 .analyze-button {
-    padding: 15px 30px;
-    font-size: 1.6rem;
+    padding: 0 30px;
+    /* Use flex alignment for height */
+    height: 50px;
+    font-size: 1.1rem;
     color: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
+    /* Pill shape matches buttons */
     background: linear-gradient(145deg, var(--accent-color), #c14c1f);
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .analyze-button:hover {
     background: linear-gradient(145deg, #e66025, #a03d17);
     color: #ffffff;
-    transform: scale(1.05);
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(214, 75, 23, 0.4);
 }
 
 .analyze-button:disabled {
-    background-color: #666666;
-    color: #cccccc;
+    background: #444;
+    /* Darker disabled state */
+    color: #888;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 15px;
-}
-
-.back-button {
+.back-button,
+.reset-button {
     position: relative;
-    width: 60px;
-    height: 60px;
-    background-color: #1e1e2f;
-    border: 3px solid #6c757d;
+    width: 50px;
+    /* Slightly smaller for better fit */
+    height: 50px;
     border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 10px rgba(108, 117, 125, 0.3);
+    padding: 0;
+}
+
+.back-button {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .back-button:hover {
-    background-color: #6c757d;
+    background-color: rgba(255, 255, 255, 0.2);
     border-color: #ffffff;
     transform: scale(1.05);
 }
 
 .back-button:active {
-    background-color: #5a6268;
     transform: scale(0.95);
 }
 
-.back-button svg {
-    width: 24px;
-    height: 24px;
-    stroke: #ffffff;
-    transition: stroke 0.3s ease;
-}
-
-.back-button:hover svg {
-    stroke: #ffffff;
-}
-
 .reset-button {
-    position: relative;
-    width: 60px;
-    /* Set width for square button */
-    height: 60px;
-    /* Set height for square button */
-    background-color: #1e1e2f;
-    /* Dark background */
-    border: 3px solid #e36125;
-    /* Thicker orange border */
-    border-radius: 50%;
-    /* Fully rounded corners */
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Center the SVG */
-    box-shadow: 0 0 10px rgba(227, 97, 37, 0.5);
-
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(227, 97, 37, 0.5);
+    /* Orange hint */
 }
 
 .reset-button:hover {
-    background-color: #e36125;
-    /* Orange highlight on hover */
-    border-color: #ffffff;
-    /* White border on hover */
+    background-color: rgba(227, 97, 37, 0.2);
+    border-color: #e36125;
     transform: scale(1.05);
 }
 
 .reset-button:active {
-    background-color: #c14c1f;
-    /* Darker orange when active */
     transform: scale(0.95);
 }
 
+.reset-button:disabled {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+/* Icons are now handled via props, but we keep this for consistency if needed */
+.back-button svg,
 .reset-button svg {
-    width: 30px;
-    /* Adjust size of the SVG */
-    height: 30px;
-    stroke: #ffffff;
-    /* White color for the SVG */
     transition: stroke 0.3s ease;
 }
 
-.reset-button:hover svg {
-    stroke: #ffffff;
-    /* White color on hover */
-}
+/* Media Queries for Mobile */
+@media (max-width: 600px) {
+    .coordinates-content {
+        padding: 15px;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        /* Full screen on mobile */
+        justify-content: center;
+    }
 
-.reset-button:disabled {
-    background-color: #666666;
-    /* Grey background for disabled state */
-    border-color: #999999;
-    /* Lighter grey border */
-    cursor: not-allowed;
-    transform: none;
-    /* Disable scaling effect */
-}
+    .coordinates-content h2 {
+        font-size: 1.2rem;
+    }
 
-.reset-button:disabled svg {
-    stroke: rgba(255, 255, 255, 0.3);
-    /* White with low opacity for disabled state */
-    transition: none;
-    /* Disable transition effects */
+    .image-wrapper {
+        max-height: 40vh;
+    }
+
+    .button-group {
+        flex-direction: column-reverse;
+        /* Stack buttons, analyze on top or bottom? Reversed puts Analyze on top usually, wait. Row: [Sec] [Analyze]. Rev: [Analyze] [Sec] typically. 
+        Actually column-reverse on [A, B] results in [B, A].
+        Here: [SecondaryDiv, AnalyzeBtn].
+        Reverse: [AnalyzeBtn, SecondaryDiv].
+        This puts the big button at the TOP of the control area (visually) or BOTTOM?
+        Flex direction column: Top to Bottom.
+        Column Reverse: Bottom to Top.
+        So [Analyze] will be at the bottom if we use column-reverse? No.
+        Normal column:
+        1. Secondary
+        2. Analyze
+        Reverse:
+        1. Analyze
+        2. Secondary
+        (Visual Order: Top element is Analyze)
+        Let's just use `flex-direction: column;` -> Secondary then Analyze.
+        Wait, usually on mobile, the primary action is at the bottom for easy thumb access?
+        Or sticky?
+        Let's try standard column.
+        */
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .secondary-actions {
+        width: 100%;
+        justify-content: center;
+        /* Center back/reset buttons */
+        gap: 20px;
+    }
+
+    .analyze-button {
+        width: 100%;
+        padding: 15px;
+    }
 }

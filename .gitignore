@@ -27,3 +27,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Uploads and large media
+uploads/
+src/server/uploads/
+*.mov
+*.mp4
+*.webm
+*.avi

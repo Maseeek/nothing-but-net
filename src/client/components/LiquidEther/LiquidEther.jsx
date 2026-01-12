@@ -7,11 +7,11 @@ export default function LiquidEther({
     cursorSize = 100,
     isViscous = false,
     viscous = 30,
-    iterationsViscous = 16,
-    iterationsPoisson = 16,
+    iterationsViscous = 8,
+    iterationsPoisson = 8,
     dt = 0.014,
-    BFECC = true,
-    resolution = 0.5,
+    BFECC = false,
+    resolution = 0.4,
     isBounce = false,
     colors = ['#5227FF', '#FF9FFC', '#B19EEF'],
     style = {},
@@ -1094,25 +1094,22 @@ export default function LiquidEther({
             }
             webglRef.current = null;
         };
-    }, [
-        BFECC,
-        cursorSize,
-        dt,
-        isBounce,
-        isViscous,
-        iterationsPoisson,
-        iterationsViscous,
-        mouseForce,
-        resolution,
-        viscous,
-        colors,
-        autoDemo,
-        autoSpeed,
-        autoIntensity,
-        takeoverDuration,
-        autoResumeDelay,
-        autoRampDuration
-    ]);
+    }, [JSON.stringify(colors)]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     useEffect(() => {
         const webgl = webglRef.current;
@@ -1164,5 +1161,5 @@ export default function LiquidEther({
         autoRampDuration
     ]);
 
-    return <div ref={mountRef} className={`liquid-ether-container ${className || ''}`} style={style} />;
+    return <div ref={mountRef} className={`liquid-ether-container ${className || ''}`} style={{ padding: 0, margin: 0, ...style }} />;
 }

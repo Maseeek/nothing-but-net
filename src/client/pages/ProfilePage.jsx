@@ -13,6 +13,9 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcEleme
 // --- ICONS (Placeholder SVGs) ---
 const UserCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm0-12a3,3,0,1,1-3,3A3,3,0,0,1,12,8Zm0,10a6,6,0,0,1-4.22-1.77,7.83,7.83,0,0,1,8.44,0A6,6,0,0,1,12,18Z" /></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>;
+const UserIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>;
+const LockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" /></svg>;
+const MailIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>;
 
 const VerificationStatusIcon = ({ isVerified }) => {
     if (isVerified) {
@@ -94,18 +97,42 @@ const ProfileDetails = ({ user }) => {
         <div className="profile-tab-content">
             <h3>Account Details</h3>
             <div className="details-grid">
-                <label>Username</label>
                 {isEditing ? (
-                    <input type="text" name="username" value={formData.username} onChange={handleChange} className="profile-input" />
+                    <>
+                        <div className="input-group full-width">
+                            <span className="input-icon"><UserIcon /></span>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                placeholder=" "
+                                className="profile-input"
+                            />
+                            <label htmlFor="username">Username</label>
+                        </div>
+                        <div className="input-group full-width">
+                            <span className="input-icon"><MailIcon /></span>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder=" "
+                                className="profile-input"
+                            />
+                            <label htmlFor="email">Email Address</label>
+                        </div>
+                    </>
                 ) : (
-                    <span>{user.username}</span>
-                )}
-
-                <label>Email Address <VerificationStatusIcon isVerified={user.verified} /> </label>
-                {isEditing ? (
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} className="profile-input" />
-                ) : (
-                    <span>{user.email}</span>
+                    <>
+                        <label>Username</label>
+                        <span>{user.username}</span>
+                        <label>Email Address <VerificationStatusIcon isVerified={user.verified} /> </label>
+                        <span>{user.email}</span>
+                    </>
                 )}
 
             </div>
@@ -123,14 +150,23 @@ const SecuritySettings = () => {
         <div className="profile-tab-content">
             <h3>Password & Security</h3>
             <form className="security-form">
-                <label htmlFor="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" name="currentPassword" className="profile-input" placeholder="••••••••" />
+                <div className="input-group">
+                    <span className="input-icon"><LockIcon /></span>
+                    <input type="password" id="currentPassword" name="currentPassword" placeholder=" " />
+                    <label htmlFor="currentPassword">Current Password</label>
+                </div>
 
-                <label htmlFor="newPassword">New Password</label>
-                <input type="password" id="newPassword" name="newPassword" className="profile-input" />
+                <div className="input-group">
+                    <span className="input-icon"><LockIcon /></span>
+                    <input type="password" id="newPassword" name="newPassword" placeholder=" " />
+                    <label htmlFor="newPassword">New Password</label>
+                </div>
 
-                <label htmlFor="confirmNewPassword">Confirm New Password</label>
-                <input type="password" id="confirmNewPassword" name="confirmNewPassword" className="profile-input" />
+                <div className="input-group">
+                    <span className="input-icon"><LockIcon /></span>
+                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder=" " />
+                    <label htmlFor="confirmNewPassword">Confirm New Password</label>
+                </div>
 
                 <button type="submit" className="profile-action-btn">Update Password</button>
             </form>
@@ -449,6 +485,14 @@ const ProfilePage = () => {
         <div className="profile-page">
             <Navbar />
             <div className="profile-container glass">
+                <div className="gradient-bar" style={{
+                    width: '60px',
+                    height: '6px',
+                    background: 'linear-gradient(145deg, var(--accent-color), #c14c1f)',
+                    borderRadius: '3px',
+                    margin: '0 auto 20px auto',
+                    boxShadow: '0 0 10px rgba(214, 75, 23, 0.5)'
+                }}></div>
                 <header className="profile-header">
                     <div className="avatar">
                         <span className="avatar-initial">{user.username.charAt(0).toUpperCase()}</span>

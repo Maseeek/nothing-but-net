@@ -1,6 +1,7 @@
 /* Profile Container */
 .profile-container {
-    background-color: #2a2a3d;
+    background-color: rgba(42, 42, 61, 0.6);
+    backdrop-filter: blur(10px);
     color: #e0e0e0;
     border-radius: 8px;
     border: 1px solid #547AA5;
@@ -35,7 +36,7 @@
 }
 
 /* Chart Styling */
-canvas {
+.charts-container canvas {
     background-color: #222230;
     border-radius: 6px;
     padding: 5px;

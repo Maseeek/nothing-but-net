@@ -9,11 +9,12 @@
     padding: 15px 30px;
 
     /* Glass Recipe Inheritance */
-    background: var(--bg-nav);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    /* Ultra-light blur for best performance */
+    background: rgba(18, 18, 18, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
     position: fixed;
     top: 0;
@@ -65,56 +66,32 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Faster, more tactile transition */
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 10px;
     border-radius: 12px;
     width: auto;
     height: auto;
     position: relative;
     overflow: hidden;
+    will-change: transform;
 }
 
-.home-btn::before,
-.profile-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
+.home-btn:active,
+.profile-btn:active {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.4s ease, height 0.4s ease;
-    z-index: 0;
-}
-
-.home-btn:hover::before,
-.profile-btn:hover::before {
-
-    width: 120%;
-    height: 120%;
-}
-
-
-.home-btn svg,
-.profile-btn svg {
-    position: relative;
-    z-index: 1;
-    stroke-width: 2px;
-    transition: all 0.3s ease;
 }
 
 .home-btn:hover,
 .profile-btn:hover {
-    color: var(--text-primary);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-color);
 }
 
 .home-btn:hover svg,
 .profile-btn:hover svg {
-    /* stroke: var(--accent-color); */
-    /* filter: drop-shadow(0 0 5px rgba(214, 75, 23, 0.5)); */
+    stroke: var(--accent-color);
+    filter: drop-shadow(0 0 8px rgba(214, 75, 23, 0.8));
 }
 
 /* Auth Button (Login/Register) */
@@ -128,9 +105,10 @@
     top: 75px;
     right: 30px;
 
-    background: var(--dropdown-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    /* Further reduced blur for extreme performance */
+    background: rgba(25, 25, 38, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -142,20 +120,23 @@
     overflow: hidden;
     opacity: 0;
     transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Optimized transition */
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
 }
 
 .dropdown-menu.visible {
     display: flex;
     opacity: 1;
     transform: translateY(0);
-    animation: fadeInDown 0.3s ease forwards;
+    /* Fast entrance animation */
+    animation: fadeInDown 0.15s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
 
     to {
@@ -174,7 +155,8 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    /* Snappy hover response */
+    transition: background-color 0.1s ease, color 0.1s ease;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 

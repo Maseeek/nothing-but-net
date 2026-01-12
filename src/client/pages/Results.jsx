@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import "./../css/Results.css"; // This now points to the combined CSS file
 
@@ -35,8 +36,16 @@ function Results() {
     return (
         <div className="results-page">
             <Navbar />
-            <div className="results-container">
+            <div className="results-container glass">
                 <header className="results-header">
+                    <div className="gradient-bar" style={{
+                        width: '80px',
+                        height: '6px',
+                        background: 'linear-gradient(90deg, var(--accent-color), #c14c1f)',
+                        borderRadius: '3px',
+                        margin: '0 auto 20px auto',
+                        boxShadow: '0 0 15px rgba(214, 75, 23, 0.6)'
+                    }}></div>
                     <h1>Analysis Complete</h1>
                     <p>Here is the breakdown of your shooting session.</p>
                 </header>
@@ -88,12 +97,23 @@ function Results() {
                                     ))}
                                 </div>
                             </div>
+
+
+                            {/* --- Action Buttons --- */}
+                            <div className="results-actions">
+                                <Link to="/" className="action-btn secondary">
+                                    Analyze New Video
+                                </Link>
+                                <Link to="/profile" className="action-btn primary">
+                                    View Profile
+                                </Link>
+                            </div>
                         </>
                     )}
                 </main>
             </div>
 
-        </div>
+        </div >
     );
 }
 

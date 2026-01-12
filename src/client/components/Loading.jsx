@@ -1,5 +1,5 @@
 import React from 'react';
-import nbnLogo from '../assets/nbnlight.png';
+import nbnLogo from '../assets/nbn logo transparent.png';
 import '../css/loading.css';
 
 function Loading() {

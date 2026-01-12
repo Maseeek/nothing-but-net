@@ -234,7 +234,7 @@ def save_session():
         print("Incoming session data:", request.json)
         # Validate input
         required_fields = [
-            'userId', 'makes', 'misses', 'longestStreak', 'average_angle',
+            'userId', 'makes', 'misses', 'longest_streak', 'average_angle',
             'average_make_angle', 'average_miss_angle', 'fg_percentage',
             'shot_angles', 'shots_results', 'total_shots'
         ]

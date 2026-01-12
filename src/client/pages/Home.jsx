@@ -7,7 +7,9 @@ import Loading from "../components/Loading.jsx";
 import Instructions from "../components/Instructions.jsx";
 import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
 import VideoUpload from "../components/VideoUpload.jsx";
-import LiquidEther from "../components/LiquidEther/LiquidEther.jsx";
+
+
+
 
 function HomeContent() {
     const [videoFile, setVideoFile] = useState(null);
@@ -15,7 +17,7 @@ function HomeContent() {
     const [coordinates, setCoordinates] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
-    const [currentStep, setCurrentStep] = useState('upload'); // 'upload' or 'coordinates'
+    const [showCoordinates, setShowCoordinates] = useState(false);
 
     const handleVideoSelect = (file) => {
         if (file) {
@@ -30,13 +32,22 @@ function HomeContent() {
         videoElement.onloadedmetadata = () => { videoElement.currentTime = 1; };
         videoElement.onseeked = () => {
             const canvas = document.createElement("canvas");
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
+            // Limit resolution for performance
+            const MAX_DIM = 720;
+            let w = videoElement.videoWidth;
+            let h = videoElement.videoHeight;
+            if (w > MAX_DIM || h > MAX_DIM) {
+                const ratio = Math.min(MAX_DIM / w, MAX_DIM / h);
+                w *= ratio;
+                h *= ratio;
+            }
+
+            canvas.width = w;
+            canvas.height = h;
             const context = canvas.getContext("2d");
-            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            setImage(canvas.toDataURL());
-            // Auto-transition to coordinates step after frame extraction
-            setCurrentStep('coordinates');
+            context.drawImage(videoElement, 0, 0, w, h);
+            setImage(canvas.toDataURL('image/jpeg', 0.85)); // Optimized format
+            setShowCoordinates(true);
         };
     };
 
@@ -44,61 +55,55 @@ function HomeContent() {
         setVideoFile(null);
         setImage(null);
         setCoordinates([]);
-        setCurrentStep('upload');
+        setShowCoordinates(false);
     };
 
     const handleCoordinatesChange = (newCoordinates) => {
         setCoordinates(newCoordinates);
     };
 
-    const handleAnalyzeResults = async () => {
-        if (coordinates.length === 2) {
-            setIsAnalyzing(true);
-            try {
-                await sendVideoForAnalysis(videoFile, coordinates[0], coordinates[1]);
-            } catch (error) {
-                console.error("Error during analysis:", error);
-            } finally {
-                setIsAnalyzing(false);
-            }
-        } else {
-            alert("Please select exactly two coordinates.");
-        }
-    };
-
+    // Note: handleAnalyzeResults is defined in Coordinates component now/handled there or passed down? 
+    // Checking previous code: Coordinates called sendVideoForAnalysis directly. 
+    // And Home.jsx also had handleAnalyzeResults but it wasn't passed to Coordinates in the previous snippets?
+    // Wait, in the previous code for Home.jsx (Step 22), Coordinates was passed:
+    // imageUrl, videoFile, onCoordinatesChange, onBack.
+    // Coordinates component (Step 8) HAS its own handleAnalyzeResults.
+    // So Home.jsx's handleAnalyzeResults (Lines 54-67) was seemingly UNUSED or redundant if Coordinates handles it.
+    // Let's verify if Coordinates uses validation from Home.
+    // Coordinates (Step 8) line 46 defines handleAnalyzeResults and uses sendVideoForAnalysis.
+    // So Home.jsx lines 54-67 are likely dead code or from older version. I will remove them to clean up.
 
     return (
-        <div className="main-page glass">
-            {/* Conditionally render the pop-up from this component */}
+        <>
+            {/* Instructions Overlay */}
             {showInstructions && <Instructions onClose={() => setShowInstructions(false)} />}
 
-            {isAnalyzing ? (
-                <Loading />
-            ) : (
-                <>
-                    <h2 className="section-title">Upload & Analyze</h2>
+            {/* Global Loading Overlay if analyzing happening in Home (not currently used but kept for structure) */}
+            {isAnalyzing && <Loading />}
 
-                    {currentStep === 'upload' ? (
-                        <div className="upload-section step-transition">
-                            <VideoUpload onVideoSelect={handleVideoSelect} />
-
-                            <button className="instructions-btn" onClick={() => setShowInstructions(true)} title="How to use">
-                                <QuestionMarkIcon className="icon" />
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="coordinates-section step-transition">
-                            <Coordinates
-                                imageUrl={image}
-                                videoFile={videoFile}
-                                onCoordinatesChange={handleCoordinatesChange}
-                                onBack={handleBackToUpload}
-                            />
-                        </div>
-                    )}
-                </>
+            {/* Coordinates Overlay */}
+            {showCoordinates && (
+                <Coordinates
+                    imageUrl={image}
+                    videoFile={videoFile}
+                    onCoordinatesChange={handleCoordinatesChange}
+                    onBack={handleBackToUpload}
+                />
             )}
-        </div>
+
+            {/* Main Content - Always visible underneath */}
+            <div className="main-page glass">
+                <h2 className="section-title">Upload & Analyze</h2>
+
+                <div className="upload-section">
+                    <VideoUpload onVideoSelect={handleVideoSelect} />
+
+                    <button className="instructions-btn" onClick={() => setShowInstructions(true)} title="How to use">
+                        <QuestionMarkIcon className="icon" />
+                    </button>
+                </div>
+            </div>
+        </>
     );
 }
 
@@ -106,21 +111,7 @@ function LandingPage() {
     return (
         <div className="landing-page">
             <div className="background-video-form">
-                <LiquidEther
-                    mouseForce={20}
-                    cursorSize={100}
-                    isViscous={true}
-                    viscous={30}
-                    iterationsViscous={12}
-                    iterationsPoisson={12}
-                    colors={["#ffd214", "#ff5805", "#ff4606"]}
-                    autoDemo
-                    autoSpeed={0.5}
-                    autoIntensity={2.2}
-                    isBounce={false}
-                    resolution={0.4}
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -2 }}
-                />
+
                 <div className="video-overlay"></div>
 
                 <div className="landing-content-wrapper">
