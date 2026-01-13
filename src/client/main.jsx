@@ -7,7 +7,7 @@ import Home from './pages/Home.jsx';
 import Results from './pages/Results.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/Login.jsx';
-import Profile from './pages/Profile.jsx';
+
 import ProfilePage from './pages/ProfilePage.jsx';
 import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
 import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx';
@@ -27,9 +27,12 @@ function Main() {
                 <LiquidEther
                     mouseForce={20}
                     cursorSize={100}
-                    isViscous={true}
+                    isViscous={false}
+                    iterationsPoisson={4}
+                    iterationsViscous={4}
                     viscous={30}
                     colors={["#ffd214", "#ff5805", "#ff4606"]}
+                    resolution={0.2}
                     autoDemo={true}
                     autoSpeed={0.5}
                     autoIntensity={2.2}
