@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar.jsx";
 import "../css/MainPage.css";
 import Coordinates from "../components/Coordinates.jsx";
 import { sendVideoForAnalysis } from "../js/videoProcessing.js";
-import Loading from "../components/Loading.jsx";
+
 import Instructions from "../components/Instructions.jsx";
 import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
 import VideoUpload from "../components/VideoUpload.jsx";
@@ -14,8 +14,7 @@ import VideoUpload from "../components/VideoUpload.jsx";
 function HomeContent() {
     const [videoFile, setVideoFile] = useState(null);
     const [image, setImage] = useState(null);
-    const [coordinates, setCoordinates] = useState([]);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
+
     const [showInstructions, setShowInstructions] = useState(false);
     const [showCoordinates, setShowCoordinates] = useState(false);
 
@@ -58,9 +57,7 @@ function HomeContent() {
         setShowCoordinates(false);
     };
 
-    const handleCoordinatesChange = (newCoordinates) => {
-        setCoordinates(newCoordinates);
-    };
+
 
     // Note: handleAnalyzeResults is defined in Coordinates component now/handled there or passed down? 
     // Checking previous code: Coordinates called sendVideoForAnalysis directly. 
@@ -78,15 +75,14 @@ function HomeContent() {
             {/* Instructions Overlay */}
             {showInstructions && <Instructions onClose={() => setShowInstructions(false)} />}
 
-            {/* Global Loading Overlay if analyzing happening in Home (not currently used but kept for structure) */}
-            {isAnalyzing && <Loading />}
+
 
             {/* Coordinates Overlay */}
             {showCoordinates && (
                 <Coordinates
                     imageUrl={image}
                     videoFile={videoFile}
-                    onCoordinatesChange={handleCoordinatesChange}
+
                     onBack={handleBackToUpload}
                 />
             )}

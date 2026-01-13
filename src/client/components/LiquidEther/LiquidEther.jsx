@@ -88,7 +88,7 @@ export default function LiquidEther({
                 this.container = container;
                 this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
                 this.resize();
-                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
                 this.renderer.autoClear = false;
                 this.renderer.setClearColor(new THREE.Color(0x000000), 0);
                 this.renderer.setPixelRatio(this.pixelRatio);
@@ -996,6 +996,16 @@ export default function LiquidEther({
                     if (Common.renderer) {
                         const canvas = Common.renderer.domElement;
                         if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+
+                        // Dispose of FBOs and Textures to prevent memory leaks
+                        if (this.output && this.output.simulation) {
+                            const fbos = this.output.simulation.fbos;
+                            for (let key in fbos) {
+                                if (fbos[key]) fbos[key].dispose();
+                            }
+                        }
+                        if (paletteTex) paletteTex.dispose();
+
                         Common.renderer.dispose();
                     }
                 } catch (e) {
