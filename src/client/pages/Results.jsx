@@ -9,13 +9,24 @@ function Results() {
     const [showAngle, setShowAngle] = useState(true);
 
     useEffect(() => {
+        console.log("Results component mounted");
         const storedData = sessionStorage.getItem("analysisResults");
+        console.log("Raw stored data from sessionStorage:", storedData);
         if (storedData) {
-            setData(JSON.parse(storedData));
+            try {
+                const parsedData = JSON.parse(storedData);
+                console.log("Parsed data:", parsedData);
+                setData(parsedData);
+            } catch (err) {
+                console.error("Error parsing stored results:", err);
+            }
+        } else {
+            console.warn("No 'analysisResults' found in sessionStorage.");
         }
 
         // Load settings
         const storedShowAngle = localStorage.getItem('nbn_settings_showAngle');
+        console.log("Stored showAngle setting:", storedShowAngle);
         if (storedShowAngle !== null) {
             setShowAngle(JSON.parse(storedShowAngle));
         }

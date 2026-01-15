@@ -61,6 +61,24 @@
     margin-bottom: 40px;
 }
 
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* Force 2 columns on mobile */
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 20px 10px;
+        /* Compress padding */
+    }
+
+    .stat-card p {
+        font-size: 2.2rem;
+        /* Slightly smaller text */
+    }
+}
+
 .stat-card {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(10px);

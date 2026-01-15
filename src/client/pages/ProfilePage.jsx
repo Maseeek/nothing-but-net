@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { Line, Doughnut } from 'react-chartjs-2';
 import Navbar from '../components/Navbar.jsx';
 import Loading from '../components/Loading.jsx';
@@ -8,7 +8,7 @@ import { API_BASE_URL } from '../config.js';
 import './../css/ProfilePage.css';
 
 // Register Chart.js components we will use
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler);
 
 // --- ICONS (Placeholder SVGs) ---
 const UserCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Zm0-12a3,3,0,1,1-3,3A3,3,0,0,1,12,8Zm0,10a6,6,0,0,1-4.22-1.77,7.83,7.83,0,0,1,8.44,0A6,6,0,0,1,12,18Z" /></svg>;

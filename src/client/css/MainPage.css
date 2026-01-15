@@ -29,17 +29,13 @@
     position: relative;
     z-index: 2;
     font-size: 10vh;
-    /* Responsive font size */
     font-weight: 700;
-    /* Bold */
     margin: 0;
-    /* Remove default browser margins */
 
-    /* The Text Gradient Magic */
+    /* PC Default: Image Gradient */
     color: transparent;
     background-image: url("../assets/gradient.jpg");
     color: var(--text-primary);
-    /* verify path */
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -48,7 +44,6 @@
     /* Glow & Brightness */
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
     filter: brightness(200%);
-    /* Reduced brightness for performance */
     background-size: 100% auto;
     background-position: center;
 
@@ -58,37 +53,49 @@
 
 .welcome-message:hover {
     filter: brightness(180%);
-    /* Dim slightly on hover */
 }
 
 .welcome-info {
     position: relative;
     z-index: 2;
     font-size: 1.2rem;
-    /* Slightly larger for tagline */
     margin-top: 10px;
+
+    /* PC Default: Image Gradient */
     background-image: url("../assets/gradient.jpg");
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: brightness(250%);
-    /* Makes the dark gradient pop */
     background-size: 100% auto;
-    /* bold */
     font-weight: 1000;
     background-position: center;
 
-    /* font-family: var(--text-primary); */
-    /* Same font as title */
-    font-weight: 1000;
-    /* Bold */
     color: #ff4800;
     filter: brightness(180%);
-    /* Reduced brightness for performance */
-    /* Vibrant Orange */
-
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     letter-spacing: 0.05em;
+}
+
+/* Retain Keyframes for Mobile Use */
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
 }
 
 /* Glass Container for Main Content */
@@ -350,12 +357,80 @@
 @media (max-width: 768px) {
     .main-page {
         width: 95%;
-        padding: 25px;
+        padding: 25px 20px;
+        /* Reduced vertical and side padding */
+    }
+
+    .welcome-message {
+        font-size: 8vh;
+        /* Slightly smaller on mobile */
+
+        /* Mobile Override: CSS Gradient */
+        background-image: none;
+        background: linear-gradient(135deg, #ff4800 0%, #d64b17 25%, #ffffff 50%, #d64b17 75%, #ff4800 100%);
+        background-size: 300% 300%;
+        animation: gradientFlow 8s ease infinite;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: none;
+        /* Remove filter for clean vector look on mobile */
+    }
+
+    .welcome-info {
+        /* Mobile Override: CSS Gradient */
+        background-image: none;
+        background: linear-gradient(135deg, #ffaa80 0%, #ffffff 50%, #ffaa80 100%);
+        background-size: 200% auto;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: none;
+        animation: shine 6s linear infinite;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+
+    .upload-section {
+        flex-direction: column;
+        /* Stack explicitly */
+        gap: 15px;
     }
 
     .video-upload-zone {
+        min-height: 160px;
+        /* Adjust height */
+        padding: 30px 15px;
+    }
 
-        min-height: 150px;
+    .upload-title {
+        font-size: 1.1rem;
+    }
+
+    .upload-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+    }
+
+    .upload-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Adjust instructions button position for mobile */
+    .instructions-btn {
+        top: 10px;
+        right: 10px;
+        padding: 6px;
+    }
+
+    .instructions-btn .icon {
+        width: 20px;
+        height: 20px;
     }
 }
 

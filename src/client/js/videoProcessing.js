@@ -45,10 +45,13 @@ export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) 
     formData.append("video", file);
     formData.append("hoopLeft", JSON.stringify([hoopLeft.x, hoopLeft.y]));
     formData.append("hoopRight", JSON.stringify([hoopRight.x, hoopRight.y]));
-    formData.append("showAngle", sessionStorage.getItem("showAngle") != "true");
-
     try {
         console.log("Hoop Left:", hoopLeft, "Hoop Right:", hoopRight);
+
+        // Match the key used in Settings and Results
+        const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
+        formData.append("showAngle", settingsShowAngle);
+
         const response = await fetch(`${ANALYSIS_API_URL}/upload-and-analyze`, {
             method: "POST",
             body: formData,
@@ -57,11 +60,13 @@ export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) 
         const data = await response.json();
 
         if (response.ok && data.success) {
-            console.log("Analysis completed successfully:", data.data);
-            sessionStorage.setItem("analysisResults", JSON.stringify(data.data));
+            console.log("Analysis raw response data:", data.data);
+            const analysisResults = data.data;
+            console.log("Saving to sessionStorage 'analysisResults':", analysisResults);
+            sessionStorage.setItem("analysisResults", JSON.stringify(analysisResults));
 
             // Send session data to the server
-            await sendSessionData(data.data);
+            await sendSessionData(analysisResults);
 
             navigate("/results"); // Navigate to Results.jsx page
         } else {

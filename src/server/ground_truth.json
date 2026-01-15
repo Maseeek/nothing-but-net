@@ -1,0 +1,12 @@
+{
+    "example_video.mp4": {
+        "makes": 2,
+        "misses": 3,
+        "total_shots": 5
+    },
+    "another_video.mov": {
+        "makes": 5,
+        "misses": 0,
+        "total_shots": 5
+    }
+}

@@ -87,6 +87,7 @@
     width: 100%;
     /* Flex constraint */
     max-height: 50vh;
+    box-sizing: border-box;
 }
 
 .image-wrapper:hover {
@@ -104,6 +105,7 @@
     cursor: crosshair;
     display: block;
     transition: border-color 0.3s ease;
+    box-sizing: border-box;
 }
 
 .selectable-image:hover {

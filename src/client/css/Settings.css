@@ -99,8 +99,12 @@
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 28px;
+    width: 60px;
+    /* Increased wide */
+    height: 34px;
+    /* Increased height */
+    /* Add touch target padding invisibly */
+    margin: 5px 0;
 }
 
 .switch input {
@@ -124,8 +128,10 @@
 .slider:before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
+    height: 26px;
+    /* Larger knob */
+    width: 26px;
+    /* Larger knob */
     left: 4px;
     bottom: 4px;
     background-color: white;
@@ -142,7 +148,41 @@ input:focus+.slider {
 }
 
 input:checked+.slider:before {
-    transform: translateX(22px);
+    transform: translateX(26px);
+    /* 60px width - 26px knob - 8px total padding = 26px travel? 
+    Math: 
+    Width = 60
+    Padding L/R = 4
+    Knob = 26
+    Left Start = 4
+    Right End = 60 - 4 - 26 = 30
+    Travel = 30 - 4 = 26. Correct. */
+}
+
+/* Mobile Toggle Simplification */
+@media (max-width: 600px) {
+    .switch {
+        width: auto;
+        height: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .slider {
+        display: none;
+        /* Hide the custom slider */
+    }
+
+    .switch input {
+        opacity: 1;
+        /* Show the native checkbox */
+        width: 30px;
+        height: 30px;
+        position: relative;
+        cursor: pointer;
+        accent-color: var(--accent-color);
+        /* Use theme color */
+    }
 }
 
 /* Buttons */
