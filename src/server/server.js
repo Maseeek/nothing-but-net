@@ -138,7 +138,14 @@ app.post('/api/register',
             const token = crypto.randomBytes(32).toString('hex');
             user.verificationToken = token;
             user.verificationTokenExpires = Date.now() + 3600000;
-            await user.save(); // Now this save will be consistent with the check
+
+            try {
+                await user.save();
+                console.log('User saved to database');
+            } catch (dbErr) {
+                console.error('Database save error:', dbErr);
+                return res.status(500).json({ error: 'Database save failed', details: dbErr.message });
+            }
 
             const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
             const verificationLink = `${frontendUrl}/verify-email/${token}`;
@@ -167,13 +174,23 @@ app.post('/api/register',
         </div>
     `
             };
-            await transporter.sendMail(mailOptions);
+
+            try {
+                await transporter.sendMail(mailOptions);
+                console.log('Verification email sent');
+            } catch (emailErr) {
+                console.error('Email sending error:', emailErr);
+                // We still fail the request if email fails, because verification is required
+                // Optionally delete the user to allow retrying
+                await User.deleteOne({ _id: user._id });
+                return res.status(500).json({ error: 'Email sending failed', details: emailErr.message });
+            }
 
             res.status(201).json({ message: 'User registered successfully! Please check your email.' });
 
         } catch (err) {
             console.error('Registration error:', err);
-            res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: 'Server error', details: err.message });
         }
     }
 );
