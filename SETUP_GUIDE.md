@@ -14,7 +14,8 @@ The application still works with localhost by default. No configuration needed!
 
 ```bash
 npm install
-npm run dev
+# Run frontend, backend, and python server concurrently
+npm run dev-all
 ```
 
 The app will use these defaults:
@@ -80,7 +81,10 @@ heroku config:set MONGODB_URI=your-mongodb-connection-string
 
 ## Need Help?
 
-See `DEPLOYMENT.md` for detailed instructions and troubleshooting.
+## Need Help?
+
+- **Connection Refused in Production?** See `DEPLOYMENT_FIX.md` for the solution.
+- For other issues, see `DEPLOYMENT.md` for detailed instructions and troubleshooting.
 
 ## Files Modified
 

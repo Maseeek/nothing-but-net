@@ -46,6 +46,9 @@ async function login(username, password) {
         return data; // Optionally return data if needed by a caller that doesn't rely on the redirect.
 
     } catch (error) {
+        if (error.message === 'Failed to fetch') {
+            error.message = 'Connection failed. Is the backend server running?';
+        }
         console.error('Login error (from auth.js):', error.message);
         // Update non-React UI if element exists
         if (outcomeEl) {
@@ -102,6 +105,9 @@ async function register(username, email, password, confirmPassword) {
         return data; // Return success data
 
     } catch (err) {
+        if (err.message === 'Failed to fetch') {
+            err.message = 'Connection failed. Is the backend server running?';
+        }
         // For non-React UI:
         if (outcomeEl) {
             outcomeEl.textContent = err.message;
