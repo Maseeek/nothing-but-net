@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Added this import for the links to work
+import { Link, useNavigate } from 'react-router-dom'; // Added this import for the links to work
 import { login } from '../js/auth.js';
 import Navbar from '../components/Navbar.jsx';
 import './../css/Login.css';
@@ -25,6 +25,7 @@ const LoginPage = () => {
     });
     const [outcome, setOutcome] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -43,6 +44,10 @@ const LoginPage = () => {
         try {
             await login(username, password);
             setOutcome(<span style={{ color: 'green' }}>Login successful! Redirecting...</span>);
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 2000);
         } catch (err) {
             const errorMessage = err && err.message ? err.message : 'Login failed. Please check your credentials.';
             setOutcome(errorMessage);

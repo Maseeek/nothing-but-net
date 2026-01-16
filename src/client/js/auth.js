@@ -39,9 +39,7 @@ async function login(username, password) {
 
         // The redirect will still happen from here on success.
         // The LoginPage.jsx success message might flash briefly.
-        setTimeout(() => {
-            window.location.href = 'profile'; // Consider using React Router's navigate for SPA consistency if login is called from a component that has access to it.
-        }, 1000);
+        // Redirect is handled by the caller (LoginPage.jsx)
 
         return data; // Optionally return data if needed by a caller that doesn't rely on the redirect.
 
@@ -96,11 +94,7 @@ async function register(username, email, password, confirmPassword) {
             outcomeEl.style.color = 'green';
         }
 
-        setTimeout(() => {
-            // RegisterPage.jsx also does its own redirect to '/login'.
-            // Ensure consistency; using '/login' for React Router.
-            window.location.href = '/login';
-        }, 1500);
+        // Redirect is handled by the caller (RegisterPage.jsx)
 
         return data; // Return success data
 
