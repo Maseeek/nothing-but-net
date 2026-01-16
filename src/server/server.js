@@ -637,7 +637,8 @@ app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
-app.listen(PORT, () => {
+console.log(`Attempting to bind server to port ${PORT}...`);
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
 
