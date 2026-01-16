@@ -16,7 +16,20 @@ cv2.setUseOptimized(True)
 # PYTHON PROGRAM TO PROCESS VIDEO AND DETERMINE BASKETBALL OUTCOMES
 MAX_FRAMES = 5000
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# Configure CORS
+# Allow specific origins for production and development
+allowed_origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://nothingbutnet.online",
+    "https://www.nothingbutnet.online",
+    os.environ.get("FRONTEND_URL"),
+    os.environ.get("PRODUCTION_FRONTEND_URL")
+]
+# Filter out None values
+allowed_origins = [origin for origin in allowed_origins if origin]
+
+CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
 
 # Configure upload folder
 UPLOAD_FOLDER = 'uploads'
