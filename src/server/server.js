@@ -31,11 +31,11 @@ const stripe = new Stripe(STRIPE_SECRET_KEY);
 app.use(helmet());
 const allowedOrigins = [
     'http://localhost:3000',
-    'http://localhost:63342',
-    'http://localhost:63343',
     'http://localhost:5173',
+    'https://nothingbutnet.online',
+    'https://www.nothingbutnet.online',
     process.env.FRONTEND_URL,
-    process.env.PRODUCTION_FRONTEND_URL
+    process.env.PRODUCTION_FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
