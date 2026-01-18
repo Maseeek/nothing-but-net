@@ -97,7 +97,7 @@ function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
         <div className="coordinates-container">
             {isAnalyzing && <Loading />}
             {!isAnalyzing && (
-                <div className="coordinates-content">
+                <div className="coordinates-content glass">
                     <div className="progress-indicator">
                         {coordinates.length === 0 ? "Step 1 of 2" : coordinates.length === 1 ? "Step 2 of 2" : "Complete ✓"}
                     </div>

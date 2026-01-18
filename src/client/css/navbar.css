@@ -46,20 +46,24 @@
     font-weight: 700;
 }
 
-.nav-title:hover {
-    color: var(--accent-color);
-}
+@media (hover: hover) {
+    .nav-title:hover {
+        color: var(--accent-color);
+    }
 
-.nav-title:hover svg {
-    stroke: var(--accent-color);
+    .nav-title:hover svg {
+        stroke: var(--accent-color);
+    }
 }
 
 /* Home & Profile Buttons - Using Icon Button Style */
 /* Home & Profile Buttons - Minimalistic Modern Style */
+/* Home & Profile Buttons - Minimalistic Modern Style */
 .home-btn,
 .profile-btn {
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    /* Base glass tint */
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: #ffffff;
     cursor: pointer;
     font-size: 18px;
@@ -67,8 +71,8 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    /* Faster, more tactile transition */
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Fluid bounce */
     padding: 10px;
     border-radius: 12px;
     width: auto;
@@ -76,23 +80,71 @@
     position: relative;
     overflow: hidden;
     will-change: transform;
+
+    /* Volumetric Depth */
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Spotlight Effect */
+.home-btn::before,
+.profile-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.3), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+@media (hover: hover) {
+
+    .home-btn:hover,
+    .profile-btn:hover {
+        transform: translateY(-2px) scale(1.05);
+        background: rgba(255, 255, 255, 0.15);
+        /* Brighter glass on hover */
+        color: var(--accent-color);
+        border-color: rgba(255, 255, 255, 0.3);
+
+        /* Enhanced Volumetric Shadow on Hover */
+        box-shadow:
+            0 8px 15px rgba(214, 75, 23, 0.3),
+            /* Orange glow */
+            inset 0 1px 1px rgba(255, 255, 255, 0.5),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+
+        /* "Goo" effect removed to prevent icon blurring */
+        /* filter: url('#goo'); */
+    }
+
+    .home-btn:hover::before,
+    .profile-btn:hover::before {
+        opacity: 1;
+    }
 }
 
 .home-btn:active,
 .profile-btn:active {
-    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(1px) scale(0.95);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.home-btn:hover,
-.profile-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--accent-color);
-}
+@media (hover: hover) {
 
-.home-btn:hover svg,
-.profile-btn:hover svg {
-    stroke: var(--accent-color);
-    filter: drop-shadow(0 0 8px rgba(214, 75, 23, 0.8));
+    .home-btn:hover svg,
+    .profile-btn:hover svg {
+        stroke: var(--accent-color);
+        filter: drop-shadow(0 0 5px rgba(214, 75, 23, 0.8));
+    }
 }
 
 /* Auth Button (Login/Register) */
@@ -165,13 +217,15 @@
     border-bottom: none;
 }
 
-.dropdown-item:hover {
-    background-color: var(--dropdown-hover);
-    color: var(--accent-color);
-}
+@media (hover: hover) {
+    .dropdown-item:hover {
+        background-color: var(--dropdown-hover);
+        color: var(--accent-color);
+    }
 
-.dropdown-item:hover svg {
-    stroke: var(--accent-color);
+    .dropdown-item:hover svg {
+        stroke: var(--accent-color);
+    }
 }
 
 /* SVG icons */
@@ -183,21 +237,20 @@ a svg {
 
 #logo {
     transition: filter 0.3s ease, transform 0.3s ease;
+    height: 80px;
+    width: auto;
 }
 
-#logo:hover {
-    filter: drop-shadow(0 0 0.4em var(--accent-color));
-    transform: scale(1.05);
-}
+@media (hover: hover) {
+    #logo:hover {
+        filter: drop-shadow(0 0 0.4em var(--accent-color));
+        transform: scale(1.05);
+    }
 
-#nbntitle {
-    transition: color 0.3s ease, filter 0.3s ease;
-    margin: 0;
-}
-
-#nbntitle:hover {
-    filter: drop-shadow(0 0 0.4em var(--accent-color));
-    color: var(--accent-color);
+    #nbntitle:hover {
+        filter: drop-shadow(0 0 0.4em var(--accent-color));
+        color: var(--accent-color);
+    }
 }
 
 

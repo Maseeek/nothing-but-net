@@ -23,6 +23,7 @@ const ResetPasswordPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     // --- State for password visibility ---
     const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +37,7 @@ const ResetPasswordPage = () => {
         }
         setError('');
         setMessage('');
+        setIsLoading(true);
 
         try {
             const response = await fetch(`${API_BASE_URL}/api/reset-password/${token}`, {
@@ -51,6 +53,7 @@ const ResetPasswordPage = () => {
             setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
             setError(err.message);
+            setIsLoading(false);
         }
     };
 
@@ -96,7 +99,9 @@ const ResetPasswordPage = () => {
                                 {showConfirmPassword ? <EyeSlashIcon /> : <EyeIcon />}
                             </button>
                         </div>
-                        <button type="submit" className="submit-button">Reset Password</button>
+                        <button type="submit" className="submit-button" disabled={isLoading}>
+                            {isLoading ? <span className="loading-spinner"></span> : 'Reset Password'}
+                        </button>
                         {message && <p className="outcome" style={{ color: 'green' }}>{message}</p>}
                         {error && <p className="outcome">{error}</p>}
                     </form>

@@ -24,6 +24,7 @@ const LoginPage = () => {
         password: ''
     });
     const [outcome, setOutcome] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
@@ -41,6 +42,9 @@ const LoginPage = () => {
             return;
         }
 
+        setIsLoading(true);
+        setOutcome(''); // Clear previous outcome
+
         try {
             await login(username, password);
             setOutcome(<span style={{ color: 'green' }}>Login successful! Redirecting...</span>);
@@ -51,6 +55,7 @@ const LoginPage = () => {
         } catch (err) {
             const errorMessage = err && err.message ? err.message : 'Login failed. Please check your credentials.';
             setOutcome(errorMessage);
+            setIsLoading(false); // Only re-enable if login failed (keep loading on success until redirect)
         }
     };
 
@@ -96,7 +101,14 @@ const LoginPage = () => {
                             </button>
                         </div>
 
-                        <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>Log In</button>
+                        <button
+                            type="submit"
+                            className="btn-primary"
+                            style={{ width: '100%', marginTop: '10px' }}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? <span className="loading-spinner"></span> : 'Log In'}
+                        </button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>
                     <div className="form-footer">

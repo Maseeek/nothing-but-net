@@ -53,8 +53,10 @@
     transition: filter 0.3s ease-in-out;
 }
 
-.welcome-message:hover {
-    filter: brightness(180%);
+@media (hover: hover) {
+    .welcome-message:hover {
+        filter: brightness(180%);
+    }
 }
 
 .welcome-info {
@@ -160,7 +162,15 @@
     -webkit-backdrop-filter: blur(4px);
 }
 
-.video-upload-zone:hover,
+@media (hover: hover) {
+    .video-upload-zone:hover {
+        border-color: var(--accent-color);
+        background: rgba(214, 75, 23, 0.08);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+}
+
 .video-upload-zone.dragging {
     border-color: var(--accent-color);
     background: rgba(214, 75, 23, 0.08);
@@ -197,20 +207,15 @@
     transition: transform 0.3s ease;
 }
 
-.video-upload-zone:hover .upload-icon-wrapper {
-    transform: scale(1.1);
-    background: rgba(214, 75, 23, 0.2);
-}
+@media (hover: hover) {
+    .video-upload-zone:hover .upload-icon-wrapper {
+        transform: scale(1.1);
+        background: rgba(214, 75, 23, 0.2);
+    }
 
-.upload-icon {
-    width: 30px;
-    height: 30px;
-    stroke: #ffffff;
-    transition: stroke 0.3s ease;
-}
-
-.video-upload-zone:hover .upload-icon {
-    stroke: #ffffff;
+    .video-upload-zone:hover .upload-icon {
+        stroke: #ffffff;
+    }
 }
 
 .upload-title {
@@ -294,9 +299,11 @@
     box-shadow: none;
 }
 
-.reset-video-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(0);
+@media (hover: hover) {
+    .reset-video-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(0);
+    }
 }
 
 /* Instructions Button Styling updates */
@@ -312,10 +319,12 @@
     transition: all 0.3s ease;
 }
 
-.instructions-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
+@media (hover: hover) {
+    .instructions-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.1);
+    }
 }
 
 /* Adjust main page for the absolute button */
@@ -460,9 +469,11 @@
     border-radius: 8px;
 }
 
-.demo-link-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.05);
+@media (hover: hover) {
+    .demo-link-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+    }
 }
 
 .landing-content-wrapper {

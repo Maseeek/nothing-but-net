@@ -4,6 +4,8 @@ import Loading from '../components/Loading.jsx';
 import ProfileDetails from '../components/profile/ProfileDetails.jsx';
 import SecuritySettings from '../components/profile/SecuritySettings.jsx';
 import AnalysesHistory from '../components/profile/AnalysesHistory.jsx';
+import { ShimmerButton } from '../components/magicui/shimmer-button.jsx';
+import Pricing from '../components/Pricing.jsx';
 import { API_BASE_URL } from '../config.js';
 import './../css/ProfilePage.css';
 
@@ -102,29 +104,13 @@ const ProfilePage = () => {
                         </h2>
                         <p>{user.email}</p>
                         {!user.isPro && (
-                            <button className="upgrade-btn" onClick={async () => {
-                                try {
-                                    const token = localStorage.getItem('authToken');
-                                    const res = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${token}`
-                                        }
-                                    });
-                                    const data = await res.json();
-                                    if (data.url) {
-                                        window.location.href = data.url;
-                                    } else {
-                                        alert('Failed to start checkout');
-                                    }
-                                } catch (e) {
-                                    console.error(e);
-                                    alert('Error starting checkout');
-                                }
-                            }}>
-                                Upgrade to PRO
-                            </button>
+                            <div onClick={() => setActiveTab('pricing')}>
+                                <ShimmerButton className="shadow-2xl">
+                                    <span className="text-center text-sm leading-none font-medium tracking-tight whitespace-pre-wrap text-white lg:text-lg dark:from-white dark:to-slate-900/10">
+                                        View Upgrade Options
+                                    </span>
+                                </ShimmerButton>
+                            </div>
                         )}
                     </div>
                 </header>
@@ -139,6 +125,7 @@ const ProfilePage = () => {
                     {activeTab === 'details' && <ProfileDetails user={user} />}
                     {activeTab === 'security' && <SecuritySettings />}
                     {activeTab === 'analyses' && <AnalysesHistory />}
+                    {activeTab === 'pricing' && <Pricing />}
                 </main>
             </div>
         </div>

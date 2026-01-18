@@ -98,10 +98,14 @@ body {
     font-weight: 500;
 }
 
-.form-footer a:hover {
-    color: var(--accent-color-hover);
-    text-decoration: underline;
+@media (hover: hover) {
+    .form-footer a:hover {
+        color: var(--accent-color-hover);
+        text-decoration: underline;
+    }
 }
+
+/* Loading State styles moved to Form.css */
 
 @keyframes fadeIn {
     from {

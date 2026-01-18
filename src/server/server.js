@@ -19,6 +19,13 @@ import { requireAuthSession } from './middleware/auth.js';
 
 dotenv.config();
 
+// Debugging: Log loaded environment variables (masked)
+console.log("Server Startup: Checking Environment Variables...");
+console.log("PORT:", process.env.PORT || 3000);
+console.log("MONGODB_URI:", process.env.MONGODB_URI ? "Set" : "NOT SET");
+console.log("EMAIL_USER:", process.env.EMAIL_USER ? process.env.EMAIL_USER : "NOT SET");
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "******" : "NOT SET");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
@@ -27,7 +34,7 @@ const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/nbnc')
     .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+    .catch(err => console.log('MongoDB Connection Error:', err));
 
 // Middleware
 app.use(express.json());
@@ -50,23 +57,27 @@ const stripe = new Stripe(STRIPE_SECRET_KEY || 'sk_test_placeholder');
 
 
 app.post('/api/register', registerValidation, async (req, res) => {
+    console.log('[Register] Request received');
     try {
         const { username, email, password } = req.body;
         const lowerCaseEmail = email.toLowerCase();
         const lowerCaseUsername = username.toLowerCase();
 
+        console.log(`[Register] Checking existing user for: ${lowerCaseUsername}, ${lowerCaseEmail}`);
         // Check if a user with the same lowercase username or email already exists
         if (await User.findOne({ $or: [{ username: lowerCaseUsername }, { email: lowerCaseEmail }] })) {
+            console.log('[Register] User already exists');
             return res.status(400).json({ error: 'Username or email already exists' });
         }
+
+        console.log('[Register] Hashing password...');
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = new User({
             username: lowerCaseUsername, // Save as lowercase
             email: lowerCaseEmail,       // Save as lowercase
-            password: await bcrypt.hash(password, 10)
+            password: hashedPassword
         });
-
-        // ... (rest of the registration logic remains the same, stripping validation checks) ...
 
         // --- Email Verification Logic ---
         const token = crypto.randomBytes(32).toString('hex');
@@ -74,15 +85,20 @@ app.post('/api/register', registerValidation, async (req, res) => {
         user.verificationTokenExpires = Date.now() + 3600000;
 
         try {
+            console.log('[Register] Saving user to DB...');
             await user.save();
-            console.log('User saved to database');
+            console.log('[Register] User saved to database');
         } catch (dbErr) {
-            console.error('Database save error:', dbErr);
+            console.error('[Register] Database save error:', dbErr);
             return res.status(500).json({ error: 'Database save failed', details: dbErr.message });
         }
 
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
         const verificationLink = `${frontendUrl}/verify-email/${token}`;
+
+        console.log('[Register] Preparing email options...');
+        console.log(`[Register] From: ${process.env.EMAIL_USER}, To: ${user.email}`);
+
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: user.email,
@@ -110,20 +126,33 @@ app.post('/api/register', registerValidation, async (req, res) => {
         };
 
         try {
+            console.log('[Register] Sending email...');
+            // Check if transporter is defined
+            if (!transporter) {
+                throw new Error("Nodemailer transporter is not defined!");
+            }
             await transporter.sendMail(mailOptions);
-            console.log('Verification email sent');
+            console.log('[Register] Verification email sent');
         } catch (emailErr) {
-            console.error('Email sending error:', emailErr);
+            console.error('[Register] Email sending error:', emailErr);
             // We still fail the request if email fails, because verification is required
             // Optionally delete the user to allow retrying
             await User.deleteOne({ _id: user._id });
-            next(emailErr);
+            console.log('[Register] User deleted due to email failure');
+
+            // THROW the error so it goes to the outer catch block or handle it here?
+            // The original code passed it to 'next(emailErr)' which is undefined here as 'next' argument is missing in the route signature! wait.
+            // The route signature is `(req, res)`. 'next' is NOT defined.
+            // calling `next(emailErr)` would CRASH the server with ReferenceError: next is not defined.
+            // THIS IS LIKELY THE BUG!
+
+            return res.status(500).json({ error: 'Email sending failed', details: emailErr.message });
         }
 
         res.status(201).json({ message: 'User registered successfully! Please check your email.' });
 
     } catch (err) {
-        console.error('Registration error:', err);
+        console.error('[Register] CRITICAL Registration error:', err);
         res.status(500).json({ error: 'Server error', details: err.message });
     }
 });

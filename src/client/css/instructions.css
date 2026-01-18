@@ -22,19 +22,7 @@
 
 /* Modal Content (Glassmorphism) */
 .popup-content {
-    /* Liquid Glass Aesthetic - Enhanced */
-    background: rgba(30, 30, 45, 0.4);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-
-    /* Shine Effects */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.6),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    /* Liquid Glass Aesthetic - Handled by global .glass class */
 
     color: var(--text-primary);
     padding: 50px;

@@ -1,7 +1,8 @@
-import { StrictMode, Suspense, lazy } from 'react';
+import { StrictMode, Suspense, lazy, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import './index.css';
 import './css/index.css';
 import './css/Form.css';
 // Lazy load pages for better performance
@@ -36,9 +37,33 @@ import LiquidEther from './components/LiquidEther/LiquidEther.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            document.documentElement.style.setProperty('--mouse-x', `${x}px`);
+            document.documentElement.style.setProperty('--mouse-y', `${y}px`);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
     return (
         <BrowserRouter>
             <Analytics />
+            {/* Global SVG Filters for Liquid/Gooey Effects */}
+            {/* Global SVG Filters for Liquid/Gooey Effects */}
+            <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}>
+                <defs>
+                    <filter id="goo">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+                    </filter>
+                </defs>
+            </svg>
+
             <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2 }}>
                 <LiquidEther
                     mouseForce={20}

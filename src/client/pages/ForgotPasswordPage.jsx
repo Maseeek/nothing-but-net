@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
 import './../css/Login.css'; // You can reuse the login page styles
@@ -6,10 +6,26 @@ import './../css/Login.css'; // You can reuse the login page styles
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [cooldown, setCooldown] = useState(0);
+
+    useEffect(() => {
+        let timer;
+        if (cooldown > 0) {
+            timer = setInterval(() => {
+                setCooldown((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [cooldown]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (cooldown > 0) return;
+
+        setIsLoading(true);
         setMessage('');
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/forgot-password`, {
                 method: 'POST',
@@ -17,9 +33,17 @@ const ForgotPasswordPage = () => {
                 body: JSON.stringify({ email })
             });
             const data = await response.json();
-            setMessage(data.message); // Show the success/info message from the server
+
+            if (response.ok) {
+                setMessage(data.message);
+                setCooldown(60); // Start 60s cooldown
+            } else {
+                setMessage(data.message || 'An error occurred.');
+            }
         } catch (error) {
             setMessage('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -36,7 +60,14 @@ const ForgotPasswordPage = () => {
                         <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " />
                         <label htmlFor="email">Email Address</label>
                     </div>
-                    <button type="submit" className="submit-button">Send Reset Link</button>
+                    <button
+                        type="submit"
+                        className="submit-button"
+                        disabled={isLoading || cooldown > 0}
+                        style={{ width: '100%', marginTop: '10px' }} // Inline style for consistency if needed, or rely on CSS
+                    >
+                        {isLoading ? <span className="loading-spinner"></span> : cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
+                    </button>
                     {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}
                 </form>
             </div>

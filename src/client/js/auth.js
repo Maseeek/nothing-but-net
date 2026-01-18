@@ -109,6 +109,10 @@ async function register(username, email, password, confirmPassword) {
         }
         console.error('Registration error (in auth.js):', err.message);
         // *** IMPORTANT: Re-throw the error ***
+        // Log generic error details for better debugging
+        if (err.message) {
+            console.error('Detailed error:', err);
+        }
         throw err;
     }
 }
