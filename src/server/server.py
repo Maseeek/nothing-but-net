@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 import os
 import cv2
 import numpy as np
@@ -7,26 +7,20 @@ import json
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-import datetime
-
-# RUNNING ON PORT 5000
-
-cv2.setUseOptimized(True)
-
 # PYTHON PROGRAM TO PROCESS VIDEO AND DETERMINE BASKETBALL OUTCOMES
 MAX_FRAMES = 5000
 app = Flask(__name__)
+
 # Configure CORS
-# Allow specific origins for production and development
 allowed_origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:3000",
     "https://nothingbutnet.online",
     "https://www.nothingbutnet.online",
     os.environ.get("FRONTEND_URL"),
     os.environ.get("PRODUCTION_FRONTEND_URL")
 ]
-# Filter out None values
 allowed_origins = [origin for origin in allowed_origins if origin]
 
 CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
@@ -37,44 +31,228 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# MongoDB connection removed (handled by Node.js server)
+# Constants
+PUMPKIN = (33, 121, 250)
+CELADON = (187, 229, 169)
+VANILLA = (177, 246, 252)
+FELDGRAU = (59, 75, 63)
+GREEN = (63, 99, 68)
 
+dist = lambda x1, y1, x2, y2: (float(x1)-float(x2))**2 + (float(y1)-float(y2))**2
 
-dist = lambda x1, y1, x2, y2: (x1-x2)**2 + (y1-y2)**2
+class BasketballTracker:
+    def __init__(self, hoop_left, hoop_right):
+        self.hoop_left = hoop_left
+        self.hoop_right = hoop_right
+        
+        # Calculate hoop metrics
+        hoop_dist = math.sqrt(dist(hoop_left[0], hoop_left[1], hoop_right[0], hoop_right[1]))
+        self.ball_radius_est = 0.264 * hoop_dist
+        self.hoop_max_height = min(hoop_left[1], hoop_right[1])
+        self.hoop_min_height = max(hoop_left[1], hoop_right[1])
+        
+        # Detection parameters
+        constant = 1.2
+        self.min_radius = int(self.ball_radius_est / constant)
+        self.max_radius = int(self.ball_radius_est * constant)
+        
+        # State variables
+        self.shots = [] # 1 for make, 0 for miss
+        self.shot_angles = []
+        self.pos_list_x = []
+        self.pos_list_y = []
+        self.fga = 0
+        self.fgm = 0
+        self.cooldown = 0
+        self.prev_circle = None
+        self.center = None
+        self.shot_in_progress = False
+        self.radius = 0
 
-def findBall(frame, prevCircle, radius):
-    CONSTANT = 1.2
-    minRadius = int(radius / CONSTANT)
-    maxRadius = int(radius * CONSTANT)
-    chosen = None
-    grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blurredFrame = cv2.GaussianBlur(grayFrame, (17, 17), 0)
-    circles = cv2.HoughCircles(blurredFrame, cv2.HOUGH_GRADIENT, 1.2, 100,
-                              param1=100, param2=30, minRadius=minRadius, maxRadius=maxRadius)
-    if circles is not None:
-        circles = np.uint16(np.around(circles))
+    def find_ball(self, frame):
+        """Locates the ball in the current frame using HoughCircles with ROI optimization."""
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        chosen = None
+        
+        # 1. Try ROI search if we have a previous position
+        if self.prev_circle is not None:
+            prev_x, prev_y, _ = self.prev_circle
+            margin = int(self.max_radius * 5)
+            h, w = gray_frame.shape
+            
+            x1 = max(0, int(prev_x - margin))
+            y1 = max(0, int(prev_y - margin))
+            x2 = min(w, int(prev_x + margin))
+            y2 = min(h, int(prev_y + margin))
+            
+            if x2 > x1 and y2 > y1:
+                roi = gray_frame[y1:y2, x1:x2]
+                blurred_roi = cv2.GaussianBlur(roi, (17, 17), 0)
+                
+                circles = cv2.HoughCircles(
+                    blurred_roi, cv2.HOUGH_GRADIENT, 1.2, 100,
+                    param1=100, param2=30, 
+                    minRadius=self.min_radius, maxRadius=self.max_radius
+                )
+                
+                if circles is not None:
+                    circles = np.uint16(np.around(circles))
+                    best_dist = float('inf')
+                    
+                    for i in circles[0, :]:
+                        gx = int(i[0] + x1)
+                        gy = int(i[1] + y1)
+                        gr = i[2]
+                        
+                        curr_dist = dist(gx, gy, prev_x, prev_y)
+                        if curr_dist < best_dist:
+                            best_dist = curr_dist
+                            chosen = np.array([gx, gy, gr])
 
-        for i in circles[0, :]:
-            if chosen is None: chosen = i
-            if prevCircle is not None:
-                if(dist(chosen[0], chosen[1], prevCircle[0], prevCircle[1]) <= dist(i[0], i[1], prevCircle[0], prevCircle[1])):
-                    chosen = i
-    return chosen
+        # 2. Fallback to Full Frame Search
+        if chosen is None:
+            blurred_frame = cv2.GaussianBlur(gray_frame, (17, 17), 0)
+            circles = cv2.HoughCircles(
+                blurred_frame, cv2.HOUGH_GRADIENT, 1.2, 100,
+                param1=100, param2=30, 
+                minRadius=self.min_radius, maxRadius=self.max_radius
+            )
+            
+            if circles is not None:
+                circles = np.uint16(np.around(circles))
+                if self.prev_circle is not None:
+                    prev_x, prev_y, _ = self.prev_circle
+                    best_dist = float('inf')
+                    for i in circles[0, :]:
+                        curr_dist = dist(i[0], i[1], prev_x, prev_y)
+                        if curr_dist <= best_dist:
+                            best_dist = curr_dist
+                            chosen = i
+                else:
+                    chosen = circles[0, 0]
 
-def calculateAngle(positionListX, positionListY):
-    try:
-        delta_x = positionListX[2] - positionListX[0]
-        delta_y = positionListY[2] - positionListY[0]
-        angle_radians = math.atan2(delta_y, delta_x)
-        angle_degrees = -math.degrees(angle_radians)
-        if angle_degrees > 90 and angle_degrees < 180:
-            angle_degrees = 180 - angle_degrees
-        if(angle_degrees > 0 and angle_degrees < 90):
-            return angle_degrees
-        else:
+        return chosen
+
+    def process_frame(self, frame, debug=False):
+        basketball = self.find_ball(frame)
+        
+        # 1. Detection & Filtering
+        if basketball is not None:
+            new_x, new_y = int(basketball[0]), int(basketball[1])
+            
+            # Physic check: If the ball teleported > 300px, it's likely a false positive
+            if self.center is not None:
+                if dist(new_x, new_y, self.center[0], self.center[1]) > 300**2:
+                     basketball = None 
+
+        if basketball is not None:
+            self.prev_circle = (int(basketball[0]), int(basketball[1]), int(basketball[2]))
+            self.center = (self.prev_circle[0], self.prev_circle[1])
+            self.radius = self.prev_circle[2]
+            
+            if debug:
+                self.show_frame_with_ball_circled(frame, basketball)
+        
+        if debug:
+            self.draw_hoop(frame)
+
+        # 2. Shot Logic
+        if self.center is not None and self.cooldown == 0:
+            if self.center[1] <= (self.hoop_min_height + self.radius * 5):
+                if not self.pos_list_x or (self.center[0] != self.pos_list_x[-1]):
+                    self.pos_list_x.append(self.center[0])
+                    self.pos_list_y.append(self.center[1])
+                
+                if self.center[1] < self.hoop_min_height:
+                     self.shot_in_progress = True
+                
+                if debug:
+                    if self.shot_in_progress:
+                        cv2.putText(frame, "Shot in Progress", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, VANILLA, 2, cv2.LINE_AA)
+                    if len(self.pos_list_x) > 1:
+                        angle = self.calculate_angle()
+                        cv2.putText(frame, f"Release Angle: {angle:.2f}", (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, VANILLA, 2, cv2.LINE_AA)
+
+        # 3. Shot Outcome Logic
+        if len(self.pos_list_x) > 3:
+            if self.pos_list_y[-1] > self.hoop_min_height and self.shot_in_progress:
+                avg_x = (self.pos_list_x[-1] + self.pos_list_x[-2]) / 2
+                
+                if self.hoop_left[0] < avg_x < self.hoop_right[0]:
+                    self.shots.append(1)
+                    self.fgm += 1
+                else:
+                    self.shots.append(0)
+                self.fga += 1
+
+                self.shot_angles.append(self.calculate_angle())
+                self.pos_list_x.clear()
+                self.pos_list_y.clear()
+                self.shot_in_progress = False
+                self.cooldown = 30 
+            elif debug:
+                self.trace_predicted_path(frame)
+
+        if self.cooldown > 0:
+            self.cooldown -= 1
+            
+        return {
+            "fgm": self.fgm,
+            "fga": self.fga,
+            "fg_percent": (100 * self.fgm / self.fga) if self.fga > 0 else 0.0,
+            "frame": frame
+        }
+
+    def calculate_angle(self):
+        if len(self.pos_list_x) < 3: return 0
+        try:
+            delta_x = self.pos_list_x[2] - self.pos_list_x[0]
+            delta_y = self.pos_list_y[2] - self.pos_list_y[0]
+            angle_radians = math.atan2(delta_y, delta_x)
+            angle_degrees = -math.degrees(angle_radians)
+            
+            if 90 < angle_degrees < 180:
+                angle_degrees = 180 - angle_degrees
+            
+            if 0 < angle_degrees < 90:
+                return angle_degrees
             return 0
-    except:
-        return 0
+        except:
+            return 0
+
+    def draw_hoop(self, frame):
+        cv2.circle(frame, self.hoop_left, 10, GREEN, cv2.FILLED)
+        cv2.circle(frame, self.hoop_right, 10, GREEN, cv2.FILLED)
+        cv2.line(frame, self.hoop_left, self.hoop_right, GREEN, 2)
+
+    def show_frame_with_ball_circled(self, frame, ball):
+        if ball is not None:
+            x, y, r = int(ball[0]), int(ball[1]), int(ball[2])
+            cv2.circle(frame, (x, y), r, PUMPKIN, 2)
+            cv2.putText(frame, f"radius {r}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, PUMPKIN, 2, cv2.LINE_AA)
+
+    def trace_predicted_path(self, frame):
+        if len(self.pos_list_x) < 3: return
+        try:
+            A, B, C = np.polyfit(self.pos_list_x, self.pos_list_y, 2)
+            width_of_frame = frame.shape[1]
+            x_list = range(0, width_of_frame, 10) 
+            pts = []
+            for px, py in zip(self.pos_list_x, self.pos_list_y):
+                cv2.circle(frame, (px, py), 10, PUMPKIN, cv2.FILLED)
+                pts.append((px, py))
+            if len(pts) > 1:
+                cv2.polylines(frame, [np.array(pts)], False, PUMPKIN, 5)
+
+            pred_pts = []
+            for x in x_list:
+                y = int(A * x ** 2 + B * x + C)
+                if 0 <= y < frame.shape[0]:
+                    pred_pts.append((x, y))
+            if len(pred_pts) > 1:
+                 cv2.polylines(frame, [np.array(pred_pts)], False, FELDGRAU, 2)
+        except:
+            pass
 
 def getLongestStreak(array):
     longestStreak = 0
@@ -93,14 +271,17 @@ def calculateAverageAngle(shotAngles, shots):
     shotsMissedAngle = []
 
     for i in range(len(shots)):
-        if (shotAngles[i] != 0):
+        if shotAngles[i] != 0:
             if not abs(sum(shotAngles) / len(shotAngles) - shotAngles[i]) > 2 * sum(shotAngles) / len(shotAngles):
                 if shots[i] == 1:
                     shotsMadeAngle.append(shotAngles[i])
                 else:
                     shotsMissedAngle.append(shotAngles[i])
     try:
-        averageAngle = (sum(shotsMadeAngle) + sum(shotsMissedAngle)) / (len(shotsMissedAngle) + len(shotsMadeAngle))
+        if not shotsMadeAngle and not shotsMissedAngle:
+            return 0, 0, 0
+        total_angles = shotsMadeAngle + shotsMissedAngle
+        averageAngle = sum(total_angles) / len(total_angles) if total_angles else 0
         averageMakeAngle = sum(shotsMadeAngle) / len(shotsMadeAngle) if len(shotsMadeAngle) > 0 else 0
         averageMissAngle = sum(shotsMissedAngle) / len(shotsMissedAngle) if len(shotsMissedAngle) > 0 else 0
         return averageAngle, averageMakeAngle, averageMissAngle
@@ -108,70 +289,22 @@ def calculateAverageAngle(shotAngles, shots):
         return 0, 0, 0
 
 def analyze_video(videoPath, hoopLeft, hoopRight, max_frames, accuracy=0.15):
-    shots = []
-    shotAngles = []
-    posListX = []
-    posListY = []
+    tracker = BasketballTracker(hoopLeft, hoopRight)
     cap = cv2.VideoCapture(videoPath)
-
-    ballRadius = 0.264 * math.sqrt(dist(hoopLeft[0], hoopLeft[1], hoopRight[0], hoopRight[1]))
-    hoopMinHeight = max(hoopLeft[1], hoopRight[1])
-    fga = 0
-    fgm = 0
-    cooldown = 0
-    prevCircle = None
-    center = None
-    shotInProgress = False
-
     frame_count = 0
 
     while cap.isOpened() and frame_count < max_frames:
         ret, frame = cap.read()
         if not ret:
             break
-
         frame_count += 1
-        if frame_count % int(1/accuracy) != 0:  # Skip every other frame
+        if frame_count % int(1/accuracy) != 0: 
             continue
-
-        basketball = findBall(frame, prevCircle, ballRadius)
-
-        if basketball is not None:
-            prevCircle = (basketball[0], basketball[1], basketball[2])
-            center = (int(basketball[0]), int(basketball[1]))
-            radius = basketball[2]
-
-        if center is not None:
-            if center[1] <= (hoopMinHeight + radius * 5) and cooldown == 0:
-                posListX.append(center[0])
-                posListY.append(center[1])
-                if center[1] < hoopMinHeight:
-                    shotInProgress = True
-                    if len(posListX) > 1 and len(posListY) > 1:
-                        angle = calculateAngle(posListX, posListY)
-
-        if len(posListX) > 3:
-            if posListY[-1] > hoopMinHeight and shotInProgress:
-                averageXOfLast2 = (posListX[-1] + posListX[-2]) / 2
-                if hoopLeft[0] < averageXOfLast2 < hoopRight[0]:
-                    shots.append(1)
-                    fgm += 1
-                else:
-                    shots.append(0)
-                fga += 1
-
-                shotAngles.append(calculateAngle(posListX, posListY))
-                posListX.clear()
-                posListY.clear()
-
-                shotInProgress = False
-                cooldown = 30
-
-        if cooldown > 0:
-            cooldown -= 1
-
+        tracker.process_frame(frame, debug=False)
     cap.release()
 
+    shots = tracker.shots
+    shotAngles = tracker.shot_angles
     makes = shots.count(1) if shots else 0
     misses = shots.count(0) if shots else 0
     fg_percentage = 100 * makes / len(shots) if shots else 0
@@ -190,7 +323,6 @@ def analyze_video(videoPath, hoopLeft, hoopRight, max_frames, accuracy=0.15):
         "shot_angles": shotAngles,
         "shots_results": shots
     }
-
     return result
 
 @app.route('/upload-and-analyze', methods=['POST'])
@@ -199,33 +331,33 @@ def upload_and_analyze():
         return jsonify({'success': False, 'error': 'No video file provided'}), 400
 
     video_file = request.files['video']
-
     if video_file.filename == '':
         return jsonify({'success': False, 'error': 'Empty filename'}), 400
 
-    # Get hoop coordinates from request
     try:
-        hoopLeft = json.loads(request.form.get('hoopLeft', '[0, 0]'))
-        hoopRight = json.loads(request.form.get('hoopRight', '[100, 0]'))
-    except:
+        hoopLeftRaw = request.form.get('hoopLeft', '[0, 0]')
+        hoopRightRaw = request.form.get('hoopRight', '[100, 0]')
+        hoopLeft = json.loads(hoopLeftRaw)
+        hoopRight = json.loads(hoopRightRaw)
+        
+        if isinstance(hoopLeft, dict):
+            hoopLeft = [hoopLeft.get('x', hoopLeft.get('0', 0)), hoopLeft.get('y', hoopLeft.get('1', 0))]
+        if isinstance(hoopRight, dict):
+            hoopRight = [hoopRight.get('x', hoopRight.get('0', 100)), hoopRight.get('y', hoopRight.get('1', 0))]
+    except Exception as e:
         return jsonify({'success': False, 'error': 'Invalid hoop coordinates'}), 400
 
-    # Get showAngle status from request
     show_angle = request.form.get('showAngle', 'false').lower() == 'true'
     accuracy = 0.5 if show_angle else 0.15
 
-    # Save the video file
     filename = secure_filename(video_file.filename)
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     video_file.save(filepath)
 
     try:
-        # Run the analysis
         result = analyze_video(filepath, hoopLeft, hoopRight, MAX_FRAMES, accuracy)
-
-        # Clean up the file (optional)
-        # os.remove(filepath)
-
+        if os.path.exists(filepath):
+             os.remove(filepath)
         return jsonify({
             'success': True,
             'data': result
@@ -236,6 +368,9 @@ def upload_and_analyze():
             'error': str(e)
         }), 500
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "ok"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

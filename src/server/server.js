@@ -14,10 +14,40 @@ import {
     emailValidation
 } from './middleware/validation.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { requireAuthSession } from './middleware/auth.js';
 
-// ... imports ...
 
-// ... app setup ...
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/nbnc')
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+app.use(helmet());
+app.use(compression());
+
+// Models
+import User from './models/User.js';
+import Session from './models/Session.js';
+import Analysis from './models/Analysis.js';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import Stripe from 'stripe';
+const stripe = new Stripe(STRIPE_SECRET_KEY || 'sk_test_placeholder');
+
 
 app.post('/api/register', registerValidation, async (req, res) => {
     try {
@@ -543,7 +573,7 @@ app.use(errorHandler);
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/index.html'));
+    res.sendFile(path.join(__dirname, '../../index.html'));
 });
 
 console.log(`Attempting to bind server to port ${PORT}...`);
