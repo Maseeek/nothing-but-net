@@ -24,16 +24,9 @@ function SettingsPage() {
     return (
         <div className="settings-page">
             <Navbar />
-            <div className="settings-container glass">
+            <div className="settings-container glass animate-fade-in">
                 <header className="settings-header">
-                    <div className="gradient-bar" style={{
-                        width: '60px',
-                        height: '6px',
-                        background: 'linear-gradient(145deg, var(--accent-color), #c14c1f)',
-                        borderRadius: '3px',
-                        margin: '0 auto 15px auto',
-                        boxShadow: '0 0 10px rgba(214, 75, 23, 0.5)'
-                    }}></div>
+                    <div className="gradient-bar-std"></div>
                     <h1>Settings</h1>
                     <p>Customize your Nothing But Net experience</p>
                 </header>
@@ -67,7 +60,7 @@ function SettingsPage() {
                             <h3>Clear History</h3>
                             <p>Remove locally stored analysis results from this session</p>
                         </div>
-                        <button className="danger-btn" onClick={handleClearHistory}>
+                        <button className="btn-primary btn-danger" onClick={handleClearHistory}>
                             Clear Data
                         </button>
                     </div>

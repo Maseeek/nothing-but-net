@@ -43,12 +43,14 @@ const VerifyEmailPage = () => {
     return (
         <>
             <Navbar />
-            <div style={{ textAlign: 'center', color: 'white', paddingTop: '150px' }}>
-                <h1>Email Verification</h1>
-                <p>{verificationStatus}</p>
-                <Link to="/profile" style={{ color: '#d64b17', marginTop: '20px', display: 'inline-block' }}>
-                    Go to Your Profile
-                </Link>
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '150px' }}>
+                <div className="glass" style={{ padding: '40px', maxWidth: '500px', width: '90%', textAlign: 'center', color: 'white' }}>
+                    <h1>Email Verification</h1>
+                    <p>{verificationStatus}</p>
+                    <Link to="/profile" style={{ color: '#d64b17', marginTop: '20px', display: 'inline-block', fontWeight: 'bold' }}>
+                        Go to Your Profile
+                    </Link>
+                </div>
             </div>
         </>
     );

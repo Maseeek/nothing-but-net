@@ -47,16 +47,9 @@ function Results() {
     return (
         <div className="results-page">
             <Navbar />
-            <div className="results-container glass">
+            <div className="results-container glass animate-fade-in">
                 <header className="results-header">
-                    <div className="gradient-bar" style={{
-                        width: '80px',
-                        height: '6px',
-                        background: 'linear-gradient(90deg, var(--accent-color), #c14c1f)',
-                        borderRadius: '3px',
-                        margin: '0 auto 20px auto',
-                        boxShadow: '0 0 15px rgba(214, 75, 23, 0.6)'
-                    }}></div>
+                    <div className="gradient-bar-std" style={{ width: '80px' }}></div>
                     <h1>Analysis Complete</h1>
                     <p>Here is the breakdown of your shooting session.</p>
                 </header>
@@ -66,8 +59,12 @@ function Results() {
                         <p>Loading results...</p>
                     ) : !data ? (
                         <div className="results-placeholder">
+                            <div className="placeholder-icon">📊</div>
                             <h2>No analysis data found.</h2>
                             <p>Please upload a video to see your results.</p>
+                            <Link to="/" className="btn-primary" style={{ marginTop: '20px' }}>
+                                Analyze Video
+                            </Link>
                         </div>
                     ) : (
                         <>
@@ -112,10 +109,10 @@ function Results() {
 
                             {/* --- Action Buttons --- */}
                             <div className="results-actions">
-                                <Link to="/" className="action-btn secondary">
+                                <Link to="/" className="btn-secondary">
                                     Analyze New Video
                                 </Link>
-                                <Link to="/profile" className="action-btn primary">
+                                <Link to="/profile" className="btn-primary">
                                     View Profile
                                 </Link>
                             </div>

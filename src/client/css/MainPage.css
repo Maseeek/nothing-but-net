@@ -4,13 +4,13 @@
     position: relative;
     width: 100%;
     min-height: 100vh;
-    padding: 80px 0;
+    padding: 130px 20px 130px 20px;
     box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     text-align: center;
 }
 
@@ -28,8 +28,10 @@
 .welcome-message {
     position: relative;
     z-index: 2;
-    font-size: 10vh;
-    font-weight: 700;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     margin: 0;
 
     /* PC Default: Image Gradient */
@@ -58,8 +60,10 @@
 .welcome-info {
     position: relative;
     z-index: 2;
-    font-size: 1.2rem;
-    margin-top: 10px;
+    font-size: 1.25rem;
+    margin-top: 16px;
+    font-weight: 500;
+    opacity: 0.9;
 
     /* PC Default: Image Gradient */
     background-image: url("../assets/gradient.jpg");
@@ -135,317 +139,338 @@
 }
 
 /* Video Upload Component Styles */
-.video-upload-zone {
-    flex-grow: 1;
-    border: 2px dashed rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 40px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-align: center;
+flex-grow: 1;
+border: 2px dashed rgba(255, 255, 255, 0.1);
+border-radius: 24px;
+padding: 60px 40px;
+background: rgba(255, 255, 255, 0.03);
+transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+cursor: pointer;
+position: relative;
+overflow: hidden;
+text-align: center;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 280px;
+
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
 }
 
 .video-upload-zone:hover,
 .video-upload-zone.dragging {
     border-color: var(--accent-color);
-    background: rgba(214, 75, 23, 0.05);
-    /* Very subtle tint */
-    box-shadow: 0 0 20px rgba(214, 75, 23, 0.1);
+    background: rgba(214, 75, 23, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
-.hidden-input {
-    display: none;
-}
+.video-upload-zone:active {
+    transform: translateY(-2px);
 
-.upload-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    /* Let clicks pass to container */
-}
-
-.upload-icon-wrapper {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    transition: transform 0.3s ease;
-}
-
-.video-upload-zone:hover .upload-icon-wrapper {
-    transform: scale(1.1);
-    background: rgba(214, 75, 23, 0.2);
-}
-
-.upload-icon {
-    width: 30px;
-    height: 30px;
-    stroke: #ffffff;
-    transition: stroke 0.3s ease;
-}
-
-.video-upload-zone:hover .upload-icon {
-    stroke: #ffffff;
-}
-
-.upload-title {
-    margin: 0 0 5px 0;
-    font-size: 1.2rem;
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-.upload-desc {
-    margin: 0 0 10px 0;
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-}
-
-.upload-formats {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 4px 8px;
-    border-radius: 4px;
-}
-
-.drag-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(214, 75, 23, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    animation: fadeIn 0.2s ease;
-}
-
-.drag-overlay p {
-    color: white;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-/* Selected Video Status */
-.video-selected-status {
-    width: 100%;
-    background: rgba(46, 204, 113, 0.1);
-    border: 1px solid rgba(46, 204, 113, 0.3);
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.status-indicator {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #2ecc71;
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
-}
-
-.video-selected-status span {
-    flex-grow: 1;
-    text-align: left;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.reset-video-btn {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: none;
-}
-
-.reset-video-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(0);
-}
-
-/* Instructions Button Styling updates */
-.instructions-btn {
-    position: absolute;
-    /* Floating positioned relative to main-page */
-    top: 20px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    padding: 8px;
-    color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.instructions-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-}
-
-/* Adjust main page for the absolute button */
-.main-page {
-    position: relative;
-}
-
-.instructions-btn .icon {
-    width: 24px;
-    height: 24px;
-    stroke: currentColor;
-}
-
-/* Coordinates & Analyze  */
-.coordinates-section,
-.analyze-button {
-    width: 100%;
-    margin-top: 20px;
-}
-
-.coordinates-section {
-    display: flex;
-    justify-content: center;
-}
-
-.analyze-button {
-    /* margin-top: 30px; */
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
+    .hidden-input {
+        display: none;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-.step-transition {
-    animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .main-page {
-        width: 95%;
-        padding: 25px 20px;
-        /* Reduced vertical and side padding */
-    }
-
-    .welcome-message {
-        font-size: 8vh;
-        /* Slightly smaller on mobile */
-
-        /* Mobile Override: CSS Gradient */
-        background-image: none;
-        background: linear-gradient(135deg, #ff4800 0%, #d64b17 25%, #ffffff 50%, #d64b17 75%, #ff4800 100%);
-        background-size: 300% 300%;
-        animation: gradientFlow 8s ease infinite;
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: none;
-        /* Remove filter for clean vector look on mobile */
-    }
-
-    .welcome-info {
-        /* Mobile Override: CSS Gradient */
-        background-image: none;
-        background: linear-gradient(135deg, #ffaa80 0%, #ffffff 50%, #ffaa80 100%);
-        background-size: 200% auto;
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: none;
-        animation: shine 6s linear infinite;
-    }
-
-    .section-title {
-        font-size: 1.3rem;
-        margin-bottom: 20px;
-    }
-
-    .upload-section {
+    .upload-content {
+        display: flex;
         flex-direction: column;
-        /* Stack explicitly */
-        gap: 15px;
-    }
-
-    .video-upload-zone {
-        min-height: 160px;
-        /* Adjust height */
-        padding: 30px 15px;
-    }
-
-    .upload-title {
-        font-size: 1.1rem;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        /* Let clicks pass to container */
     }
 
     .upload-icon-wrapper {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 10px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .video-upload-zone:hover .upload-icon-wrapper {
+        transform: scale(1.1);
+        background: rgba(214, 75, 23, 0.2);
     }
 
     .upload-icon {
-        width: 24px;
-        height: 24px;
+        width: 30px;
+        height: 30px;
+        stroke: #ffffff;
+        transition: stroke 0.3s ease;
     }
 
-    /* Adjust instructions button position for mobile */
+    .video-upload-zone:hover .upload-icon {
+        stroke: #ffffff;
+    }
+
+    .upload-title {
+        margin: 0 0 5px 0;
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .upload-desc {
+        margin: 0 0 10px 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .upload-formats {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .drag-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(30, 30, 47, 0.85);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .drag-overlay p {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    /* Selected Video Status */
+    .video-selected-status {
+        width: 100%;
+        background: rgba(46, 204, 113, 0.1);
+        border: 1px solid rgba(46, 204, 113, 0.3);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #2ecc71;
+        box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+    }
+
+    .video-selected-status span {
+        flex-grow: 1;
+        text-align: left;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .reset-video-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: none;
+    }
+
+    .reset-video-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(0);
+    }
+
+    /* Instructions Button Styling updates */
     .instructions-btn {
-        top: 10px;
-        right: 10px;
-        padding: 6px;
+        position: absolute;
+        /* Floating positioned relative to main-page */
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        padding: 8px;
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .instructions-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.1);
+    }
+
+    /* Adjust main page for the absolute button */
+    .main-page {
+        position: relative;
     }
 
     .instructions-btn .icon {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
+        stroke: currentColor;
     }
-}
 
-.demo-link-btn {
-    /* margin-top: 50px !important; */
-}
+    /* Coordinates & Analyze  */
+    .coordinates-section,
+    .analyze-button {
+        width: 100%;
+        margin-top: 20px;
+    }
 
-.landing-content-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    /* Removed padding-top for perfect centering in 100vh */
-}
+    .coordinates-section {
+        display: flex;
+        justify-content: center;
+    }
+
+    .analyze-button {
+        /* margin-top: 30px; */
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .step-transition {
+        animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-page {
+            width: 95%;
+            padding: 25px 20px;
+            /* Reduced vertical and side padding */
+        }
+
+        .welcome-message {
+            font-size: 8vh;
+            /* Slightly smaller on mobile */
+
+            /* Mobile Override: CSS Gradient */
+            background-image: none;
+            background: linear-gradient(135deg, #ff4800 0%, #d64b17 25%, #ffffff 50%, #d64b17 75%, #ff4800 100%);
+            background-size: 300% 300%;
+            animation: gradientFlow 8s ease infinite;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: none;
+            /* Remove filter for clean vector look on mobile */
+        }
+
+        .welcome-info {
+            /* Mobile Override: CSS Gradient */
+            background-image: none;
+            background: linear-gradient(135deg, #ffaa80 0%, #ffffff 50%, #ffaa80 100%);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: none;
+            animation: shine 6s linear infinite;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-section {
+            flex-direction: column;
+            /* Stack explicitly */
+            gap: 15px;
+        }
+
+        .video-upload-zone {
+            min-height: 160px;
+            /* Adjust height */
+            padding: 30px 15px;
+        }
+
+        .upload-title {
+            font-size: 1.1rem;
+        }
+
+        .upload-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .upload-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Adjust instructions button position for mobile */
+        .instructions-btn {
+            top: 10px;
+            right: 10px;
+            padding: 6px;
+        }
+
+        .instructions-btn .icon {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    .demo-link-btn {
+        margin-top: 24px !important;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        padding: 8px 16px;
+        border-radius: 8px;
+    }
+
+    .demo-link-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .landing-content-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        /* Removed padding-top for perfect centering in 100vh */
+    }

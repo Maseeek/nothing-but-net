@@ -1,19 +1,35 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import './css/index.css';
-import Home from './pages/Home.jsx';
-import Results from './pages/Results.jsx';
-import RegisterPage from './pages/RegisterPage.jsx';
-import LoginPage from './pages/Login.jsx';
+import './css/Form.css';
+// Lazy load pages for better performance
+const Home = lazy(() => import('./pages/Home.jsx'));
+const Results = lazy(() => import('./pages/Results.jsx'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage.jsx'));
+const LoginPage = lazy(() => import('./pages/Login.jsx'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
+const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage.jsx'));
+const VerificationSuccessPage = lazy(() => import('./pages/VerificationSuccessPage.jsx'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.jsx'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.jsx'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage.jsx'));
 
-import ProfilePage from './pages/ProfilePage.jsx';
-import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
-import VerificationSuccessPage from './pages/VerificationSuccessPage.jsx';
-import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
-import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
-import SettingsPage from './pages/SettingsPage.jsx';
+// Loading component
+const PageLoader = () => (
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        color: '#d64b17',
+        fontSize: '1.2rem',
+        fontWeight: 'bold'
+    }}>
+        Loading...
+    </div>
+);
 
 
 import LiquidEther from './components/LiquidEther/LiquidEther.jsx';
@@ -42,19 +58,21 @@ function Main() {
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', pointerEvents: 'none' }}></div>
             </div>
 
-            <Routes>
-                {/* All routes must be inside here */}
-                <Route path="/" element={<Home />} />
-                <Route path="/results" element={<Results />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
-                <Route path="/verification-success" element={<VerificationSuccessPage />} />
-                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-            </Routes>
+            <Suspense fallback={<PageLoader />}>
+                <Routes>
+                    {/* All routes must be inside here */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/results" element={<Results />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+                    <Route path="/verification-success" element={<VerificationSuccessPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                </Routes>
+            </Suspense>
         </BrowserRouter>
     );
 }

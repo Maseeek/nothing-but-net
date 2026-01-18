@@ -23,7 +23,8 @@ const userSchema = new mongoose.Schema({
     },
     verificationToken: {
         type: String,
-        default: null
+        default: null,
+        index: true
     },
     verificationTokenExpires: {
         type: Date,
@@ -31,7 +32,8 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordToken: {
         type: String,
-        default: null
+        default: null,
+        index: true
     },
     resetPasswordExpires: {
         type: Date,
@@ -43,7 +45,8 @@ const userSchema = new mongoose.Schema({
     },
     stripeCustomerId: {
         type: String,
-        default: null
+        default: null,
+        index: true
     }
 }, { timestamps: true });
 

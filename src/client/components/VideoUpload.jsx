@@ -116,15 +116,10 @@ const VideoUpload = ({ onVideoSelect }) => {
                 )}
             </div>
 
-            <button onClick={(e) => { e.stopPropagation(); loadDemoVideo(); }} className="demo-link-btn" style={{
-                marginTop: '15px',
-                background: 'none',
-                border: 'none',
-                color: '#ffffff',
-                textDecoration: 'underline',
-                cursor: 'pointer',
-                fontSize: '0.9rem'
-            }}>
+            <button
+                onClick={(e) => { e.stopPropagation(); loadDemoVideo(); }}
+                className="demo-link-btn"
+            >
                 Don't have a video? Try our demo.
             </button>
         </div>

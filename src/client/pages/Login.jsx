@@ -96,7 +96,7 @@ const LoginPage = () => {
                             </button>
                         </div>
 
-                        <button type="submit" className="submit-button">Log In</button>
+                        <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>Log In</button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>
                     <div className="form-footer">

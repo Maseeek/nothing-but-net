@@ -26,18 +26,18 @@ const ForgotPasswordPage = () => {
     return (
         <div className="login-page">
             <Navbar />
-            <div className="login-container">
+            <div className="login-container glass">
                 <header>
                     <h1>Forgot Password</h1>
                     <p>Enter your email address and we'll send you a link to reset your password.</p>
                 </header>
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="input-group">
-                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" "/>
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " />
                         <label htmlFor="email">Email Address</label>
                     </div>
                     <button type="submit" className="submit-button">Send Reset Link</button>
-                    {message && <p className="outcome" style={{color: 'white'}}>{message}</p>}
+                    {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}
                 </form>
             </div>
         </div>

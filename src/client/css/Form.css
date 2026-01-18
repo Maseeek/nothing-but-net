@@ -1,0 +1,157 @@
+/* Shared Form Styles (Inputs, Labels, Icons) */
+
+/* --- Input Group Styling --- */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-group.full-width {
+    width: 100%;
+}
+
+.input-group .input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    line-height: 0;
+    z-index: 1;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 16px 18px 16px 50px;
+    /* Space for icon */
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: var(--bg-input, rgba(255, 255, 255, 0.05));
+    /* Fallback */
+    color: var(--text-primary, #ffffff);
+    transition: all 0.3s ease;
+    line-height: 1.4;
+    box-sizing: border-box;
+    font-family: var(--font-body, sans-serif);
+}
+
+.input-group input::placeholder {
+    color: transparent;
+}
+
+.input-group label {
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888888;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    background-color: transparent;
+    padding: 0 4px;
+    white-space: nowrap;
+}
+
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
+    top: 0px;
+    transform: translateY(-50%) scale(0.85);
+    left: 42px;
+    color: var(--accent-color, #d64b17);
+    background-color: var(--bg-input, #1e1e2f);
+    /* Match input bg to hide line */
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.input-group input:focus {
+    border-color: var(--accent-color, #d64b17);
+    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
+    outline: none;
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888888;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 2;
+}
+
+.password-toggle:hover svg {
+    color: var(--accent-color, #d64b17);
+}
+
+/* Primary Button Style (Shared) */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-heading, sans-serif);
+    color: white;
+    background: linear-gradient(145deg, var(--accent-color, #d64b17), #c14c1f);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #e66025, #a03d17);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(214, 75, 23, 0.4);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-heading, sans-serif);
+    color: var(--text-primary, #ffffff);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    /* For links */
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger {
+    background: rgba(185, 28, 28, 0.8) !important;
+    border: 1px solid #b91c1c;
+}
+
+.btn-danger:hover {
+    background: #b91c1c !important;
+    box-shadow: 0 4px 15px rgba(185, 28, 28, 0.3);
+}

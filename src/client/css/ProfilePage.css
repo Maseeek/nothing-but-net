@@ -131,167 +131,7 @@
     color: var(--text-primary);
 }
 
-/* OLD Input Fields - Kept for compatibility but superseded by input-group below */
-.profile-input {
-    width: 100%;
-    padding: 12px 16px;
-    font-size: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background-color: var(--bg-input);
-    color: var(--text-primary);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.profile-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
-    outline: none;
-}
-
-/* --- Input Group Styling (From Login.css) --- */
-.input-group {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    /* Ensure it takes full width of grid cell */
-}
-
-.input-group.full-width {
-    width: 100%;
-}
-
-.input-group .input-icon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-    pointer-events: none;
-    line-height: 0;
-    z-index: 1;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 16px 18px 16px 50px;
-    /* Space for icon */
-    font-size: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    background-color: var(--bg-input);
-    color: var(--text-primary);
-    transition: all 0.3s ease;
-    line-height: 1.4;
-    box-sizing: border-box;
-    font-family: var(--font-body);
-}
-
-.input-group input::placeholder {
-    color: transparent;
-}
-
-.input-group label {
-    position: absolute;
-    left: 50px;
-    /* Aligned with text start */
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888888;
-    pointer-events: none;
-    transition: all 0.2s ease-in-out;
-    background-color: transparent;
-    padding: 0 4px;
-    white-space: nowrap;
-}
-
-.input-group input:focus+label,
-.input-group input:not(:placeholder-shown)+label {
-    top: 0px;
-    transform: translateY(-50%) scale(0.85);
-    left: 42px;
-    color: var(--accent-color);
-    background-color: var(--bg-input);
-    font-weight: 500;
-    border-radius: 4px;
-}
-
-.input-group input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(214, 75, 23, 0.25);
-    outline: none;
-}
-
-/* Action Buttons */
-.profile-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 30px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: var(--font-heading);
-    color: white;
-    background: linear-gradient(145deg, var(--accent-color), #c14c1f);
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.profile-action-btn:hover {
-    background: linear-gradient(145deg, #e66025, #a03d17);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3);
-}
-
-/* Security Form & Danger Zone */
-.security-form {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    /* Increased gap for floating labels */
-    max-width: 400px;
-}
-
-.security-form label {
-    /* Reset label styles for floating labels */
-    margin-bottom: 0;
-}
-
-.divider {
-    border: none;
-    height: 1px;
-    background-color: var(--border-color);
-    margin: 40px 0;
-}
-
-.danger-zone h4 {
-    color: #ef4444;
-    /* Red for danger */
-    font-size: 1.2rem;
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-.danger-zone p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    max-width: 500px;
-    line-height: 1.5;
-}
-
-.btn-danger {
-    background-color: rgba(185, 28, 28, 0.8);
-    border: 1px solid #b91c1c;
-}
-
-.btn-danger:hover {
-    background-color: #b91c1c;
-}
+/* Old input styles removed (superseded by Form.css) */
 
 /* --- NEW: Statistics Dashboard Styles --- */
 
@@ -649,8 +489,59 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.upgrade-btn:hover {
-    background: linear-gradient(145deg, #43A047, #388E3C);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Security Tab Styles */
+.security-form {
+    max-width: 600px;
+    /* Limit width for better readability */
+}
+
+.security-form .input-group {
+    margin-bottom: 25px;
+    /* Space between inputs */
+}
+
+.security-form .btn-primary {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 40px 0;
+}
+
+.danger-zone {
+    border: 1px solid rgba(185, 28, 28, 0.3);
+    background-color: rgba(185, 28, 28, 0.05);
+    /* Very faint red bg */
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.danger-zone h4 {
+    color: #ef4444;
+    /* Red color */
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.danger-zone p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.danger-zone .btn-danger {
+    width: 100%;
 }

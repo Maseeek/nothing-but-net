@@ -5,7 +5,7 @@ import '../css/loading.css';
 function Loading() {
     return (
         <div className="loading-container">
-            <div className="loading-box">
+            <div className="loading-box glass">
                 <img src={nbnLogo} alt="NBN Logo" className="loading-logo" />
                 <div className="loading-spinner"></div>
             </div>

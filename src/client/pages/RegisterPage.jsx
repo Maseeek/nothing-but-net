@@ -63,7 +63,7 @@ const RegisterPage = () => {
         <div className="register-page">
             <Navbar />
             <div className="register-background">
-                <div className="register-container">
+                <div className="register-container glass">
                     <header>
                         <img src={nbnLogo} alt="NothingButNet Logo" className="register-logo" />
                         <h1>Create Your Account</h1>
@@ -131,7 +131,7 @@ const RegisterPage = () => {
                             </button>
                         </div>
 
-                        <button type="submit" className="submit-button">Create Account</button>
+                        <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '15px' }}>Create Account</button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>
                     <div className="form-footer">

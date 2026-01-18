@@ -9,10 +9,11 @@
     padding: 15px 30px;
 
     /* Glass Recipe Inheritance */
-    /* Ultra-light blur for best performance */
-    background: rgba(18, 18, 18, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* Glass Recipe Inheritance */
+    /* Liquid Glass Aesthetic - Enhanced */
+    background: rgba(18, 18, 18, 0.4);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     border-bottom: 1px solid var(--border-color);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
@@ -106,9 +107,9 @@
     right: 30px;
 
     /* Further reduced blur for extreme performance */
-    background: rgba(25, 25, 38, 0.9);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(25, 25, 38, 0.6);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
