@@ -17,6 +17,7 @@ function HomeContent() {
 
     const [showInstructions, setShowInstructions] = useState(false);
     const [showCoordinates, setShowCoordinates] = useState(false);
+    const [scaleFactor, setScaleFactor] = useState(1);
 
     const handleVideoSelect = (file) => {
         if (file) {
@@ -45,6 +46,12 @@ function HomeContent() {
             canvas.height = h;
             const context = canvas.getContext("2d");
             context.drawImage(videoElement, 0, 0, w, h);
+
+            // Calculate scale factor (Original Width / Canvas Width)
+            // if w changed, then we scaled. If not, ratio is 1.
+            const factor = videoElement.videoWidth / w;
+            setScaleFactor(factor);
+
             setImage(canvas.toDataURL('image/jpeg', 0.85)); // Optimized format
             setShowCoordinates(true);
         };
@@ -82,7 +89,7 @@ function HomeContent() {
                 <Coordinates
                     imageUrl={image}
                     videoFile={videoFile}
-
+                    scaleFactor={scaleFactor}
                     onBack={handleBackToUpload}
                 />
             )}

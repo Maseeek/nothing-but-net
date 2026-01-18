@@ -5,7 +5,7 @@ import Loading from "../components/Loading.jsx";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw, ArrowLeft } from 'lucide-react';
 
-function Coordinates({ imageUrl, videoFile, onBack }) {
+function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
     const [coordinates, setCoordinates] = useState([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -64,10 +64,20 @@ function Coordinates({ imageUrl, videoFile, onBack }) {
                 return;
             }
 
+            // Apply scale factor to convert UI coords to Original Video coords
+            const realHoopLeft = {
+                x: hoopLeft.x * (scaleFactor || 1),
+                y: hoopLeft.y * (scaleFactor || 1)
+            };
+            const realHoopRight = {
+                x: hoopRight.x * (scaleFactor || 1),
+                y: hoopRight.y * (scaleFactor || 1)
+            };
+
             setIsAnalyzing(true);
 
             try {
-                await sendVideoForAnalysis(videoFile, hoopLeft, hoopRight, navigate);
+                await sendVideoForAnalysis(videoFile, realHoopLeft, realHoopRight, navigate);
             } catch (error) {
                 console.error("Error during analysis:", error);
                 alert("An error occurred during analysis. Please try again.");
