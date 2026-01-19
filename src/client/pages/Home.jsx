@@ -60,7 +60,6 @@ function HomeContent() {
     const handleBackToUpload = () => {
         setVideoFile(null);
         setImage(null);
-        setCoordinates([]);
         setShowCoordinates(false);
     };
 

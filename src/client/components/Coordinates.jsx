@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import "../css/Coordinates.css";
-import { sendVideoForAnalysis } from "../js/videoProcessing.js";
+// import { sendVideoForAnalysis } from "../js/videoProcessing.js"; // Removed
+import { useAnalysis } from "../context/AnalysisContext"; // Added
 import Loading from "../components/Loading.jsx";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw, ArrowLeft } from 'lucide-react';
@@ -11,6 +12,7 @@ function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
     const [isLoading, setIsLoading] = useState(true);
     const [imgElement, setImgElement] = useState(null);
     const navigate = useNavigate();
+    const { startAnalysis } = useAnalysis(); // Added
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoading(false), 500);
@@ -77,10 +79,17 @@ function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
             setIsAnalyzing(true);
 
             try {
-                await sendVideoForAnalysis(videoFile, realHoopLeft, realHoopRight, navigate);
+                // Determine showAngle setting
+                const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
+
+                await startAnalysis(videoFile, realHoopLeft, realHoopRight, settingsShowAngle);
+
+                // Immediately close the overlay and let the background process run
+                onBack();
+
             } catch (error) {
-                console.error("Error during analysis:", error);
-                alert("An error occurred during analysis. Please try again.");
+                console.error("Error starting analysis:", error);
+                alert("An error occurred starting analysis. Please try again.");
             } finally {
                 setIsAnalyzing(false);
             }

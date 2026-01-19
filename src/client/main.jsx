@@ -34,6 +34,7 @@ const PageLoader = () => (
 
 
 import LiquidEther from './components/LiquidEther/LiquidEther.jsx';
+import { AnalysisProvider } from './context/AnalysisContext.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
@@ -83,21 +84,23 @@ function Main() {
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', pointerEvents: 'none' }}></div>
             </div>
 
-            <Suspense fallback={<PageLoader />}>
-                <Routes>
-                    {/* All routes must be inside here */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/results" element={<Results />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
-                    <Route path="/verification-success" element={<VerificationSuccessPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                </Routes>
-            </Suspense>
+            <AnalysisProvider>
+                <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                        {/* All routes must be inside here */}
+                        <Route path="/" element={<Home />} />
+                        <Route path="/results" element={<Results />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+                        <Route path="/verification-success" element={<VerificationSuccessPage />} />
+                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                    </Routes>
+                </Suspense>
+            </AnalysisProvider>
         </BrowserRouter>
     );
 }

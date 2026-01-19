@@ -325,8 +325,26 @@ def analyze_video(videoPath, hoopLeft, hoopRight, max_frames, accuracy=0.15):
     }
     return result
 
-@app.route('/upload-and-analyze', methods=['POST'])
-def upload_and_analyze():
+# State variables
+JOBS = {}
+
+def process_video_async(job_id, filepath, hoopLeft, hoopRight, max_frames, accuracy):
+    try:
+        JOBS[job_id] = {"status": "processing", "data": None}
+        result = analyze_video(filepath, hoopLeft, hoopRight, max_frames, accuracy)
+        
+        # Clean up file
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            
+        JOBS[job_id] = {"status": "completed", "data": result}
+    except Exception as e:
+        if os.path.exists(filepath):
+            os.remove(filepath)
+        JOBS[job_id] = {"status": "failed", "error": str(e)}
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
     if 'video' not in request.files:
         return jsonify({'success': False, 'error': 'No video file provided'}), 400
 
@@ -354,19 +372,30 @@ def upload_and_analyze():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     video_file.save(filepath)
 
-    try:
-        result = analyze_video(filepath, hoopLeft, hoopRight, MAX_FRAMES, accuracy)
-        if os.path.exists(filepath):
-             os.remove(filepath)
-        return jsonify({
-            'success': True,
-            'data': result
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    import uuid
+    import threading
+    
+    job_id = str(uuid.uuid4())
+    thread = threading.Thread(target=process_video_async, args=(job_id, filepath, hoopLeft, hoopRight, MAX_FRAMES, accuracy))
+    thread.start()
+
+    return jsonify({
+        'success': True,
+        'job_id': job_id
+    })
+
+@app.route('/status/<job_id>', methods=['GET'])
+def get_status(job_id):
+    job = JOBS.get(job_id)
+    if not job:
+        return jsonify({'success': False, 'error': 'Job not found'}), 404
+    
+    return jsonify({
+        'success': True,
+        'status': job['status'],
+        'data': job.get('data'),
+        'error': job.get('error')
+    })
 
 @app.route('/health', methods=['GET'])
 def health():
