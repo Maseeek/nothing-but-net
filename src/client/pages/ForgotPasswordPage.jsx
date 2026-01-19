@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
+import Loading from '../components/Loading.jsx';
 import './../css/Login.css'; // You can reuse the login page styles
 
 const ForgotPasswordPage = () => {
@@ -49,6 +50,7 @@ const ForgotPasswordPage = () => {
 
     return (
         <div className="login-page">
+            {isLoading && <Loading />}
             <Navbar />
             <div className="login-container glass">
                 <header>
@@ -66,7 +68,8 @@ const ForgotPasswordPage = () => {
                         disabled={isLoading || cooldown > 0}
                         style={{ width: '100%', marginTop: '10px' }} // Inline style for consistency if needed, or rely on CSS
                     >
-                        {isLoading ? <span className="loading-spinner"></span> : cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
+                    >
+                        {cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
                     </button>
                     {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}
                 </form>

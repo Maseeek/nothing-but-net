@@ -3,6 +3,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { Line, Doughnut } from 'react-chartjs-2';
 import { getCurrentUser } from '../../js/auth.js';
 import { API_BASE_URL } from '../../config.js';
+import Loading from '../Loading.jsx';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler);
@@ -112,7 +113,7 @@ const AnalysesHistory = () => {
     }, [sessions]);
 
     if (loading) {
-        return <div className="stats-loading">Loading Statistics...</div>;
+        return <Loading />;
     }
 
     if (sessions.length === 0) {

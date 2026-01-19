@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
+import Loading from '../components/Loading.jsx';
 import './../css/Login.css'; // Reusing the login styles which is great
 
 // --- SVG Icons (Copied from Login.jsx for consistency) ---
@@ -59,6 +60,7 @@ const ResetPasswordPage = () => {
 
     return (
         <div className="login-page">
+            {isLoading && <Loading />}
             <Navbar />
             <div className="login-background">
                 <div className="login-container glass">
@@ -100,7 +102,7 @@ const ResetPasswordPage = () => {
                             </button>
                         </div>
                         <button type="submit" className="submit-button" disabled={isLoading}>
-                            {isLoading ? <span className="loading-spinner"></span> : 'Reset Password'}
+                            Reset Password
                         </button>
                         {message && <p className="outcome" style={{ color: 'green' }}>{message}</p>}
                         {error && <p className="outcome">{error}</p>}

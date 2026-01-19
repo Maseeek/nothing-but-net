@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../js/auth.js'; // Assuming this path is correct
 import Navbar from '../components/Navbar.jsx'; // Assuming this path is correct
+import Loading from '../components/Loading.jsx';
 import './../css/RegisterPage.css'; // Ensure this path points to the updated CSS
 import nbnLogo from '../assets/nbnlight.png'; // Path to your logo
 
@@ -68,6 +69,7 @@ const RegisterPage = () => {
 
     return (
         <div className="register-page">
+            {isLoading && <Loading />}
             <Navbar />
             <div className="register-background">
                 <div className="register-container glass">
@@ -144,7 +146,7 @@ const RegisterPage = () => {
                             style={{ width: '100%', marginTop: '15px' }}
                             disabled={isLoading}
                         >
-                            {isLoading ? <span className="loading-spinner"></span> : 'Create Account'}
+                            Create Account
                         </button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>

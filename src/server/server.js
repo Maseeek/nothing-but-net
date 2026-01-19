@@ -195,6 +195,7 @@ app.get('/api/profile', async (req, res, next) => {
         res.json({
             userId: user._id,
             username: user.username,
+            email: user.email,
             emailVerified: user.emailVerified,
             isPro: user.isPro
         });

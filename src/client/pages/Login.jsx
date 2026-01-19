@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Added this import for the links to work
 import { login } from '../js/auth.js';
 import Navbar from '../components/Navbar.jsx';
+import Loading from '../components/Loading.jsx';
 import './../css/Login.css';
 import nbnLogo from '../assets/nbnlight.png';
 
@@ -61,6 +62,7 @@ const LoginPage = () => {
 
     return (
         <div className="login-page">
+            {isLoading && <Loading />}
             <Navbar />
             <div className="login-background">
                 <div className="login-container glass">
@@ -107,7 +109,7 @@ const LoginPage = () => {
                             style={{ width: '100%', marginTop: '10px' }}
                             disabled={isLoading}
                         >
-                            {isLoading ? <span className="loading-spinner"></span> : 'Log In'}
+                            Log In
                         </button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>

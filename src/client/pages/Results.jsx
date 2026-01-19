@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Loading from "../components/Loading.jsx";
 import "./../css/Results.css"; // This now points to the combined CSS file
 
 function Results() {
@@ -56,7 +57,7 @@ function Results() {
 
                 <main className="results-content">
                     {loading ? (
-                        <p>Loading results...</p>
+                        <Loading />
                     ) : !data ? (
                         <div className="results-placeholder">
                             <div className="placeholder-icon">📊</div>

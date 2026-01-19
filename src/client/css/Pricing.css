@@ -1,0 +1,190 @@
+/* Pricing Section Container */
+.pricing-section {
+    width: 100%;
+    margin-top: 40px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.pricing-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+    background: linear-gradient(135deg, #ffffff 0%, #a0aec0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.pricing-header p {
+    color: var(--text-secondary, #888);
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+/* Grid Layout */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 0 10px;
+}
+
+/* Glass Card */
+.pricing-card {
+    position: relative;
+    background: rgba(30, 30, 40, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Pro/Popular Card Highlight */
+.pricing-card--popular {
+    background: rgba(43, 43, 53, 0.6);
+    border: 1px solid rgba(214, 75, 23, 0.3);
+    box-shadow: 0 0 20px rgba(214, 75, 23, 0.1);
+}
+
+.pricing-card--popular:hover {
+    border-color: rgba(214, 75, 23, 0.6);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(214, 75, 23, 0.2);
+}
+
+/* Badge */
+.popular-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--accent-color, #d64b17);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-bottom-left-radius: 16px;
+    box-shadow: 0 4px 10px rgba(214, 75, 23, 0.4);
+}
+
+/* Card Content */
+.pricing-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+    margin: 0;
+    font-family: var(--font-heading, sans-serif);
+}
+
+.pricing-price {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary, #fff);
+    margin: 20px 0 10px;
+    font-family: var(--font-heading, sans-serif);
+}
+
+.pricing-price span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary, #888);
+}
+
+.pricing-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #888);
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+/* Features List */
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px;
+    flex-grow: 1;
+}
+
+.pricing-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: var(--text-primary, #ddd);
+    font-size: 0.95rem;
+}
+
+.check-icon {
+    color: var(--accent-color, #d64b17);
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.cross-icon {
+    color: #666;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.pricing-features li.disabled {
+    color: #555;
+    text-decoration: line-through;
+}
+
+/* Button */
+.pricing-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: var(--font-heading, sans-serif);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.pricing-btn--outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.pricing-btn--outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: white;
+}
+
+.pricing-btn--primary {
+    background: linear-gradient(135deg, var(--accent-color, #d64b17), #a03d17);
+    color: white;
+    box-shadow: 0 4px 15px rgba(214, 75, 23, 0.3);
+}
+
+.pricing-btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(214, 75, 23, 0.5);
+}

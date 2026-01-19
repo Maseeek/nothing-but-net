@@ -2,7 +2,7 @@ import { StrictMode, Suspense, lazy, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
-import './index.css';
+
 import './css/index.css';
 import './css/Form.css';
 // Lazy load pages for better performance
