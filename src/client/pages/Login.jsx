@@ -62,7 +62,6 @@ const LoginPage = () => {
 
     return (
         <div className="login-page">
-            {isLoading && <Loading />}
             <Navbar />
             <div className="login-background">
                 <div className="login-container glass">
@@ -82,6 +81,7 @@ const LoginPage = () => {
                                 required
                                 autoComplete="username"
                                 placeholder=" "
+                                disabled={isLoading}
                             />
                             <label htmlFor="username">Username</label>
                         </div>
@@ -96,6 +96,7 @@ const LoginPage = () => {
                                 required
                                 autoComplete="current-password"
                                 placeholder=" "
+                                disabled={isLoading}
                             />
                             <label htmlFor="password">Password</label>
                             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password visibility">
@@ -109,7 +110,7 @@ const LoginPage = () => {
                             style={{ width: '100%', marginTop: '10px' }}
                             disabled={isLoading}
                         >
-                            Log In
+                            {isLoading ? <span className="loading-spinner"></span> : 'Log In'}
                         </button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>

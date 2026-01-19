@@ -495,26 +495,32 @@ app.post('/api/forgot-password', emailValidation, async (req, res, next) => {
 app.post('/api/create-checkout-session', requireAuthSession, async (req, res, next) => {
     try {
         const user = req.user;
+        const { priceId } = req.body; // Expecting priceId from frontend
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+        // Map price IDs to internal plan names for metadata
+        let planType = 'pro'; // Default fallback
+        if (priceId === 'price_1Sr78K0lkHUim5wo9C2J6xhp') planType = 'standard';
+        else if (priceId === 'price_1Sr77w0lkHUim5woxWcXdHbO') planType = 'pro';
+
+        if (!priceId) {
+            return res.status(400).json({ error: 'Price ID is required' });
+        }
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             customer_email: user.email,
             client_reference_id: user._id.toString(),
+            metadata: {
+                planType: planType
+            },
             line_items: [
                 {
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: 'NothingButNet PRO Subscription',
-                            description: 'Unlock unlimited video analysis and advanced stats.',
-                        },
-                        unit_amount: 1000, // $10.00
-                    },
+                    price: priceId,
                     quantity: 1,
                 },
             ],
-            mode: 'payment', // Use 'subscription' if you set up recurring prices in Dashboard
+            mode: 'subscription',
             success_url: `${frontendUrl}/profile?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${frontendUrl}/profile`,
         });
@@ -548,16 +554,19 @@ app.post('/api/webhook', async (req, res, next) => {
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         const userId = session.client_reference_id;
-        console.log(`Processing checkout.session.completed for user: ${userId}`);
+        const planType = session.metadata?.planType || 'pro'; // Default to pro if missing
+
+        console.log(`Processing checkout.session.completed for user: ${userId}, Plan: ${planType}`);
 
         if (userId) {
             try {
                 const user = await User.findById(userId);
                 if (user) {
-                    user.isPro = true;
+                    user.isPro = true; // Legacy support
+                    user.subscriptionPlan = planType;
                     user.stripeCustomerId = session.customer;
                     await user.save();
-                    console.log(`SUCCESS: User ${user.username} upgraded to PRO via Stripe.`);
+                    console.log(`SUCCESS: User ${user.username} upgraded to ${planType} via Stripe.`);
                 } else {
                     console.error(`User not found for ID: ${userId}`);
                 }

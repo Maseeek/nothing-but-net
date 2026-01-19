@@ -11,7 +11,9 @@ export const requireAuthSession = async (req, res, next) => {
         }
 
         const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, JWT_SECRET);
+        // Read secret at runtime to ensure dotenv is loaded
+        const secret = process.env.JWT_SECRET || 'secret';
+        const decoded = jwt.verify(token, secret);
 
         const user = await User.findById(decoded.userId).select('-password');
         if (!user) {

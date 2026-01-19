@@ -4,53 +4,85 @@ import { Check, X } from 'lucide-react';
 import '../css/Pricing.css';
 
 const Pricing = () => {
+    const handleCheckout = async (priceId) => {
+        try {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                // Redirect to login or show meaningful error
+                window.location.href = '/login';
+                return;
+            }
+
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ priceId })
+            });
+
+            const data = await response.json();
+            if (response.ok && data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Checkout error:', data.error);
+                alert(`Failed to start checkout session: ${data.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+            alert(`An error occurred: ${error.message}`);
+        }
+    };
+
     const plans = [
         {
-            name: 'Basic',
-            price: '$29',
-            description: 'Perfect for small businesses and individuals.',
+            name: 'Free',
+            price: '$0',
+            description: 'Get 3 free analyses a week',
             features: [
-                { name: '3 Pages', included: true },
-                { name: 'Basic SEO', included: true },
-                { name: 'Email Support', included: true },
-                { name: 'Responsive Design', included: true },
-                { name: 'CMS Integration', included: false },
-                { name: '24/7 Chat Support', included: false },
+                { name: '3 Analyses', included: true },
+                { name: 'Track makes and misses', included: true },
+                { name: 'Track shot angles', included: false },
+                { name: 'Track shot distances', included: false },
+                { name: 'Track shot locations', included: false },
+                { name: 'Priority Support', included: false },
             ],
             buttonText: 'Get Started',
-            buttonLink: 'https://buy.stripe.com/test_basic',
+            buttonLink: '/register', // Free plan just registers
+            isFree: true,
             popular: false
         },
         {
             name: 'Standard',
-            price: '$59',
-            description: 'Best for growing businesses with more needs.',
+            price: '$9.99',
+            description: 'Get 10 free analyses a week',
             features: [
-                { name: '10 Pages', included: true },
-                { name: 'Advanced SEO', included: true },
-                { name: 'CMS Integration', included: true },
-                { name: '24/7 Chat Support', included: true },
-                { name: 'E-commerce Integration', included: false },
+                { name: '10 Analyses', included: true },
+                { name: 'Track makes and misses', included: true },
+                { name: 'Track session FG%', included: true },
+                { name: 'Track FG% Progression', included: false },
+                { name: 'Track shot locations', included: false },
                 { name: 'Priority Support', included: false },
             ],
             buttonText: 'Get Started',
-            buttonLink: 'https://buy.stripe.com/test_standard',
+            priceId: 'price_1Sr78K0lkHUim5wo9C2J6xhp', // Standard Plan Price ID
             popular: true
         },
         {
             name: 'Pro',
-            price: '$99',
-            description: 'Ideal for larger businesses that need scalability.',
+            price: '$14.99',
+            description: 'Get 25 free analyses a week',
             features: [
-                { name: 'Unlimited Pages', included: true },
-                { name: 'E-commerce Integration', included: true },
+                { name: '25 Analyses', included: true },
+                { name: 'Track makes and misses', included: true },
+                { name: 'Track shot angles', included: true },
+                { name: 'Track FG% Progression', included: true },
+                { name: 'Track shot locations', included: true },
                 { name: 'Priority Support', included: true },
-                { name: 'Custom API Integration', included: true },
-                { name: 'Advanced Analytics', included: true },
-                { name: 'Dedicated Manager', included: true },
             ],
-            buttonText: 'Contact Sales',
-            buttonLink: 'https://buy.stripe.com/test_pro',
+            buttonText: 'Get Started',
+            priceId: 'price_1Sr77w0lkHUim5woxWcXdHbO', // Pro Plan Price ID
             popular: false
         }
     ];
@@ -88,12 +120,12 @@ const Pricing = () => {
                             ))}
                         </ul>
 
-                        <a
-                            href={plan.buttonLink}
+                        <button
+                            onClick={() => plan.isFree ? window.location.href = plan.buttonLink : handleCheckout(plan.priceId)}
                             className={`pricing-btn ${plan.popular ? 'pricing-btn--primary' : 'pricing-btn--outline'}`}
                         >
                             {plan.buttonText}
-                        </a>
+                        </button>
                     </div>
                 ))}
             </div>

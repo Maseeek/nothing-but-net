@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    subscriptionPlan: {
+        type: String,
+        enum: ['free', 'standard', 'pro'],
+        default: 'free'
+    },
     stripeCustomerId: {
         type: String,
         default: null,

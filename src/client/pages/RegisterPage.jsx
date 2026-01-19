@@ -69,7 +69,6 @@ const RegisterPage = () => {
 
     return (
         <div className="register-page">
-            {isLoading && <Loading />}
             <Navbar />
             <div className="register-background">
                 <div className="register-container glass">
@@ -88,9 +87,10 @@ const RegisterPage = () => {
                                 onChange={handleChange}
                                 required
                                 autoComplete="username"
-                            // Add placeholder=" " if you want the label to float even when empty on first load,
-                            // but usually :not(:placeholder-shown) or :valid handles this with `required`.
-                            // For a pure floating label look, the label itself acts as the placeholder.
+                                // Add placeholder=" " if you want the label to float even when empty on first load,
+                                // but usually :not(:placeholder-shown) or :valid handles this with `required`.
+                                // For a pure floating label look, the label itself acts as the placeholder.
+                                disabled={isLoading}
                             />
                             <label htmlFor="username">Username</label>
                         </div>
@@ -104,6 +104,7 @@ const RegisterPage = () => {
                                 onChange={handleChange}
                                 required
                                 autoComplete="email"
+                                disabled={isLoading}
                             />
                             <label htmlFor="email">Email</label>
                         </div>
@@ -117,6 +118,7 @@ const RegisterPage = () => {
                                 onChange={handleChange}
                                 required
                                 autoComplete="new-password"
+                                disabled={isLoading}
                             />
                             <label htmlFor="password">Password</label>
                             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password visibility">
@@ -133,6 +135,7 @@ const RegisterPage = () => {
                                 onChange={handleChange}
                                 required
                                 autoComplete="new-password"
+                                disabled={isLoading}
                             />
                             <label htmlFor="confirmPassword">Confirm Password</label>
                             <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)} aria-label="Toggle confirm password visibility">
@@ -146,7 +149,7 @@ const RegisterPage = () => {
                             style={{ width: '100%', marginTop: '15px' }}
                             disabled={isLoading}
                         >
-                            Create Account
+                            {isLoading ? <span className="loading-spinner"></span> : 'Create Account'}
                         </button>
                         {outcome && <p className="outcome">{outcome}</p>}
                     </form>

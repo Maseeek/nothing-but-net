@@ -50,7 +50,6 @@ const ForgotPasswordPage = () => {
 
     return (
         <div className="login-page">
-            {isLoading && <Loading />}
             <Navbar />
             <div className="login-container glass">
                 <header>
@@ -59,7 +58,7 @@ const ForgotPasswordPage = () => {
                 </header>
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="input-group">
-                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " />
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " disabled={isLoading} />
                         <label htmlFor="email">Email Address</label>
                     </div>
                     <button
@@ -69,7 +68,7 @@ const ForgotPasswordPage = () => {
                         style={{ width: '100%', marginTop: '10px' }} // Inline style for consistency if needed, or rely on CSS
                     >
                     >
-                        {cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
+                        {isLoading ? <span className="loading-spinner"></span> : cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
                     </button>
                     {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}
                 </form>

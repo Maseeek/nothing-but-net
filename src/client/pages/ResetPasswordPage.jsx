@@ -60,7 +60,6 @@ const ResetPasswordPage = () => {
 
     return (
         <div className="login-page">
-            {isLoading && <Loading />}
             <Navbar />
             <div className="login-background">
                 <div className="login-container glass">
@@ -79,6 +78,7 @@ const ResetPasswordPage = () => {
                                 required
                                 placeholder=" "
                                 autoComplete="new-password"
+                                disabled={isLoading}
                             />
                             <label htmlFor="password">New Password</label>
                             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
@@ -95,6 +95,7 @@ const ResetPasswordPage = () => {
                                 required
                                 placeholder=" "
                                 autoComplete="new-password"
+                                disabled={isLoading}
                             />
                             <label htmlFor="confirmPassword">Confirm New Password</label>
                             <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
@@ -102,7 +103,7 @@ const ResetPasswordPage = () => {
                             </button>
                         </div>
                         <button type="submit" className="submit-button" disabled={isLoading}>
-                            Reset Password
+                            {isLoading ? <span className="loading-spinner"></span> : 'Reset Password'}
                         </button>
                         {message && <p className="outcome" style={{ color: 'green' }}>{message}</p>}
                         {error && <p className="outcome">{error}</p>}
