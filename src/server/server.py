@@ -12,18 +12,9 @@ MAX_FRAMES = 5000
 app = Flask(__name__)
 
 # Configure CORS
-allowed_origins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:3000",
-    "https://nothingbutnet.online",
-    "https://www.nothingbutnet.online",
-    os.environ.get("FRONTEND_URL"),
-    os.environ.get("PRODUCTION_FRONTEND_URL")
-]
-allowed_origins = [origin for origin in allowed_origins if origin]
-
-CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
+# Configure CORS - Allow all origins
+# Since this API doesn't require credentials (cookies), we can safely allow all origins
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configure upload folder
 UPLOAD_FOLDER = 'uploads'
@@ -345,6 +336,9 @@ def process_video_async(job_id, filepath, hoopLeft, hoopRight, max_frames, accur
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
+    # Log origin for debugging
+    print(f"Request Origin: {request.headers.get('Origin')}")
+    
     if 'video' not in request.files:
         return jsonify({'success': False, 'error': 'No video file provided'}), 400
 
