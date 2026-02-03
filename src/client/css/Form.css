@@ -85,6 +85,15 @@
     cursor: pointer;
     padding: 5px;
     z-index: 2;
+    /* Reset global button styles to prevent weird interaction */
+    box-shadow: none;
+}
+
+.password-toggle:hover {
+    /* Override global button:hover to keep it centered and just scale slightly */
+    transform: translateY(-50%) scale(1.1);
+    background: transparent;
+    box-shadow: none;
 }
 
 .password-toggle:hover svg {

@@ -20,7 +20,7 @@
 /* Glass Card */
 .profile-container {
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px;
 
     color: var(--text-primary);
     padding: 30px 40px;
@@ -119,6 +119,14 @@
     grid-template-columns: 150px 1fr;
     gap: 20px;
     align-items: center;
+    margin-bottom: 30px;
+    /* Added spacing */
+}
+
+.email-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .details-grid label {

@@ -55,7 +55,7 @@ const ProfileDetails = ({ user }) => {
                     <>
                         <label>Username</label>
                         <span>{user.username}</span>
-                        <label>Email Address <VerificationStatus isVerified={user.emailVerified} /></label>
+                        <label className="email-label">Email Address <VerificationStatus isVerified={user.emailVerified} /></label>
                         <span>{user.email}</span>
                     </>
                 )}
