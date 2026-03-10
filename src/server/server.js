@@ -37,8 +37,31 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/nbnc')
     .catch(err => console.log('MongoDB Connection Error:', err));
 
 // Middleware
+// Configure CORS - Allow specific origins
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:3000",
+    "https://nothingbutnet.online",
+    "https://www.nothingbutnet.online",
+    process.env.FRONTEND_URL,
+    process.env.PRODUCTION_FRONTEND_URL
+].filter(Boolean); // Filter out undefined values
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true // Important for sessions/cookies/auth headers
+}));
+
 app.use(express.json());
-app.use(cors());
 app.use(helmet());
 app.use(compression());
 
@@ -56,12 +79,21 @@ import Stripe from 'stripe';
 const stripe = new Stripe(STRIPE_SECRET_KEY || 'sk_test_placeholder');
 
 
+// Email transporter setup
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
 app.post('/api/register', registerValidation, async (req, res) => {
     console.log('[Register] Request received');
     try {
         const { username, email, password } = req.body;
-        const lowerCaseEmail = email.toLowerCase();
-        const lowerCaseUsername = username.toLowerCase();
+        const lowerCaseEmail = email && email.toLowerCase();
+        const lowerCaseUsername = username && username.toLowerCase();
 
         console.log(`[Register] Checking existing user for: ${lowerCaseUsername}, ${lowerCaseEmail}`);
         // Check if a user with the same lowercase username or email already exists
@@ -139,13 +171,6 @@ app.post('/api/register', registerValidation, async (req, res) => {
             // Optionally delete the user to allow retrying
             await User.deleteOne({ _id: user._id });
             console.log('[Register] User deleted due to email failure');
-
-            // THROW the error so it goes to the outer catch block or handle it here?
-            // The original code passed it to 'next(emailErr)' which is undefined here as 'next' argument is missing in the route signature! wait.
-            // The route signature is `(req, res)`. 'next' is NOT defined.
-            // calling `next(emailErr)` would CRASH the server with ReferenceError: next is not defined.
-            // THIS IS LIKELY THE BUG!
-
             return res.status(500).json({ error: 'Email sending failed', details: emailErr.message });
         }
 
@@ -160,16 +185,23 @@ app.post('/api/register', registerValidation, async (req, res) => {
 app.post('/api/login', loginValidation, async (req, res, next) => {
     try {
         const { username, password } = req.body;
+        console.log(`[Login] Request received for user: ${username}`);
 
         // Convert input username to lowercase to match registration
         const lowerCaseUsername = username.toLowerCase();
 
         const user = await User.findOne({ username: lowerCaseUsername });
-        if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-
-        if (!await bcrypt.compare(password, user.password)) {
+        if (!user) {
+            console.log(`[Login] User not found: ${lowerCaseUsername}`);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
+
+        if (!await bcrypt.compare(password, user.password)) {
+            console.log(`[Login] Invalid password for user: ${lowerCaseUsername}`);
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        console.log(`[Login] Successful login for: ${lowerCaseUsername}`);
 
         const token = jwt.sign(
             { userId: user._id, username: user.username, email: user.email, emailVerified: user.emailVerified },
@@ -179,6 +211,7 @@ app.post('/api/login', loginValidation, async (req, res, next) => {
         res.json({ token });
 
     } catch (err) {
+        console.error('[Login] Error:', err);
         next(err);
     }
 });
@@ -323,14 +356,8 @@ app.get('/api/analyses', requireAuthSession, async (req, res, next) => {
 });
 
 // --- NODEMAILER TRANSPORTER SETUP ---
-// This uses the credentials from your .env file
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+// Transporter was moved to the top of the file
+
 
 
 // --- NEW API ROUTE: SEND VERIFICATION EMAIL ---

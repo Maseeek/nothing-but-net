@@ -4,6 +4,7 @@ import { Line, Doughnut } from 'react-chartjs-2';
 import { getCurrentUser } from '../../js/auth.js';
 import { API_BASE_URL } from '../../config.js';
 import Loading from '../Loading.jsx';
+import LiquidGlassGraph from './LiquidGlassGraph.jsx';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler);
@@ -98,18 +99,8 @@ const AnalysesHistory = () => {
             }]
         };
 
-        const doughnutChartData = {
-            labels: ['Made', 'Missed'],
-            datasets: [{
-                data: [totalMade, totalShots - totalMade],
-                backgroundColor: ['#4ade80', '#ef4444'],
-                borderColor: '#1e1e2f',
-                borderWidth: 4,
-                hoverOffset: 4
-            }]
-        };
 
-        return { totalShots, totalMade, careerFgPct, bestSessionPct, lineChartData, doughnutChartData };
+        return { totalShots, totalMade, careerFgPct, bestSessionPct, lineChartData };
     }, [sessions]);
 
     if (loading) {
@@ -160,29 +151,7 @@ const AnalysesHistory = () => {
         }
     };
 
-    const doughnutChartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom', labels: { color: '#f0f0f0', font: { size: 14 } } },
-            tooltip: {
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                titleFont: { size: 14 },
-                bodyFont: { size: 12 },
-                padding: 10,
-                cornerRadius: 4,
-                callbacks: {
-                    label: function (context) {
-                        const label = context.label || '';
-                        const value = context.raw;
-                        const percentage = ((value / (totalShots || 1)) * 100).toFixed(1);
-                        return `${label}: ${value} (${percentage}%)`;
-                    }
-                }
-            }
-        },
-        cutout: '60%',
-    };
+
 
     return (
         <div className="profile-tab-content">
@@ -209,11 +178,13 @@ const AnalysesHistory = () => {
             <div className="charts-grid">
                 <div className="chart-container line-chart">
                     <h4>FG% Performance Over Time</h4>
-                    <Line options={lineChartOptions} data={lineChartData} />
+                    <div className="line-chart-area">
+                        <Line options={lineChartOptions} data={lineChartData} />
+                    </div>
                 </div>
                 <div className="chart-container doughnut-chart">
                     <h4>Career Shot Distribution</h4>
-                    <Doughnut data={doughnutChartData} options={doughnutChartOptions} />
+                    <LiquidGlassGraph made={totalMade} missed={totalShots - totalMade} />
                 </div>
             </div>
         </div>

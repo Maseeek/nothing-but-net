@@ -70,6 +70,10 @@
   --mouse-x: 50%;
   --mouse-y: 50%;
 
+  /* --- Spacing --- */
+  --nav-height: 120px;
+  --nav-height-mobile: 70px;
+
   color-scheme: dark;
   color: var(--text-primary);
   background-color: transparent;

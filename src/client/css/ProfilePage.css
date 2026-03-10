@@ -2,39 +2,42 @@
 .profile-page {
     width: 100%;
     min-height: 100vh;
-    padding-top: 130px;
-    /* Navbar height (~110px) + gap (20px) */
-    padding-bottom: 150px;
+    padding-top: calc(var(--nav-height) + 40px);
+    padding-bottom: 200px;
     padding-left: 20px;
     padding-right: 20px;
-
-    background-size: cover;
-
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .profile-page {
+        padding-top: calc(var(--nav-height-mobile) + 20px);
+    }
 }
 
 /* Glass Card */
 .profile-container {
     width: 100%;
-    max-width: 1200px;
-
+    max-width: 1100px;
+    margin: 40px auto;
     color: var(--text-primary);
-    padding: 30px 40px;
+    padding: 40px;
     animation: fadeIn 0.8s ease-out;
-    margin-bottom: 120px;
 }
 
 /* Profile Header */
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 25px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid var(--border-color);
+    gap: 30px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
 }
 
 .avatar {
@@ -69,38 +72,42 @@
 /* Profile Tab Navigation */
 .profile-nav {
     display: flex;
-    gap: 10px;
-    margin-top: 25px;
-    border-bottom: 1px solid var(--border-color);
+    gap: 8px;
+    margin-bottom: 30px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 14px;
+    width: fit-content;
 }
 
 .profile-nav button {
-    background: none;
+    background: transparent;
     border: none;
-    border-bottom: 3px solid transparent;
     color: var(--text-secondary);
-    padding: 12px 20px;
-    font-size: 1rem;
+    padding: 10px 24px;
+    font-size: 0.95rem;
     font-weight: 600;
     font-family: var(--font-heading);
     cursor: pointer;
-    transition: all 0.2s ease;
-    margin-bottom: -1px;
-    /* Overlap border for seamless look */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
 }
 
 .profile-nav button:hover {
     color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .profile-nav button.active {
-    color: var(--accent-color);
-    border-bottom-color: var(--accent-color);
+    color: #ffffff;
+    background: var(--accent-color);
+    box-shadow: 0 4px 12px rgba(214, 75, 23, 0.3);
 }
 
 /* Profile Content Area */
 .profile-content {
     margin-top: 30px;
+    margin-bottom: 40px;
 }
 
 .profile-tab-content h3 {
@@ -116,11 +123,14 @@
 
 .details-grid {
     display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 20px;
-    align-items: center;
+    grid-template-columns: 180px 1fr;
+    gap: 15px 30px;
+    align-items: baseline;
     margin-bottom: 30px;
-    /* Added spacing */
+    background: rgba(255, 255, 255, 0.02);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
 }
 
 .email-label {
@@ -179,7 +189,7 @@
     /* Reduced padding to make the card smaller */
     /* MODIFICATION END */
     border-radius: 16px;
-    width: 90%;
+    width: 100%;
     text-align: center;
     border-bottom: 4px solid var(--accent-color);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -220,35 +230,50 @@
 
 .charts-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
     gap: 30px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+@media (max-width: 1025px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .chart-container {
     background-color: var(--bg-nav);
-    /* Translucent */
-    padding: 25px;
-    border-radius: 16px;
-    padding-bottom: 100px;
+    padding: 30px;
+    border-radius: 20px;
     border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Prevents flex/grid children from overflowing */
 }
 
 
 .chart-container h4 {
-    margin: 0 0 25px 0;
+    margin: 0 0 20px 0;
     text-align: center;
-    font-size: 1.2rem;
-    color: var(--text-primary);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     font-weight: 600;
-    flex-shrink: 0;
-    /* Prevents the title from shrinking */
     font-family: var(--font-heading);
 }
 
-.line-chart,
-.doughnut-chart {
-    height: 450px;
-    /* <-- ADJUST THIS VALUE AS NEEDED */
+.line-chart-area,
+.doughnut-chart-area {
+    flex-grow: 1;
+    min-height: 400px;
+    width: 100%;
+    min-width: 0;
+    position: relative;
+    /* Contain absolute chart canvases */
 }
 
 /* Animation */

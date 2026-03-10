@@ -3,7 +3,7 @@
 .settings-page {
     width: 100%;
     min-height: 100vh;
-    padding-top: 130px;
+    padding-top: calc(var(--nav-height) + 30px);
     padding-bottom: 50px;
     padding-left: 20px;
     padding-right: 20px;
@@ -17,6 +17,12 @@
     align-items: flex-start;
     box-sizing: border-box;
     color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .settings-page {
+        padding-top: calc(var(--nav-height-mobile) + 20px);
+    }
 }
 
 .settings-container {

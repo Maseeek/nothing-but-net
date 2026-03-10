@@ -103,6 +103,12 @@ const ProfilePage = () => {
 
                 <nav className="profile-nav">
                     <button
+                        className={activeTab === 'analyses' ? 'active' : ''}
+                        onClick={() => setActiveTab('analyses')}
+                    >
+                        History
+                    </button>
+                    <button
                         className={activeTab === 'details' ? 'active' : ''}
                         onClick={() => setActiveTab('details')}
                     >
@@ -113,12 +119,6 @@ const ProfilePage = () => {
                         onClick={() => setActiveTab('security')}
                     >
                         Security
-                    </button>
-                    <button
-                        className={activeTab === 'analyses' ? 'active' : ''}
-                        onClick={() => setActiveTab('analyses')}
-                    >
-                        History
                     </button>
                     {/* Hidden tab primarily accessed via the Upgrade button */}
                     {activeTab === 'pricing' && (
