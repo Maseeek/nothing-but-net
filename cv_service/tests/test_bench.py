@@ -4,12 +4,14 @@ import argparse
 import os
 import glob
 import sys
+import numpy as np
 
-# Add project root to path for imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add src to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from cv_core import BasketballTracker
 
-GT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ground_truth.json")
+GT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ground_truth.json")
+# Default video dir relative to project root
 VIDEO_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Resources", "Videos")
 
 def get_click_coordinates(frame, window_name):
@@ -26,7 +28,7 @@ def get_click_coordinates(frame, window_name):
     cv2.setMouseCallback(window_name, mouse_click)
     cv2.imshow(window_name, frame)
     
-    # Bring window to front (OS dependent, but helpful)
+    # Bring window to front
     cv2.setWindowProperty(window_name, cv2.WND_PROP_TOPMOST, 1)
 
     print(f"Please click: {window_name}")
@@ -57,17 +59,13 @@ def run_setup(video_dir):
     print(f"Found {len(video_files)} videos in {video_dir}")
     
     for video_path in video_files:
-        video_key = os.path.abspath(video_path)
+        video_key = os.path.basename(video_path)
         
         if video_key in data:
-            # Check if it's the old format (missing 'sequence')
-            if 'sequence' in data[video_key]:
-                print(f"Skipping {os.path.basename(video_path)} (already setup).")
-                continue
-            else:
-                print(f"Updating format for {os.path.basename(video_path)}...")
+            print(f"Skipping {video_key} (already setup).")
+            continue
             
-        print(f"\n--- Setting up {os.path.basename(video_path)} ---")
+        print(f"\n--- Setting up {video_key} ---")
         cap = cv2.VideoCapture(video_path)
         ret, frame = cap.read()
         cap.release()
@@ -108,7 +106,7 @@ def run_setup(video_dir):
             json.dump(data, f, indent=4)
             print("Saved.")
 
-def run_test():
+def run_test(video_dir):
     if not os.path.exists(GT_FILE):
         print("No ground_truth.json found. Run with --setup first.")
         return
@@ -123,42 +121,46 @@ def run_test():
     print(f"\n{'VIDEO':<40} | {'ACTUAL':<15} | {'PREDICTED':<15} | {'STATUS'}")
     print("-" * 85)
     
-    for video_path, gt in data.items():
+    for video_filename, gt in data.items():
+        video_path = os.path.join(video_dir, video_filename)
         if not os.path.exists(video_path):
-            print(f"Video not found: {os.path.basename(video_path)}")
+            print(f"Video not found: {video_path}")
             continue
             
-        # Support fallback to old format if user didn't re-run setup
-        if 'sequence' not in gt:
-            print(f"{os.path.basename(video_path):<40} | OLD FORMAT     | -               | SKIP")
+        cap = cv2.VideoCapture(video_path)
+        ret, first_frame = cap.read()
+        if not ret:
+            cap.release()
             continue
 
-        tracker = BasketballTracker(gt['hoop_left'], gt['hoop_right'])
-        cap = cv2.VideoCapture(video_path)
+        # Implement the same 640px scaling as server.py
+        scale = 640.0 / first_frame.shape[1]
+        scaled_hoop_left = (int(gt['hoop_left'][0] * scale), int(gt['hoop_left'][1] * scale))
+        scaled_hoop_right = (int(gt['hoop_right'][0] * scale), int(gt['hoop_right'][1] * scale))
+
+        tracker = BasketballTracker(scaled_hoop_left, scaled_hoop_right)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret: break
-            tracker.process_frame(frame, debug=False)
+            
+            # Resize frame to 640px wide to match server logic
+            resized_frame = cv2.resize(frame, (640, int(frame.shape[0] * scale)))
+            tracker.process_frame(resized_frame, debug=False)
             
         cap.release()
         
-        # Compare Sequences
         actual_seq = gt['sequence']
         pred_seq = tracker.shots
         
         actual_str = "".join(map(str, actual_seq))
         pred_str = "".join(map(str, pred_seq))
         
-        # Check strict equality
-        if actual_seq == pred_seq:
-            status = "PASS"
-            match = True
-        else:
-            status = "FAIL"
-            match = False
+        match = (actual_seq == pred_seq)
+        status = "PASS" if match else "FAIL"
         
-        print(f"{os.path.basename(video_path):<40} | {actual_str:<15} | {pred_str:<15} | {status}")
+        print(f"{video_filename:<40} | {actual_str:<15} | {pred_str:<15} | {status}")
         
         total_videos += 1
         if match: perfect_videos += 1
@@ -180,6 +182,6 @@ if __name__ == "__main__":
     if args.setup:
         run_setup(args.dir)
     elif args.test:
-        run_test()
+        run_test(args.dir)
     else:
         parser.print_help()

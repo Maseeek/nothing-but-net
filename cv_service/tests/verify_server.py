@@ -5,7 +5,6 @@ import time
 import sys
 import subprocess
 import os
-import signal
 
 BASE_URL = "http://127.0.0.1:5001"
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,46 +43,23 @@ def test_server():
         print("Server already running, using existing instance.")
 
     try:
-        # 1. Init
-        print("Testing /init...")
-        init_data = {
-            "hoop_left": [100, 100],
-            "hoop_right": [200, 100]
-        }
-        resp = requests.post(f"{BASE_URL}/init", json=init_data)
+        # 1. Health check
+        print("Testing /health...")
+        resp = requests.get(f"{BASE_URL}/health")
         if resp.status_code == 200:
-            print("PASS: /init")
+            print("PASS: /health")
         else:
-            print(f"FAIL: /init {resp.text}")
+            print(f"FAIL: /health {resp.text}")
             sys.exit(1)
 
-        # 2. Process
-        print("Testing /process...")
-        # Create a dummy image
-        img = np.zeros((480, 640, 3), dtype=np.uint8)
-        cv2.circle(img, (150, 150), 20, (33, 121, 250), -1) # Draw a "ball"
-        _, img_encoded = cv2.imencode('.jpg', img)
-        
-        files = {'image': ('test.jpg', img_encoded.tobytes(), 'image/jpeg')}
-        
-        resp = requests.post(f"{BASE_URL}/process", files=files)
-        if resp.status_code == 200:
-            data = resp.json()
-            print(f"PASS: /process. Response: {data}")
-            if 'fgm' in data and 'fga' in data:
-                 print("PASS: Response structure valid")
-            else:
-                 print("FAIL: Invalid response structure")
+        # 2. Upload and Analyze (with a dummy video file if possible, or just check endpoint existence)
+        print("Testing /upload-and-analyze existence...")
+        # We'll just send a junk request to see if it 404s or 400s
+        resp = requests.post(f"{BASE_URL}/upload-and-analyze")
+        if resp.status_code == 400: # Expected because no file provided
+            print("PASS: /upload-and-analyze is reachable")
         else:
-            print(f"FAIL: /process {resp.text}")
-
-        # 3. Reset
-        print("Testing /reset...")
-        resp = requests.post(f"{BASE_URL}/reset")
-        if resp.status_code == 200:
-            print("PASS: /reset")
-        else:
-            print(f"FAIL: /reset {resp.text}")
+            print(f"FAIL: /upload-and-analyze returned {resp.status_code} - {resp.text}")
 
     finally:
         if server_process:
