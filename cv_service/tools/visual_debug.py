@@ -115,7 +115,11 @@ def main():
         print("Setup cancelled.")
         return
 
-    tracker = BasketballTracker(hoop_left, hoop_right)
+    scale = 640.0 / frame.shape[1]
+    scaled_hoop_left = (int(hoop_left[0] * scale), int(hoop_left[1] * scale))
+    scaled_hoop_right = (int(hoop_right[0] * scale), int(hoop_right[1] * scale))
+
+    tracker = BasketballTracker(scaled_hoop_left, scaled_hoop_right)
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
     SIDEBAR_WIDTH = 320
@@ -127,7 +131,8 @@ def main():
         if not ret:
             break
 
-        stats = tracker.process_frame(frame, debug=True)
+        resized_frame = cv2.resize(frame, (640, int(frame.shape[0] * scale)))
+        stats = tracker.process_frame(resized_frame, debug=True)
         debug_frame = stats['frame']
         
         # --- UI RENDERING ---
