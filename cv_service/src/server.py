@@ -17,6 +17,7 @@ app = Flask(__name__)
 # Configure CORS
 allowed_origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:3000",
     "https://nothingbutnet.online",
     "https://www.nothingbutnet.online",

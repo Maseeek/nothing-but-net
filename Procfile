@@ -1,1 +1,1 @@
-web: gunicorn src.server.server:app
+web: cd cv_service/src && gunicorn server:app

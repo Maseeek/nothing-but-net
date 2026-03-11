@@ -31,8 +31,9 @@ services:
     name: nbnc-analysis-server
     env: python
     plan: free
+    rootDir: cv_service
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --timeout 600 src.server.server:app
+    startCommand: cd src && gunicorn --timeout 600 server:app
     envVars:
       - key: PORT
         value: 10000
