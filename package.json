@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "server": "node src/server/server.js",
-    "python-server": "python src/server/server.py",
+    "python-server": "python cv_service/src/server.py",
     "dev-all": "concurrently \"npm run dev\" \"npm run server\" \"npm run python-server\"",
     "build": "vite build",
     "lint": "eslint src",

@@ -17,7 +17,7 @@ export const AnalysisProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const startAnalysis = async (videoFile, hoopLeft, hoopRight, showAngle) => {
-        setStatus('uploading');
+        setStatus('processing');
         setError(null);
 
         try {
@@ -27,7 +27,8 @@ export const AnalysisProvider = ({ children }) => {
             formData.append("hoopRight", JSON.stringify(hoopRight));
             formData.append("showAngle", showAngle);
 
-            const response = await fetch(`${ANALYSIS_API_URL}/analyze`, {
+            // Using the synchronous endpoint defined in server.py
+            const response = await fetch(`${ANALYSIS_API_URL}/upload-and-analyze`, {
                 method: "POST",
                 body: formData,
             });
@@ -35,8 +36,14 @@ export const AnalysisProvider = ({ children }) => {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setJobId(data.job_id);
-                setStatus('processing');
+                setResult(data.data);
+                setStatus('completed');
+
+                // Save to session storage as before (for compatibility if needed)
+                sessionStorage.setItem("analysisResults", JSON.stringify(data.data));
+
+                // Send session data
+                await sendSessionData(data.data);
             } else {
                 setStatus('failed');
                 setError(data.error || 'Upload failed');
@@ -46,46 +53,6 @@ export const AnalysisProvider = ({ children }) => {
             setError(err.message);
         }
     };
-
-    useEffect(() => {
-        if (status === 'processing' && jobId) {
-            pollInterval.current = setInterval(async () => {
-                try {
-                    const response = await fetch(`${ANALYSIS_API_URL}/status/${jobId}`);
-                    const data = await response.json();
-
-                    if (data.success) {
-                        if (data.status === 'completed') {
-                            clearInterval(pollInterval.current);
-                            setResult(data.data);
-                            setStatus('completed');
-
-                            // Save to session storage as before (for compatibility if needed)
-                            sessionStorage.setItem("analysisResults", JSON.stringify(data.data));
-
-                            // Send session data
-                            await sendSessionData(data.data);
-
-                        } else if (data.status === 'failed') {
-                            clearInterval(pollInterval.current);
-                            setStatus('failed');
-                            setError(data.error);
-                        }
-                        // If 'processing' or 'queued', continue polling
-                    }
-                } catch (err) {
-                    // Start polling might fail transiently, keep trying or handle error
-                    console.error("Polling error:", err);
-                }
-            }, 2000); // Poll every 2 seconds
-        }
-
-        return () => {
-            if (pollInterval.current) {
-                clearInterval(pollInterval.current);
-            }
-        };
-    }, [status, jobId]);
 
     const handleDismiss = () => {
         setStatus('idle');
