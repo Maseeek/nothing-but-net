@@ -1,24 +1,28 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import { ANALYSIS_API_URL } from '../config';
 import { sendSessionData } from '../js/videoProcessing';
 import AnalysisCompletePopup from '../components/AnalysisCompletePopup';
-import { useNavigate } from 'react-router-dom';
+import AnalysisProcessingPopup from '../components/AnalysisProcessingPopup';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AnalysisContext = createContext();
 
 export const useAnalysis = () => useContext(AnalysisContext);
 
 export const AnalysisProvider = ({ children }) => {
-    const [jobId, setJobId] = useState(null);
-    const [status, setStatus] = useState('idle'); // idle, uploading, processing, completed, failed
+    const [status, setStatus] = useState('idle'); // idle, processing, completed, failed
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
-    const pollInterval = useRef(null);
+    const [showProcessingPopup, setShowProcessingPopup] = useState(false);
+    const [showCompletePopup, setShowCompletePopup] = useState(false);
+    const location = useLocation();
     const navigate = useNavigate();
 
     const startAnalysis = async (videoFile, hoopLeft, hoopRight, showAngle) => {
         setStatus('processing');
+        setShowProcessingPopup(true);
         setError(null);
+        setResult(null);
 
         try {
             const formData = new FormData();
@@ -38,6 +42,11 @@ export const AnalysisProvider = ({ children }) => {
             if (response.ok && data.success) {
                 setResult(data.data);
                 setStatus('completed');
+                
+                // Only show the complete popup if the user is not already on the results page
+                if (location.pathname !== '/results') {
+                    setShowCompletePopup(true);
+                }
 
                 // Save to session storage as before (for compatibility if needed)
                 sessionStorage.setItem("analysisResults", JSON.stringify(data.data));
@@ -54,23 +63,32 @@ export const AnalysisProvider = ({ children }) => {
         }
     };
 
-    const handleDismiss = () => {
+    const handleDismissComplete = () => {
         setStatus('idle');
-        setJobId(null);
         setResult(null);
+        setShowCompletePopup(false);
+    };
+
+    const handleDismissProcessing = () => {
+        setShowProcessingPopup(false);
     };
 
     const handleViewResults = () => {
-        handleDismiss();
+        handleDismissComplete();
         navigate('/results');
     };
 
     return (
         <AnalysisContext.Provider value={{ startAnalysis, status, error, result }}>
             {children}
-            {status === 'completed' && (
+            {showProcessingPopup && (
+                <AnalysisProcessingPopup
+                    onDismiss={handleDismissProcessing}
+                />
+            )}
+            {showCompletePopup && status === 'completed' && (
                 <AnalysisCompletePopup
-                    onDismiss={handleDismiss}
+                    onDismiss={handleDismissComplete}
                     onViewResults={handleViewResults}
                 />
             )}

@@ -45,7 +45,7 @@ function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
         setCoordinates([]);
     };
 
-    const handleAnalyzeResults = async () => {
+    const handleAnalyzeResults = () => {
         if (!videoFile) {
             alert("No video file provided.");
             return;
@@ -76,23 +76,15 @@ function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
                 y: hoopRight.y * (scaleFactor || 1)
             };
 
-            setIsAnalyzing(true);
+            // Determine showAngle setting
+            const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
 
-            try {
-                // Determine showAngle setting
-                const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
+            // Start analysis in the background without awaiting
+            startAnalysis(videoFile, realHoopLeft, realHoopRight, settingsShowAngle);
 
-                await startAnalysis(videoFile, realHoopLeft, realHoopRight, settingsShowAngle);
+            // Immediately close the overlay and let the background process run
+            onBack();
 
-                // Immediately close the overlay and let the background process run
-                onBack();
-
-            } catch (error) {
-                console.error("Error starting analysis:", error);
-                alert("An error occurred starting analysis. Please try again.");
-            } finally {
-                setIsAnalyzing(false);
-            }
         } else {
             alert("Please select exactly two coordinates.");
         }

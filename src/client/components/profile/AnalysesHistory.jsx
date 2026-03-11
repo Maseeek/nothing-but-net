@@ -5,11 +5,14 @@ import { getCurrentUser } from '../../js/auth.js';
 import { API_BASE_URL } from '../../config.js';
 import Loading from '../Loading.jsx';
 import LiquidGlassGraph from './LiquidGlassGraph.jsx';
+import { useAnalysis } from '../../context/AnalysisContext.jsx';
+import { Loader2 } from 'lucide-react';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler);
 
 const AnalysesHistory = () => {
+    const { status } = useAnalysis();
     const [sessions, setSessions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [performanceSummary, setPerformanceSummary] = useState({
@@ -110,6 +113,21 @@ const AnalysesHistory = () => {
     if (sessions.length === 0) {
         return (
             <div className="profile-tab-content">
+                {status === 'processing' && (
+                    <div style={{
+                        backgroundColor: 'rgba(255, 88, 5, 0.1)',
+                        border: '1px solid rgba(255, 88, 5, 0.3)',
+                        borderRadius: '8px',
+                        padding: '1rem',
+                        marginBottom: '1.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem'
+                    }}>
+                        <Loader2 className="animate-spin" style={{ animation: 'spin 2s linear infinite', color: '#ff5805' }} />
+                        <span style={{ color: 'white' }}>Processing new video analysis...</span>
+                    </div>
+                )}
                 <h3>My Analyses</h3>
                 <div className="history-placeholder">
                     <p>You haven't analyzed any sessions yet.</p>
@@ -155,6 +173,21 @@ const AnalysesHistory = () => {
 
     return (
         <div className="profile-tab-content">
+            {status === 'processing' && (
+                <div style={{
+                    backgroundColor: 'rgba(255, 88, 5, 0.1)',
+                    border: '1px solid rgba(255, 88, 5, 0.3)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem'
+                }}>
+                    <Loader2 className="animate-spin" style={{ animation: 'spin 2s linear infinite', color: '#ff5805' }} />
+                    <span style={{ color: 'white' }}>Processing new video analysis...</span>
+                </div>
+            )}
             <h3>Performance Dashboard</h3>
             <div className="stats-grid">
                 <div className="stat-card">

@@ -2,27 +2,38 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Loading from "../components/Loading.jsx";
+import { useAnalysis } from "../context/AnalysisContext.jsx";
 import "./../css/Results.css"; // This now points to the combined CSS file
 
 function Results() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAngle, setShowAngle] = useState(true);
+    const { status } = useAnalysis();
 
     useEffect(() => {
-        console.log("Results component mounted");
-        const storedData = sessionStorage.getItem("analysisResults");
-        console.log("Raw stored data from sessionStorage:", storedData);
-        if (storedData) {
-            try {
-                const parsedData = JSON.parse(storedData);
-                console.log("Parsed data:", parsedData);
-                setData(parsedData);
-            } catch (err) {
-                console.error("Error parsing stored results:", err);
+        console.log("Results component mounted or status changed");
+
+        const loadData = () => {
+            const storedData = sessionStorage.getItem("analysisResults");
+            console.log("Raw stored data from sessionStorage:", storedData);
+            if (storedData) {
+                try {
+                    const parsedData = JSON.parse(storedData);
+                    console.log("Parsed data:", parsedData);
+                    setData(parsedData);
+                } catch (err) {
+                    console.error("Error parsing stored results:", err);
+                }
+            } else {
+                console.warn("No 'analysisResults' found in sessionStorage.");
             }
-        } else {
-            console.warn("No 'analysisResults' found in sessionStorage.");
+        };
+
+        // If status is idle or completed, attempt to load data
+        // If status changes to completed while we're on this page, load the new data
+        if (status === 'completed' || status === 'idle' || data === null) {
+            loadData();
         }
 
         // Load settings
@@ -33,11 +44,10 @@ function Results() {
         }
 
         setLoading(false);
-    }, []);
+    }, [status]); // Add status as a dependency so it re-runs when completing
 
     // Destructure all values from the data, providing defaults
     const {
-        total_shots = 0,
         makes = 0,
         fg_percentage = 0,
         longest_streak = 0,
@@ -56,7 +66,13 @@ function Results() {
                 </header>
 
                 <main className="results-content">
-                    {loading ? (
+                    {status === 'processing' || status === 'uploading' ? (
+                        <div className="results-placeholder">
+                            <Loading />
+                            <h2 style={{ marginTop: '20px' }}>Processing Video...</h2>
+                            <p>Your video is currently being analyzed. Please wait.</p>
+                        </div>
+                    ) : loading ? (
                         <Loading />
                     ) : !data ? (
                         <div className="results-placeholder">
