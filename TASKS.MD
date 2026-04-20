@@ -59,6 +59,12 @@
 - [ ] Perform cross-browser UI testing.
 - [ ] Resolve any remaining linter warnings.
 
+## 🤖 Agentic AI & Workspace Optimization
+- [x] Establish "Agentic Best Practices" rule for autonomous behavior.
+- [x] Enhance `architect.md` workflow with context mapping and edge case analysis.
+- [x] Define concrete "Frontend Consistency" guidelines for UI/UX.
+- [x] Implement structured "Agentic Debugging Loop" workflow.
+- [x] Create "Project DNA" rule to store high-level tech stack and business logic context.
+- [ ] Periodically audit `.agent/` directory for stale rules or workflows.
+
 ## 🚀 Deployment / DevOps
-- [ ] Verify API endpoints map correctly in staging/production environments.
-- [ ] Check logs and clean up unnecessary debugging statements.
