@@ -284,12 +284,9 @@ app.get('/api/sessions/:userId', async (req, res, next) => {
         const sessions = await Session.find({ userId })
             .select('sessionDate makes misses longest_streak fg_percentage')
             .sort({ sessionDate: -1 })
-            .lean(); // Added sort for consistency
-        if (!sessions.length) {
-            return res.status(404).json({ error: 'No sessions found for this user' });
-        }
+            .lean();
 
-        res.json(sessions);
+        res.json(sessions); // Returns [] if no sessions — empty state, not an error
     } catch (err) {
         next(err);
     }
