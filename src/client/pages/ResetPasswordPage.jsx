@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
 import Loading from '../components/Loading.jsx';
 import './../css/Login.css'; // Reusing the login styles which is great
+import nbnLogo from '../assets/nbnlight.png';
 
 // --- SVG Icons (Copied from Login.jsx for consistency) ---
 const LockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" /></svg>;
@@ -64,6 +65,7 @@ const ResetPasswordPage = () => {
             <div className="login-background">
                 <div className="login-container glass">
                     <header>
+                        <img src={nbnLogo} alt="NothingButNet Logo" className="login-logo" />
                         <h1>Reset Your Password</h1>
                         <p>Enter a new password for your account.</p>
                     </header>
@@ -81,7 +83,7 @@ const ResetPasswordPage = () => {
                                 disabled={isLoading}
                             />
                             <label htmlFor="password">New Password</label>
-                            <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                            <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password visibility">
                                 {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                             </button>
                         </div>
@@ -98,16 +100,19 @@ const ResetPasswordPage = () => {
                                 disabled={isLoading}
                             />
                             <label htmlFor="confirmPassword">Confirm New Password</label>
-                            <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                            <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)} aria-label="Toggle password visibility">
                                 {showConfirmPassword ? <EyeSlashIcon /> : <EyeIcon />}
                             </button>
                         </div>
-                        <button type="submit" className="submit-button" disabled={isLoading}>
+                        <button type="submit" className="primary-btn" style={{ width: '100%', marginTop: '10px' }} disabled={isLoading}>
                             {isLoading ? <span className="loading-spinner"></span> : 'Reset Password'}
                         </button>
                         {message && <p className="outcome" style={{ color: 'green' }}>{message}</p>}
                         {error && <p className="outcome">{error}</p>}
                     </form>
+                    <div className="form-footer">
+                        <p><Link to="/login" style={{ color: 'var(--accent-color)' }}>Back to Login</Link></p>
+                    </div>
                 </div>
             </div>
         </div>

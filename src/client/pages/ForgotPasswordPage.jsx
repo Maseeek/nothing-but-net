@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
 import Loading from '../components/Loading.jsx';
-import './../css/Login.css'; // You can reuse the login page styles
+import './../css/Login.css';
+import nbnLogo from '../assets/nbnlight.png';
 
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
@@ -51,26 +53,32 @@ const ForgotPasswordPage = () => {
     return (
         <div className="login-page">
             <Navbar />
-            <div className="login-container glass">
-                <header>
-                    <h1>Forgot Password</h1>
-                    <p>Enter your email address and we'll send you a link to reset your password.</p>
-                </header>
-                <form onSubmit={handleSubmit} className="login-form">
-                    <div className="input-group">
-                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " disabled={isLoading} />
-                        <label htmlFor="email">Email Address</label>
+            <div className="login-background">
+                <div className="login-container glass">
+                    <header>
+                        <img src={nbnLogo} alt="NothingButNet Logo" className="login-logo" />
+                        <h1>Forgot Password</h1>
+                        <p>Enter your email address and we'll send you a link to reset your password.</p>
+                    </header>
+                    <form onSubmit={handleSubmit} className="login-form">
+                        <div className="input-group">
+                            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " disabled={isLoading} />
+                            <label htmlFor="email">Email Address</label>
+                        </div>
+                        <button
+                            type="submit"
+                            className="primary-btn"
+                            disabled={isLoading || cooldown > 0}
+                            style={{ width: '100%', marginTop: '10px' }}
+                        >
+                            {isLoading ? <span className="loading-spinner"></span> : cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
+                        </button>
+                        {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}
+                    </form>
+                    <div className="form-footer">
+                        <p><Link to="/login" style={{ color: 'var(--accent-color)' }}>Back to Login</Link></p>
                     </div>
-                    <button
-                        type="submit"
-                        className="submit-button"
-                        disabled={isLoading || cooldown > 0}
-                        style={{ width: '100%', marginTop: '10px' }} // Inline style for consistency if needed, or rely on CSS
-                    >
-                        {isLoading ? <span className="loading-spinner"></span> : cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
-                    </button>
-                    {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}
-                </form>
+                </div>
             </div>
         </div>
     );

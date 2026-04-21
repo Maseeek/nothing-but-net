@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
+import { motion } from 'framer-motion';
+import nbnLogo from '../assets/nbnlight.png';
+import './../css/Login.css';
 
 const VerifyEmailPage = () => {
     const { token } = useParams();
@@ -41,18 +44,31 @@ const VerifyEmailPage = () => {
     }, [token]);
 
     return (
-        <>
+        <div className="login-page">
             <Navbar />
-            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '150px' }}>
-                <div className="glass" style={{ padding: '40px', maxWidth: '500px', width: '90%', textAlign: 'center', color: 'white' }}>
-                    <h1>Email Verification</h1>
-                    <p>{verificationStatus}</p>
-                    <Link to="/profile" style={{ color: '#d64b17', marginTop: '20px', display: 'inline-block', fontWeight: 'bold' }}>
-                        Go to Your Profile
-                    </Link>
+            <div className="login-background">
+                <div className="login-container glass" style={{ textAlign: 'center' }}>
+                    <header>
+                        <img src={nbnLogo} alt="NothingButNet Logo" className="login-logo" />
+                        <h1>Email Verification</h1>
+                    </header>
+                    
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{ margin: '2rem 0', color: 'white' }}
+                    >
+                        <p style={{ fontSize: '1.2rem', lineHeight: '1.6' }}>{verificationStatus}</p>
+                    </motion.div>
+
+                    <div className="form-footer" style={{ marginTop: '2rem' }}>
+                        <Link to="/profile" className="primary-btn" style={{ textDecoration: 'none', display: 'inline-flex' }}>
+                            Go to Your Profile
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

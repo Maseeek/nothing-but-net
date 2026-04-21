@@ -50,8 +50,10 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
             {/* The Chart SVG */}
             <div className="chart-svg-container"
                 style={{
-                    width: size,
-                    height: size,
+                    width: '100%',
+                    maxWidth: size,
+                    aspectRatio: '1/1',
+                    margin: '0 auto'
                 }}>
 
                 {/* The Badge/Stats in Center */}
@@ -81,7 +83,7 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                         cy={center}
                         r={radius}
                         fill="none"
-                        stroke="#EF4444" // Ruby Red
+                        stroke="var(--error-color, #EF4444)" // Ruby Red / Error variable
                         strokeWidth={strokeWidth}
                         strokeLinecap="round"
                         strokeDasharray={circumference}
@@ -103,7 +105,7 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                         cy={center}
                         r={radius}
                         fill="none"
-                        stroke="#10B981" // Emerald Green
+                        stroke="var(--success-color, #10B981)" // Emerald Green / Success variable
                         strokeWidth={strokeWidth}
                         strokeLinecap="round"
                         strokeDasharray={circumference}
