@@ -40,7 +40,58 @@ export async function sendSessionData(sessionData) {
     }
 }
 
+export async function getVideoDuration(file) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+            window.URL.revokeObjectURL(video.src);
+            resolve(video.duration);
+        };
+        video.onerror = () => {
+            reject("Could not load video metadata.");
+        };
+        video.src = URL.createObjectURL(file);
+    });
+}
+
 export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) {
+    const currentUser = getCurrentUser();
+    
+    // Upload Guards - Duration Limits
+    let maxDuration = 60; // Default 1 minute for guests
+    let planName = "Guest";
+
+    if (currentUser) {
+        if (currentUser.isPro || currentUser.subscriptionPlan === 'pro' || currentUser.subscriptionPlan === 'standard') {
+            maxDuration = 3600; // 60 minutes for Pro/Standard
+            planName = currentUser.subscriptionPlan.charAt(0).toUpperCase() + currentUser.subscriptionPlan.slice(1);
+        } else {
+            maxDuration = 300; // 5 minutes for Free users
+            planName = "Free";
+        }
+    }
+
+    try {
+        const duration = await getVideoDuration(file);
+        console.log(`Video Duration: ${duration.toFixed(2)}s | Limit for ${planName}: ${maxDuration}s`);
+
+        if (duration > maxDuration) {
+            const minutes = maxDuration / 60;
+            const errorMsg = currentUser 
+                ? `This video is too long (${Math.round(duration)}s). Your ${planName} plan only supports up to ${minutes} minutes. Upgrade to Pro for 1-hour uploads!`
+                : `This video is too long (${Math.round(duration)}s). Guests are limited to 1 minute. Please create a free account for 5-minute uploads or go Pro for 1-hour!`;
+            
+            alert(errorMsg); // Temporary alert, should be a nice modal later
+            return;
+        }
+    } catch (err) {
+        console.error("Duration check failed:", err);
+        // If meta check fails, we might still want to proceed or block. Let's block for safety.
+        alert("Could not verify video duration. Please try a different video format.");
+        return;
+    }
+
     const formData = new FormData();
     formData.append("video", file);
     formData.append("hoopLeft", JSON.stringify([hoopLeft.x, hoopLeft.y]));

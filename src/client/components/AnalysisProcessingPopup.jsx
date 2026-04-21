@@ -2,7 +2,9 @@ import React from 'react';
 import '../css/MainPage.css';
 import { Loader2 } from 'lucide-react';
 
-const AnalysisProcessingPopup = ({ onDismiss }) => {
+const AnalysisProcessingPopup = ({ onDismiss, progress }) => {
+    const isUploading = progress < 100;
+    
     return (
         <div className="popup-overlay" style={{ zIndex: 1000 }}>
             <div className="popup-content glass" style={{
@@ -26,10 +28,33 @@ const AnalysisProcessingPopup = ({ onDismiss }) => {
                     <Loader2 size={48} color="#ffffff" className="animate-spin" style={{ animation: 'spin 2s linear infinite' }} />
                 </div>
 
-                <div style={{ textAlign: 'center' }}>
-                    <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'white' }}>Processing Video...</h2>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                        Your video is being processed in the background. You will be notified when it is done.
+                <div style={{ textAlign: 'center', width: '100%' }}>
+                    <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'white' }}>
+                        {isUploading ? `Uploading Video: ${progress || 0}%` : 'Processing Video...'}
+                    </h2>
+                    
+                    {isUploading && (
+                        <div style={{
+                            width: '100%',
+                            height: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            borderRadius: '4px',
+                            marginTop: '1rem',
+                            overflow: 'hidden'
+                        }}>
+                            <div style={{
+                                width: `${progress || 0}%`,
+                                height: '100%',
+                                backgroundColor: 'var(--accent-color, #ff5805)',
+                                transition: 'width 0.3s ease-out'
+                            }} />
+                        </div>
+                    )}
+                    
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginTop: '1rem' }}>
+                        {isUploading 
+                            ? 'Please wait while your video uploads to our servers.' 
+                            : 'Your video is being processed in the background. You will be notified when it is done.'}
                     </p>
                 </div>
 

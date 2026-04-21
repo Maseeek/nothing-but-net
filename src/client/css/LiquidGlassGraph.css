@@ -1,0 +1,93 @@
+/* src/client/css/LiquidGlassGraph.css */
+
+.liquid-graph-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.stats-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.stats-badge {
+    text-align: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    min-width: 120px;
+}
+
+.fg-percent-value {
+    display: block;
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: white;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    font-family: var(--font-heading);
+}
+
+.fg-percent-label {
+    font-size: 0.75rem;
+    color: #10B981; /* Matching Emerald Green */
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.chart-svg-container {
+    position: relative;
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.legend-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-color-dot {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+}
+
+.legend-color-dot.made {
+    background: #10B981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+}
+
+.legend-color-dot.missed {
+    background: #EF4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+.legend-text {
+    color: var(--text-secondary);
+    font-weight: 500;
+}

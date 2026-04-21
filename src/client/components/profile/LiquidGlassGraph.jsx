@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import '../../css/LiquidGlassGraph.css';
 
 const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
     // 1. Safe data handling
@@ -18,19 +19,17 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
     const circumference = 2 * Math.PI * radius;
 
     // 3. Segment Calculations
-    // We'll stack them: Green starts at -90deg (top). Red follows Green.
     const madeRatio = safeMade / calcTotal;
     const missedRatio = safeMissed / calcTotal;
 
     const madeOffset = circumference - (madeRatio * circumference);
-    const missedOffset = circumference - (missedRatio * circumference); // This needs to be offset by Made's rotation? 
-    // Actually, distinct arcs are easier with rotation.
+    const missedOffset = circumference - (missedRatio * circumference);
 
     // 4. Animation Config
     const springTransition = { type: "spring", stiffness: 100, damping: 20, mass: 1 };
 
     return (
-        <div className="relative flex flex-col items-center justify-center p-8">
+        <div className="liquid-graph-wrapper">
             {/* Gooey Filter */}
             <svg style={{ position: 'absolute', width: 0, height: 0 }}>
                 <defs>
@@ -49,26 +48,23 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
             </svg>
 
             {/* The Badge/Stats in Center */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-                <div className="text-center backdrop-blur-sm bg-black/20 p-4 rounded-full border border-white/10">
-                    <span className="block text-4xl font-bold text-white drop-shadow-lg font-heading">
+            <div className="stats-overlay">
+                <div className="stats-badge">
+                    <span className="fg-percent-value">
                         {total > 0 ? Math.round((safeMade / total) * 100) : 0}%
                     </span>
-                    <span className="text-xs text-green-400 font-bold tracking-wider uppercase">FG Percent</span>
+                    <span className="fg-percent-label">FG Percent</span>
                 </div>
             </div>
 
             {/* The Chart SVG */}
-            <div className="relative rounded-full shadow-2xl overflow-hidden"
+            <div className="chart-svg-container"
                 style={{
                     width: size,
                     height: size,
-                    boxShadow: '0 0 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.1)',
-                    borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.02)'
                 }}>
 
-                <svg width={size} height={size} className="transform -rotate-90">
+                <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
                     {/* Track (Glass Tube Background) */}
                     <circle
                         cx={center}
@@ -79,10 +75,7 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                         strokeWidth={strokeWidth}
                     />
 
-                    {/* MISSED Arc (Ruby Red) - Background Layer */}
-                    {/* We draw this as a full circle masked, or just the segment? 
-                        Let's render it starting after Green? 
-                        Simpler: Render it fully, but rotate it so it starts where Green ends. */}
+                    {/* MISSED Arc (Ruby Red) */}
                     <motion.circle
                         cx={center}
                         cy={center}
@@ -95,7 +88,7 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                         initial={{ strokeDashoffset: circumference }}
                         animate={{
                             strokeDashoffset: missedOffset,
-                            rotate: (madeRatio * 360) // Start where Missed ends? No, rotate by Made degrees
+                            rotate: (madeRatio * 360) 
                         }}
                         transition={springTransition}
                         style={{
@@ -104,7 +97,7 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                         }}
                     />
 
-                    {/* MADE Arc (Emerald Green) - Foreground Layer */}
+                    {/* MADE Arc (Emerald Green) */}
                     <motion.circle
                         cx={center}
                         cy={center}
@@ -118,9 +111,8 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                         animate={{ strokeDashoffset: madeOffset }}
                         transition={springTransition}
                         style={{
-                            filter: 'url(#doughnut-goo)',
                             opacity: 0.9,
-                            filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))'
+                            filter: 'url(#doughnut-goo) drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))'
                         }}
                     />
 
@@ -138,14 +130,14 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
             </div>
 
             {/* Legend */}
-            <div className="flex gap-8 mt-8">
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.6)]"></div>
-                    <span className="text-gray-300 font-medium">Made ({safeMade})</span>
+            <div className="legend-container">
+                <div className="legend-item">
+                    <div className="legend-color-dot made"></div>
+                    <span className="legend-text">Made ({safeMade})</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.6)]"></div>
-                    <span className="text-gray-300 font-medium">Missed ({safeMissed})</span>
+                <div className="legend-item">
+                    <div className="legend-color-dot missed"></div>
+                    <span className="legend-text">Missed ({safeMissed})</span>
                 </div>
             </div>
         </div>

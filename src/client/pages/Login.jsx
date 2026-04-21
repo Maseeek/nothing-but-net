@@ -106,7 +106,7 @@ const LoginPage = () => {
 
                         <button
                             type="submit"
-                            className="btn-primary"
+                            className="primary-btn"
                             style={{ width: '100%', marginTop: '10px' }}
                             disabled={isLoading}
                         >

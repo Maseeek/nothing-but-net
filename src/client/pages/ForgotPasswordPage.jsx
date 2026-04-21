@@ -67,7 +67,6 @@ const ForgotPasswordPage = () => {
                         disabled={isLoading || cooldown > 0}
                         style={{ width: '100%', marginTop: '10px' }} // Inline style for consistency if needed, or rely on CSS
                     >
-                    >
                         {isLoading ? <span className="loading-spinner"></span> : cooldown > 0 ? `Resend in ${cooldown}s` : 'Send Reset Link'}
                     </button>
                     {message && <p className="outcome" style={{ color: 'white' }}>{message}</p>}

@@ -204,7 +204,14 @@ app.post('/api/login', loginValidation, async (req, res, next) => {
         console.log(`[Login] Successful login for: ${lowerCaseUsername}`);
 
         const token = jwt.sign(
-            { userId: user._id, username: user.username, email: user.email, emailVerified: user.emailVerified },
+            { 
+                userId: user._id, 
+                username: user.username, 
+                email: user.email, 
+                emailVerified: user.emailVerified,
+                isPro: user.isPro,
+                subscriptionPlan: user.subscriptionPlan
+            },
             JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -436,7 +443,9 @@ app.post('/api/verify-email', async (req, res, next) => {
                 userId: user._id,
                 username: user.username,
                 email: user.email,
-                emailVerified: user.emailVerified // This will now be true
+                emailVerified: user.emailVerified, // This will now be true
+                isPro: user.isPro,
+                subscriptionPlan: user.subscriptionPlan
             },
             JWT_SECRET,
             { expiresIn: '1h' }
