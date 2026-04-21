@@ -7,6 +7,7 @@ import AnalysisProcessingPopup from '../components/AnalysisProcessingPopup';
 import LimitExceededModal from '../components/LimitExceededModal';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import useEntitlements from '../hooks/useEntitlements';
 
 const AnalysisContext = createContext({
     status: 'idle',
@@ -33,33 +34,33 @@ export const AnalysisProvider = ({ children }) => {
     const [showLimitModal, setShowLimitModal] = useState(false);
     const [limitDetails, setLimitDetails] = useState({ planName: '', maxDuration: 0, actualDuration: 0, isGuest: true });
     const [uploadProgress, setUploadProgress] = useState(0);
+    const { limits, usage, refresh: refreshEntitlements } = useEntitlements();
     const location = useLocation();
     const navigate = useNavigate();
 
     const startAnalysis = async (videoFile, hoopLeft, hoopRight, showAngle) => {
-        const currentUser = getCurrentUser();
-        
-        // Upload Guard - Duration Limit
-        let maxDuration = 60; // 1 min for guests
-        let planName = "Guest";
-        let isGuest = true;
-
-        if (currentUser) {
-            isGuest = false;
-            if (currentUser.isPro || currentUser.subscriptionPlan === 'pro' || currentUser.subscriptionPlan === 'standard') {
-                maxDuration = 3600; // 60 mins
-                const rawPlan = currentUser.subscriptionPlan || (currentUser.isPro ? 'pro' : 'standard');
-                planName = rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1);
-            } else {
-                maxDuration = 300; // 5 mins
-                planName = "Free";
-            }
+        // Enforce Count Limit
+        if (usage.remaining <= 0) {
+            setLimitDetails({ 
+                reason: 'count',
+                planName: limits.planName || usage.plan, 
+                maxCount: usage.plan === 'guest' ? limits.dailyCount : limits.weeklyCount,
+                isGuest: usage.plan === 'guest'
+            });
+            setShowLimitModal(true);
+            return;
         }
 
         try {
             const duration = await getVideoDuration(videoFile);
-            if (duration > maxDuration) {
-                setLimitDetails({ planName, maxDuration, actualDuration: duration, isGuest });
+            if (duration > limits.maxDuration) {
+                setLimitDetails({ 
+                    reason: 'duration',
+                    planName: limits.planName || usage.plan, 
+                    maxDuration: limits.maxDuration, 
+                    actualDuration: duration, 
+                    isGuest: usage.plan === 'guest' 
+                });
                 setShowLimitModal(true);
                 return;
             }
@@ -106,6 +107,9 @@ export const AnalysisProvider = ({ children }) => {
 
                 // Send session data
                 await sendSessionData(data.data);
+                
+                // Refresh entitlements after successful analysis
+                refreshEntitlements();
             } else {
                 setStatus('failed');
                 setError(data.error || 'Upload failed');

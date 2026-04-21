@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
 import '../css/Pricing.css';
 
-const Pricing = () => {
+const Pricing = ({ user }) => {
+    const currentPlan = user?.subscriptionPlan || (user?.isPro ? 'pro' : 'free');
+
     const handleCheckout = async (priceId) => {
         try {
             const token = localStorage.getItem('authToken');
@@ -47,7 +49,7 @@ const Pricing = () => {
                 { name: 'Track shot angles', included: false },
                 { name: 'Priority Support', included: false },
             ],
-            buttonText: 'Get Started',
+            buttonText: 'GET STARTED',
             buttonLink: '/register', // Free plan just registers
             isFree: true,
             popular: false
@@ -63,7 +65,7 @@ const Pricing = () => {
                 { name: 'Track session FG%', included: true },
                 { name: 'Priority Support', included: false },
             ],
-            buttonText: 'Get Started',
+            buttonText: 'GET STARTED',
             priceId: 'price_1Sr78K0lkHUim5wo9C2J6xhp', // Standard Plan Price ID
             popular: true
         },
@@ -79,7 +81,7 @@ const Pricing = () => {
                 { name: 'Track shot locations', included: true },
                 { name: 'Priority Support', included: true },
             ],
-            buttonText: 'Get Started',
+            buttonText: 'GET STARTED',
             priceId: 'price_1Sr77w0lkHUim5woxWcXdHbO', // Pro Plan Price ID
             popular: false
         }
@@ -120,9 +122,10 @@ const Pricing = () => {
 
                         <button
                             onClick={() => plan.isFree ? window.location.href = plan.buttonLink : handleCheckout(plan.priceId)}
-                            className={`pricing-btn ${plan.popular ? 'pricing-btn--primary' : 'pricing-btn--outline'}`}
+                            className={`pricing-btn ${plan.popular ? 'pricing-btn--primary' : 'pricing-btn--outline'} ${currentPlan === plan.name.toLowerCase() ? 'current' : ''}`}
+                            disabled={currentPlan === plan.name.toLowerCase()}
                         >
-                            {plan.buttonText}
+                            {currentPlan === plan.name.toLowerCase() ? 'CURRENT PLAN' : plan.buttonText}
                         </button>
                     </div>
                 ))}

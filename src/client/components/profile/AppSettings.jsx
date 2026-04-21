@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, Trash2, Eye } from 'lucide-react';
 
+import useEntitlements from '../../hooks/useEntitlements';
+
 const AppSettings = () => {
+    const { hasFeature } = useEntitlements();
+    const isPro = hasFeature('shot_angles');
+
     // State initialization with localStorage checks
     const [showAngle, setShowAngle] = useState(() => {
         const stored = localStorage.getItem('nbn_settings_showAngle');
@@ -22,8 +27,25 @@ const AppSettings = () => {
 
     return (
         <div className="settings-content animate-fade-in">
-            <div className="settings-section bento-item glass" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+            <div className={`settings-section bento-item glass ${!isPro ? 'locked-feature' : ''}`} style={{ marginBottom: '1.5rem', padding: '1.5rem', position: 'relative' }}>
+                {!isPro && (
+                    <div className="lock-overlay" style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        background: 'rgba(214, 75, 23, 0.2)',
+                        color: 'var(--accent-color)',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold',
+                        border: '1px solid rgba(214, 75, 23, 0.3)',
+                        zIndex: 2
+                    }}>
+                        PRO ONLY
+                    </div>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem', opacity: isPro ? 1 : 0.5 }}>
                     <Eye size={20} className="accent-text" />
                     <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Basketball Review</h3>
                 </div>
@@ -32,7 +54,8 @@ const AppSettings = () => {
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: 'center',
-                    padding: '1rem 0'
+                    padding: '1rem 0',
+                    opacity: isPro ? 1 : 0.5
                 }}>
                     <div className="setting-info">
                         <h4 style={{ margin: '0 0 5px 0' }}>Show Shot Angle</h4>
@@ -40,11 +63,12 @@ const AppSettings = () => {
                             Display the average entry angle in your analysis results
                         </p>
                     </div>
-                    <label className="switch">
+                    <label className={`switch ${!isPro ? 'disabled' : ''}`}>
                         <input
                             type="checkbox"
-                            checked={showAngle}
-                            onChange={(e) => setShowAngle(e.target.checked)}
+                            checked={isPro && showAngle}
+                            onChange={(e) => isPro && setShowAngle(e.target.checked)}
+                            disabled={!isPro}
                         />
                         <span className="slider"></span>
                     </label>

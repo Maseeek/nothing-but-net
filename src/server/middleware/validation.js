@@ -32,7 +32,7 @@ export const loginValidation = [
 ];
 
 export const sessionValidation = [
-    body('userId').isMongoId().withMessage('Invalid User ID'),
+    body('userId').optional().isMongoId().withMessage('Invalid User ID'),
     body('makes').isInt({ min: 0 }).withMessage('Makes must be a non-negative integer'),
     body('misses').isInt({ min: 0 }).withMessage('Misses must be a non-negative integer'),
     body('total_shots').isInt({ min: 0 }).withMessage('Total shots must be a non-negative integer'),

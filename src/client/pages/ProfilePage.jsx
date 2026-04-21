@@ -126,9 +126,12 @@ const ProfilePage = () => {
                     >
                         App Settings
                     </button>
-                    {activeTab === 'pricing' && (
-                        <button className="active">
-                            Pricing
+                    {!user.isPro && (
+                        <button 
+                            className={activeTab === 'pricing' ? 'active' : ''}
+                            onClick={() => handleTabChange('pricing')}
+                        >
+                            Upgrades
                         </button>
                     )}
                 </nav>
@@ -138,7 +141,7 @@ const ProfilePage = () => {
                     {activeTab === 'security' && <SecuritySettings />}
                     {activeTab === 'analyses' && <AnalysesHistory />}
                     {activeTab === 'settings' && <AppSettings />}
-                    {activeTab === 'pricing' && <Pricing />}
+                    {activeTab === 'pricing' && <Pricing user={user} />}
                 </main>
             </div>
             </div>

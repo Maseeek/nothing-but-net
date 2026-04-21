@@ -4,16 +4,12 @@ import { API_BASE_URL, ANALYSIS_API_URL } from '../config.js';
 export async function sendSessionData(sessionData) {
     try {
         const currentUser = getCurrentUser();
-        if (!currentUser || !currentUser.userId) {
-            console.error("User ID not found. Ensure the user is logged in.");
-            return;
-        }
-
+        
         const payload = {
-            userId: currentUser.userId, // Include userId
+            userId: currentUser?.userId || null, 
             makes: sessionData.makes,
             misses: sessionData.misses,
-            longest_streak: sessionData.longest_streak, // Updated field name
+            longest_streak: sessionData.longest_streak,
             average_angle: sessionData.average_angle,
             average_make_angle: sessionData.average_make_angle,
             average_miss_angle: sessionData.average_miss_angle,
@@ -55,77 +51,10 @@ export async function getVideoDuration(file) {
     });
 }
 
+// NOTE: sendVideoForAnalysis is deprecated in favor of AnalysisContext.jsx
+// Keeping only the duration logic helper if needed elsewhere.
 export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) {
-    const currentUser = getCurrentUser();
-    
-    // Upload Guards - Duration Limits
-    let maxDuration = 60; // Default 1 minute for guests
-    let planName = "Guest";
-
-    if (currentUser) {
-        if (currentUser.isPro || currentUser.subscriptionPlan === 'pro' || currentUser.subscriptionPlan === 'standard') {
-            maxDuration = 3600; // 60 minutes for Pro/Standard
-            planName = currentUser.subscriptionPlan.charAt(0).toUpperCase() + currentUser.subscriptionPlan.slice(1);
-        } else {
-            maxDuration = 300; // 5 minutes for Free users
-            planName = "Free";
-        }
-    }
-
-    try {
-        const duration = await getVideoDuration(file);
-        console.log(`Video Duration: ${duration.toFixed(2)}s | Limit for ${planName}: ${maxDuration}s`);
-
-        if (duration > maxDuration) {
-            const minutes = maxDuration / 60;
-            const errorMsg = currentUser 
-                ? `This video is too long (${Math.round(duration)}s). Your ${planName} plan only supports up to ${minutes} minutes. Upgrade to Pro for 1-hour uploads!`
-                : `This video is too long (${Math.round(duration)}s). Guests are limited to 1 minute. Please create a free account for 5-minute uploads or go Pro for 1-hour!`;
-            
-            alert(errorMsg); // Temporary alert, should be a nice modal later
-            return;
-        }
-    } catch (err) {
-        console.error("Duration check failed:", err);
-        // If meta check fails, we might still want to proceed or block. Let's block for safety.
-        alert("Could not verify video duration. Please try a different video format.");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("video", file);
-    formData.append("hoopLeft", JSON.stringify([hoopLeft.x, hoopLeft.y]));
-    formData.append("hoopRight", JSON.stringify([hoopRight.x, hoopRight.y]));
-    try {
-        console.log("Hoop Left:", hoopLeft, "Hoop Right:", hoopRight);
-
-        // Match the key used in Settings and Results
-        const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
-        formData.append("showAngle", settingsShowAngle);
-
-        const response = await fetch(`${ANALYSIS_API_URL}/upload-and-analyze`, {
-            method: "POST",
-            body: formData,
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            console.log("Analysis raw response data:", data.data);
-            const analysisResults = data.data;
-            console.log("Saving to sessionStorage 'analysisResults':", analysisResults);
-            sessionStorage.setItem("analysisResults", JSON.stringify(analysisResults));
-
-            // Send session data to the server
-            await sendSessionData(analysisResults);
-
-            navigate("/results"); // Navigate to Results.jsx page
-        } else {
-            console.error("Analysis failed:", data.error || "Unknown error");
-            alert("Analysis failed: " + (data.error || "Unknown error"));
-        }
-    } catch (error) {
-        console.error("Error processing video:", error);
-        alert("Error processing video: " + error.message);
-    }
+    // This function is being phased out.
+    // Use AnalysisContext.startAnalysis for production use.
+    console.warn("sendVideoForAnalysis is deprecated. Use AnalysisContext instead.");
 }

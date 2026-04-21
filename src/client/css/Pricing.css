@@ -194,3 +194,13 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(214, 75, 23, 0.5);
 }
+
+.pricing-btn.current {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    cursor: default;
+    pointer-events: none;
+    box-shadow: none;
+    transform: none;
+}

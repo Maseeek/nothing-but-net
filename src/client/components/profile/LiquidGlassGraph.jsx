@@ -47,22 +47,22 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                 </defs>
             </svg>
 
-            {/* The Badge/Stats in Center */}
-            <div className="stats-overlay">
-                <div className="stats-badge">
-                    <span className="fg-percent-value">
-                        {total > 0 ? Math.round((safeMade / total) * 100) : 0}%
-                    </span>
-                    <span className="fg-percent-label">FG Percent</span>
-                </div>
-            </div>
-
             {/* The Chart SVG */}
             <div className="chart-svg-container"
                 style={{
                     width: size,
                     height: size,
                 }}>
+
+                {/* The Badge/Stats in Center */}
+                <div className="stats-overlay">
+                    <div className="stats-badge">
+                        <span className="fg-percent-value">
+                            {total > 0 ? Math.round((safeMade / total) * 100) : 0}%
+                        </span>
+                        <span className="fg-percent-label">FG Percent</span>
+                    </div>
+                </div>
 
                 <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
                     {/* Track (Glass Tube Background) */}

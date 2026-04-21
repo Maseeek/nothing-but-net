@@ -20,6 +20,7 @@ import Loading from "../components/Loading.jsx";
 import { useAnalysis } from "../context/AnalysisContext.jsx";
 import { getCurrentUser } from "../js/auth.js";
 import { API_BASE_URL } from "../config.js";
+import useEntitlements from "../hooks/useEntitlements.js";
 import "./../css/Results.css";
 
 // Chart.js imports
@@ -53,7 +54,13 @@ function Results() {
     const [loading, setLoading] = useState(true);
     const [showAngle, setShowAngle] = useState(true);
     const { status } = useAnalysis();
+    const { hasFeature, usage } = useEntitlements();
     const currentUser = getCurrentUser();
+    
+    // Feature flags
+    const canSeeAngles = hasFeature('shot_angles');
+    const canSeeIntelligence = hasFeature('fg_progression');
+    const canSeeSessionFG = hasFeature('session_fg');
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -120,50 +127,88 @@ function Results() {
     }, [data, history]);
 
     // --- Chart Data Preparation ---
-    const chartData = useMemo(() => {
-        if (!data?.shot_angles) return null;
+    const { chartData, points } = useMemo(() => {
+        if (!data?.shot_angles) return { chartData: null, points: [] };
         
+        const filteredPoints = data.shot_angles.map((angle, i) => ({
+            angle,
+            result: data.shots_results[i],
+            id: i + 1
+        })).filter(p => p.angle >= 30 && p.angle <= 60);
+
+        if (filteredPoints.length === 0) return { chartData: null, points: [] };
+
         return {
-            labels: data.shot_angles.map((_, i) => `Shot ${i + 1}`),
-            datasets: [
-                {
-                    label: 'Launch Angle',
-                    data: data.shot_angles,
-                    borderColor: 'rgba(214, 75, 23, 0.8)',
-                    backgroundColor: 'rgba(214, 75, 23, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: data.shots_results.map(r => r === 1 ? '#4ade80' : '#f87171'),
-                    pointBorderColor: '#fff',
-                    pointRadius: 4,
-                }
-            ]
+            points: filteredPoints,
+            chartData: {
+                labels: filteredPoints.map(p => `S${p.id}`), // Shortened labels for better mobile fit
+                datasets: [
+                    {
+                        label: 'Launch Angle',
+                        data: filteredPoints.map(p => p.angle),
+                        borderColor: 'rgba(214, 75, 23, 0.9)',
+                        backgroundColor: 'rgba(214, 75, 23, 0.05)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: 'start',
+                        pointBackgroundColor: filteredPoints.map(p => p.result === 1 ? '#4ade80' : '#f87171'),
+                        pointBorderColor: 'rgba(255, 255, 255, 0.8)',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                    }
+                ]
+            }
         };
     }, [data]);
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
             tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: '#fff',
+                backgroundColor: 'rgba(15, 15, 25, 0.95)',
+                titleColor: 'rgba(255, 255, 255, 0.5)',
                 bodyColor: '#fff',
-                padding: 10,
-                displayColors: false
+                padding: 12,
+                displayColors: false,
+                callbacks: {
+                    label: (context) => {
+                        const angle = context.parsed.y;
+                        const result = points[context.dataIndex]?.result === 1 ? 'MAKE' : 'MISS';
+                        return [`Angle: ${angle.toFixed(1)}°`, `Result: ${result}`];
+                    }
+                }
             }
         },
         scales: {
             y: {
                 min: 30,
-                max: 70,
-                grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                ticks: { color: 'rgba(255, 255, 255, 0.4)' }
+                max: 60,
+                grid: { 
+                    color: (context) => {
+                        if (context.tick.value >= 45 && context.tick.value <= 55) {
+                            return 'rgba(214, 75, 23, 0.15)';
+                        }
+                        return 'rgba(255, 255, 255, 0.03)';
+                    }
+                },
+                ticks: { 
+                    color: 'rgba(255, 255, 255, 0.3)',
+                    stepSize: 10,
+                    font: { size: 10 }
+                }
             },
             x: {
                 grid: { display: false },
-                ticks: { display: false }
+                ticks: { 
+                    color: 'rgba(255, 255, 255, 0.3)',
+                    maxRotation: 0,
+                    font: { size: 9 },
+                    autoSkip: true,
+                    maxTicksLimit: 10
+                }
             }
         }
     };
@@ -261,16 +306,24 @@ function Results() {
 
                         {/* 2. Consistency Chart */}
                         <motion.div 
-                            className="bento-card glass consistency-card"
+                            className={`bento-card glass consistency-card ${!canSeeAngles ? 'locked-feature' : ''}`}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
                         >
-                            <div className="card-header">
+                            {!canSeeAngles && (
+                                <div className="lock-overlay-center">
+                                    <Crown size={32} className="accent-text" />
+                                    <h3>Arc Analysis (Pro)</h3>
+                                    <p>Upgrade to Pro to track your launch angles and arc consistency.</p>
+                                    <Link to="/profile?tab=pricing" className="btn-primary btn-sm">Upgrade</Link>
+                                </div>
+                            )}
+                            <div className="card-header" style={{ opacity: canSeeAngles ? 1 : 0.3 }}>
                                 <TrendingUp size={18} className="accent-text" />
                                 <h3>Arc Consistency</h3>
                             </div>
-                            <div className="chart-wrapper">
+                            <div className="chart-wrapper" style={{ opacity: canSeeAngles ? 1 : 0.1, filter: canSeeAngles ? 'none' : 'blur(4px)' }}>
                                 {chartData && <Line data={chartData} options={chartOptions} />}
                             </div>
                         </motion.div>
@@ -327,61 +380,70 @@ function Results() {
 
                 {/* --- Right Column: Intelligence Sidebar --- */}
                 <aside className="intelligence-sidebar">
-                    <section className="intelligence-block glass">
-                        <div className="block-header">
+                    <section className={`intelligence-block glass ${!canSeeIntelligence ? 'locked-feature' : ''}`} style={{ position: 'relative' }}>
+                        {!canSeeIntelligence && (
+                            <div className="lock-overlay-center">
+                                <Activity size={24} className="accent-text" />
+                                <h4 style={{ margin: '10px 0' }}>Intelligence (Pro)</h4>
+                                <p style={{ fontSize: '0.8rem', padding: '0 10px' }}>Historical progression benchmarks require a Pro account.</p>
+                            </div>
+                        )}
+                        <div className="block-header" style={{ opacity: canSeeIntelligence ? 1 : 0.3 }}>
                             <Activity size={18} className="accent-text" />
                             <h3>Training Intelligence</h3>
                         </div>
                         
-                        {!intelligence ? (
-                            <div className="empty-intelligence">
-                                <AlertCircle size={32} />
-                                <p>First session detected. Keep shooting to unlock improvement metrics!</p>
-                            </div>
-                        ) : (
-                            <div className="intelligence-metrics">
-                                <div className="intelligence-item">
-                                    <div className="item-info">
-                                        <label>Efficiency Progress</label>
-                                        <div className="item-comparison">vs Last 5 Sessions</div>
-                                    </div>
-                                    <div className={`item-delta ${intelligence.fgDiffLast5 >= 0 ? 'up' : 'down'}`}>
-                                        {intelligence.fgDiffLast5 >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                                        {Math.abs(intelligence.fgDiffLast5).toFixed(1)}%
-                                    </div>
+                        <div style={{ opacity: canSeeIntelligence ? 1 : 0.1, filter: canSeeIntelligence ? 'none' : 'blur(4px)' }}>
+                            {!intelligence ? (
+                                <div className="empty-intelligence">
+                                    <AlertCircle size={32} />
+                                    <p>Keep shooting to unlock improvement metrics!</p>
                                 </div>
-
-                                <div className="intelligence-item">
-                                    <div className="item-info">
-                                        <label>Benchmark Comparison</label>
-                                        <div className="item-comparison">vs Last 5 Peak ({intelligence.lastFiveBestFG}%)</div>
-                                    </div>
-                                    <div className={`item-delta ${data.fg_percentage >= intelligence.lastFiveBestFG ? 'up' : 'down'}`}>
-                                        {data.fg_percentage >= intelligence.lastFiveBestFG ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                                        {(data.fg_percentage - intelligence.lastFiveBestFG).toFixed(1)}%
-                                    </div>
-                                </div>
-
-                                {(intelligence.isNewBest || intelligence.isStreakBest) && (
-                                    <div className="achievement-badge glass">
-                                        <Trophy size={20} className="accent-text" />
-                                        <div>
-                                            {intelligence.isNewBest ? (
-                                                <>
-                                                    <strong>New All-Time Record!</strong>
-                                                    <span>Highest Shot Efficiency achieved.</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <strong>Hot Streak!</strong>
-                                                    <span>Longest streak record broken.</span>
-                                                </>
-                                            )}
+                            ) : (
+                                <div className="intelligence-metrics">
+                                    <div className="intelligence-item">
+                                        <div className="item-info">
+                                            <label>Efficiency Progress</label>
+                                            <div className="item-comparison">vs Last 5 Sessions</div>
+                                        </div>
+                                        <div className={`item-delta ${intelligence.fgDiffLast5 >= 0 ? 'up' : 'down'}`}>
+                                            {intelligence.fgDiffLast5 >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                                            {Math.abs(intelligence.fgDiffLast5).toFixed(1)}%
                                         </div>
                                     </div>
-                                )}
-                            </div>
-                        )}
+
+                                    <div className="intelligence-item">
+                                        <div className="item-info">
+                                            <label>Benchmark Comparison</label>
+                                            <div className="item-comparison">vs Last 5 Peak ({intelligence.lastFiveBestFG}%)</div>
+                                        </div>
+                                        <div className={`item-delta ${data.fg_percentage >= intelligence.lastFiveBestFG ? 'up' : 'down'}`}>
+                                            {data.fg_percentage >= intelligence.lastFiveBestFG ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                                            {(data.fg_percentage - intelligence.lastFiveBestFG).toFixed(1)}%
+                                        </div>
+                                    </div>
+
+                                    {(intelligence.isNewBest || intelligence.isStreakBest) && (
+                                        <div className="achievement-badge glass">
+                                            <Trophy size={20} className="accent-text" />
+                                            <div>
+                                                {intelligence.isNewBest ? (
+                                                    <>
+                                                        <strong>New All-Time Record!</strong>
+                                                        <span>Highest Shot Efficiency achieved.</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <strong>Hot Streak!</strong>
+                                                        <span>Longest streak record broken.</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </section>
 
                     <section className="recent-history glass">
