@@ -1,8 +1,8 @@
 # 🏀 Nothing But Net - Task Tracker
 
 ## 🎨 Frontend (UI/UX)
-- [ ] **[BIG TASK]** standardise Site UI Architecture: Unify aesthetic (glassmorphism, bento-grid, ember accents) and navigation across all pages (Results, Profile, Settings, Auth).
-- [ ] **[BIG TASK]** Overhaul Dashboard UI into a professional "Analytics Studio" workspace.
+- [x] **[BIG TASK]** standardise Site UI Architecture: Unify aesthetic (glassmorphism, bento-grid, ember accents) and navigation across all pages (Results, Profile, Settings, Auth).
+- [x] **[BIG TASK]** Overhaul Dashboard UI into a professional "Analytics Studio" workspace.
 - [x] Fix Analysis Results Error: Resolve TypeError in `Results.jsx` related to `useAnalysis` hook.
 - [ ] Migrate outstanding pages to the cleaner, modern UI.
 - [ ] Polish styling on the data-analytics graph to avoid CSS layout conflicts (Currently using non-functional Tailwind classes in `LiquidGlassGraph.jsx`).
@@ -20,9 +20,13 @@
 ## ⚙️ Backend (Node.js / Express)
 - [ ] Optimize database queries and API response times.
 - [ ] Review error handling on user authentication & data routes.
-- [x] Ensure that a user can't upload a video longer than a minute if they do not have an account. (Client-side enforced in `AnalysisContext.jsx`)
-- [x] Ensure that a user can't upload a video longer than 5 minutes if they have a free account. (Client-side enforced in `AnalysisContext.jsx`)
-- [x] Add Premium Upgrade Modal for duration limit exceeds. (`LimitExceededModal` implemented and integrated)
+- [x] Ensure that a user can't upload a video longer than a minute if they do not have an account. (Server & Client-side enforced).
+- [x] Ensure that a user can't upload a video longer than 5 minutes if they have a free account. (Server & Client-side enforced).
+- [x] Add Premium Upgrade Modal for duration limit exceeds. (`LimitExceededModal` implemented and integrated).
+- [x] **[BIG TASK]** Implement Tiered Account System (Free, Standard, Pro) with usage frequency limits and feature gating.
+- [x] Implement backend frequency validation and `/api/user-limits` endpoint.
+- [x] Implement IP-based tracking for Guest daily limits.
+- [x] Implement premium UI "Locked" states (Arc Consistency, Intelligence) for lower-tier users.
 
 ## 🎥 Computer Vision (Python / cv_service)
 - [ ] Test accuracy of shooting metrics and trajectory estimations.
