@@ -217,7 +217,9 @@ const AnalysesHistory = () => {
                 </div>
                 <div className="chart-container doughnut-chart">
                     <h4>Career Shot Distribution</h4>
-                    <LiquidGlassGraph made={totalMade} missed={totalShots - totalMade} />
+                    <div className="doughnut-chart-area">
+                        <LiquidGlassGraph made={totalMade} missed={totalShots - totalMade} />
+                    </div>
                 </div>
             </div>
         </div>

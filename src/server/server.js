@@ -69,7 +69,13 @@ app.use(cors({
     credentials: true // Important for sessions/cookies/auth headers
 }));
 
-app.use(express.json());
+app.use(express.json({
+    verify: (req, res, buf) => {
+        if (req.originalUrl.startsWith('/api/webhook')) {
+            req.rawBody = buf;
+        }
+    }
+}));
 app.use(helmet());
 app.use(compression());
 
@@ -266,7 +272,7 @@ app.post('/api/session', sessionValidation, async (req, res, next) => {
         const session = new Session({
             userId, 
             ip: !userId ? req.ip : undefined,
-            makes, misses, longest_streak, average_angle, average_make_angle,
+            makes, misses, longestStreak: longest_streak, average_angle, average_make_angle,
             average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots, sessionDate: new Date()
         });
         await session.save();
@@ -310,7 +316,7 @@ app.get('/api/sessions/:userId', async (req, res, next) => {
         const { userId } = req.params;
 
         const sessions = await Session.find({ userId })
-            .select('sessionDate makes misses longest_streak fg_percentage total_shots')
+            .select('sessionDate makes misses longestStreak fg_percentage total_shots')
             .sort({ sessionDate: -1 })
             .lean();
 
@@ -657,32 +663,33 @@ app.post('/api/webhook', async (req, res, next) => {
     }
 
     // Handle the event
-    console.log(`Webhook Event Type: ${event.type}`); // Log event type
+    console.log(`[Stripe Webhook] Received event: ${event.type}`);
 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         const userId = session.client_reference_id;
-        const planType = session.metadata?.planType || 'pro'; // Default to pro if missing
+        const planType = session.metadata?.planType || 'pro'; 
 
-        console.log(`Processing checkout.session.completed for user: ${userId}, Plan: ${planType}`);
+        console.log(`[Stripe Webhook] Processing completion for User: ${userId}, Plan: ${planType}`);
 
         if (userId) {
             try {
                 const user = await User.findById(userId);
                 if (user) {
+                    console.log(`[Stripe Webhook] Found user: ${user.username}. Upgrading...`);
                     user.isPro = true; // Legacy support
                     user.subscriptionPlan = planType;
                     user.stripeCustomerId = session.customer;
                     await user.save();
-                    console.log(`SUCCESS: User ${user.username} upgraded to ${planType} via Stripe.`);
+                    console.log(`[Stripe Webhook] SUCCESS: User ${user.username} upgraded to ${planType}.`);
                 } else {
-                    console.error(`User not found for ID: ${userId}`);
+                    console.error(`[Stripe Webhook] ERROR: User not found for ID: ${userId}`);
                 }
             } catch (error) {
-                console.error('Error updating user status from webhook:', error);
+                console.error('[Stripe Webhook] ERROR updating user status:', error);
             }
         } else {
-            console.error('No client_reference_id found in session.');
+            console.error('[Stripe Webhook] ERROR: No client_reference_id found in session metadata.');
         }
     }
 

@@ -2,6 +2,7 @@ import { StrictMode, Suspense, lazy, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import Loading from './components/Loading.jsx';
 
 import './css/index.css';
 import './css/Form.css';
@@ -18,19 +19,7 @@ const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.jsx'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.jsx'));
 
 // Loading component
-const PageLoader = () => (
-    <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        color: '#d64b17',
-        fontSize: '1.2rem',
-        fontWeight: 'bold'
-    }}>
-        Loading...
-    </div>
-);
+const PageLoader = () => <Loading />;
 
 
 import LiquidEther from './components/LiquidEther/LiquidEther.jsx';

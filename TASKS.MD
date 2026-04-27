@@ -11,6 +11,7 @@
 - [x] Overhaul Profile Page with strict glassmorphism and refined navigation tabs spacing.
 - [x] Refactor MagicButton with Framer Motion and premium liquid shimmer effect (Replaced manual spin).
 - [x] Work on a new landing page for the app. This landing page should have a clear call to action, information about what the app does, and push the user down the funnel of signing up and getting a membership. (Done with bento-grid and motion animations)
+- [x] Fix "AI Trajectory Analysis" visual on landing page: Implemented a premium, dynamic SVG animation with emerald/ember color variety and technical callouts.
 - [x] Migrate Settings into Profile Page: Consolidated app settings (Shot Angle, History) into a new "App Settings" tab on the Profile page and removed the standalone Settings route.
 - [x] Fix global UI spacing (reduced gap between navbar and content for better vertical flow).
 - [x] Fix Results page navbar vertical shift caused by misapplied container padding.

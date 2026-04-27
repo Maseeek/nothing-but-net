@@ -53,7 +53,7 @@ function Results() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showAngle, setShowAngle] = useState(true);
-    const { status } = useAnalysis();
+    const { status, result: contextResult, uploadProgress, error: analysisError } = useAnalysis();
     const { hasFeature, usage } = useEntitlements();
     const currentUser = getCurrentUser();
     
@@ -66,7 +66,14 @@ function Results() {
         const loadInitialData = async () => {
             setLoading(true);
             
-            // 1. Load Current Analysis from Storage
+            // 1. Priority: Load from Context if it just finished
+            if (contextResult) {
+                setData(contextResult);
+                setLoading(false);
+                return;
+            }
+
+            // 2. Fallback: Load from Storage
             const storedData = sessionStorage.getItem("analysisResults");
             if (storedData) {
                 try {
@@ -76,7 +83,7 @@ function Results() {
                 }
             }
 
-            // 2. Fetch Session History for Intelligence Sidebar
+            // 3. Fetch Session History for Intelligence Sidebar
             if (currentUser?.userId) {
                 try {
                     const response = await fetch(`${API_BASE_URL}/api/sessions/${currentUser.userId}`);
@@ -89,7 +96,7 @@ function Results() {
                 }
             }
 
-            // 3. Load Settings
+            // 4. Load Settings
             const storedShowAngle = localStorage.getItem('nbn_settings_showAngle');
             if (storedShowAngle !== null) {
                 setShowAngle(JSON.parse(storedShowAngle));
@@ -99,17 +106,19 @@ function Results() {
         };
 
         loadInitialData();
-    }, [status, currentUser?.userId]);
+    }, [status, currentUser?.userId, contextResult]);
 
     // --- Intelligence Calculations ---
     const intelligence = useMemo(() => {
         if (!data || history.length === 0) return null;
 
         // 1. All-time averages (for long-term context)
+        // Filter out current session from history if it has an _id
         const relevantHistory = history.filter(h => h._id !== data._id);
         if (relevantHistory.length === 0) return null;
 
-        const avgFG = relevantHistory.reduce((acc, h) => acc + (h.fg_percentage || 0), 0) / relevantHistory.length;
+        const historyFGs = relevantHistory.map(h => h.fg_percentage || 0);
+        const avgFG = historyFGs.reduce((acc, val) => acc + val, 0) / historyFGs.length;
         
         // 2. Best of Last 5 Sessions (The "Benchmark")
         const lastFive = relevantHistory.slice(0, 5);
@@ -119,8 +128,8 @@ function Results() {
         return {
             fgDiffAvg: data.fg_percentage - avgFG,
             fgDiffLast5: data.fg_percentage - lastFiveAvgFG,
-            isNewBest: data.fg_percentage > Math.max(...relevantHistory.map(h => h.fg_percentage || 0)),
-            isStreakBest: data.longest_streak >= Math.max(...relevantHistory.map(h => h.longest_streak || 0)),
+            isNewBest: data.fg_percentage > Math.max(...historyFGs),
+            isStreakBest: (data.longest_streak || data.longestStreak || 0) >= Math.max(...relevantHistory.map(h => h.longestStreak || h.longest_streak || 0)),
             lastFiveBestFG,
             prevSession: relevantHistory[0]
         };
@@ -214,13 +223,29 @@ function Results() {
     };
 
     if (status === 'processing' || status === 'uploading') {
+        const progressMessage = status === 'uploading' 
+            ? `Uploading Content: ${uploadProgress}%` 
+            : "Analyzing Performance: Extracting biomechanics and shot data...";
+            
         return (
             <div className="analytics-studio">
                 <Navbar />
-                <div className="center-placeholder">
-                    <Loading />
-                    <h2 style={{ marginTop: '20px' }}>Analyzing Performance...</h2>
-                    <p>Extracting biomechanics and shot data.</p>
+                <Loading message={progressMessage} />
+            </div>
+        );
+    }
+
+    if (status === 'failed') {
+        return (
+            <div className="analytics-studio">
+                <Navbar />
+                <div className="hero-placeholder glass" style={{ textAlign: 'center', padding: '4rem' }}>
+                    <div className="placeholder-icon" style={{ color: '#f87171' }}>⚠️</div>
+                    <h2>Analysis Unavailable</h2>
+                    <p>{analysisError || "We encountered an issue processing your video. Please try again with a different clip."}</p>
+                    <Link to="/dashboard" className="btn-primary" style={{ marginTop: '1.5rem', display: 'inline-block' }}>
+                        Return to Dashboard
+                    </Link>
                 </div>
             </div>
         );
@@ -330,7 +355,7 @@ function Results() {
 
                         {/* 3. Small Stats */}
                         <motion.div 
-                            className="bento-card glass stat-small"
+                            className="bento-card glass s-makes stat-small"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.4 }}
@@ -341,7 +366,7 @@ function Results() {
                         </motion.div>
 
                         <motion.div 
-                            className="bento-card glass stat-small streak-highlight"
+                            className="bento-card glass s-streak stat-small streak-highlight"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.5 }}
@@ -362,13 +387,31 @@ function Results() {
                                 <History size={18} />
                                 <h3>Shot Sequence</h3>
                             </div>
-                            <div className="timeline-bubbles">
+                            <motion.div 
+                                className="timeline-bubbles"
+                                initial="hidden"
+                                animate="visible"
+                                variants={{
+                                    visible: {
+                                        transition: {
+                                            staggerChildren: 0.05
+                                        }
+                                    }
+                                }}
+                            >
                                 {data?.shots_results.map((shot, i) => (
-                                    <div key={i} className={`shot-bubble ${shot === 1 ? 'make' : 'miss'}`}>
+                                    <motion.div 
+                                        key={i} 
+                                        variants={{
+                                            hidden: { opacity: 0, scale: 0.5, y: 10 },
+                                            visible: { opacity: 1, scale: 1, y: 0 }
+                                        }}
+                                        className={`shot-bubble ${shot === 1 ? 'make' : 'miss'} ${i === data.shots_results.length - 1 ? 'last-shot' : ''}`}
+                                    >
                                         {i + 1}
-                                    </div>
+                                    </motion.div>
                                 ))}
-                            </div>
+                            </motion.div>
                         </motion.div>
                     </div>
 

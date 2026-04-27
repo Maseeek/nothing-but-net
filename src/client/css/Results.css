@@ -11,7 +11,8 @@
     gap: 2rem;
     max-width: 1400px;
     margin: 0 auto;
-    padding: calc(var(--nav-height) + 10px) 2rem 4rem 2rem;
+    /* Reduced padding-top because Navbar is sticky and takes space in the flow */
+    padding: 2rem 2rem 4rem 2rem;
 }
 
 /* --- Performance Stage (Main Area) --- */
@@ -38,7 +39,7 @@
 }
 
 .stage-header h1 {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -2px;
@@ -51,7 +52,7 @@
     grid-template-areas: 
         "hero hero chart chart"
         "hero hero chart chart"
-        "small1 small2 timeline timeline";
+        "s-makes s-streak timeline timeline";
     gap: 1.5rem;
 }
 
@@ -66,7 +67,9 @@
 
 .bento-card.hero-gauge { grid-area: hero; min-height: 350px; }
 .bento-card.consistency-card { grid-area: chart; min-height: 420px; }
-.bento-card.stat-small { grid-area: auto; display: flex; align-items: center; justify-content: center; text-align: center; }
+.bento-card.stat-makes { grid-area: s-makes; }
+.bento-card.stat-streak { grid-area: s-streak; }
+.bento-card.stat-small { display: flex; align-items: center; justify-content: center; text-align: center; }
 .bento-card.streak-highlight {
     border-color: rgba(214, 75, 23, 0.4);
     box-shadow: 0 0 30px rgba(214, 75, 23, 0.1);
@@ -159,35 +162,82 @@
 }
 
 /* 4. Shot Timeline Bubbles */
+.timeline-card {
+    display: flex;
+    flex-direction: column;
+}
+
 .timeline-bubbles {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
     padding: 0.5rem 0;
 }
 
 .shot-bubble {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px; /* Squircle/Modern look */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.shot-bubble::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 .shot-bubble.make {
-    background: radial-gradient(circle at 30% 30%, #4ade8055, #16653455);
-    border-color: #4ade8055;
-    box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+    background: linear-gradient(135deg, #166534 0%, #064e3b 100%);
+    border-color: #22c55e55;
+    box-shadow: 
+        0 4px 12px rgba(22, 101, 52, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    color: #4ade80;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 }
 
 .shot-bubble.miss {
-    background: radial-gradient(circle at 30% 30%, #f8717133, #991b1b33);
-    border-color: #f8717155;
+    background: linear-gradient(135deg, #451a03 0%, #1e1b4b 100%);
+    border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.shot-bubble:hover {
+    transform: scale(1.15) translateY(-5px);
+    z-index: 10;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.shot-bubble.make:hover {
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+    border-color: #4ade80;
+}
+
+.shot-bubble.last-shot {
+    animation: shot-pulse 2s infinite;
+    border-width: 2px;
+}
+
+@keyframes shot-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(214, 75, 23, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(214, 75, 23, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(214, 75, 23, 0); }
 }
 
 /* --- Intelligence Sidebar --- */
@@ -375,11 +425,124 @@
     font-size: 0.8rem;
 }
 
-/* --- Responsive --- */
-@media (max-width: 1100px) { ... }
+/* --- Responsive System --- */
 
-@media (max-width: 600px) {
-    .stage-header h1 { font-size: 2.2rem; }
-    .metric-value { font-size: 3.5rem; }
-    .bento-layout { grid-template-columns: 1fr; grid-template-areas: "hero" "chart" "timeline" "small1" "small2"; }
+/* Tablets and Small Desktops */
+@media (max-width: 1100px) {
+    .studio-content-wrapper {
+        flex-direction: column;
+        padding: 1rem 1.5rem 3rem 1.5rem;
+    }
+
+    .performance-stage {
+        width: 100%;
+        gap: 1.5rem;
+    }
+
+    .intelligence-sidebar {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .recent-history {
+        min-height: auto;
+    }
+
+    .bento-layout {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: 
+            "timeline timeline"
+            "hero hero"
+            "chart chart"
+            "s-makes s-streak";
+    }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+    .stage-header {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stage-header h1 {
+        font-size: 2rem;
+        letter-spacing: -1px;
+    }
+
+    .header-pill {
+        justify-content: center;
+    }
+
+    .intelligence-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .bento-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "timeline"
+            "hero"
+            "chart"
+            "s-makes"
+            "s-streak";
+        gap: 1rem;
+    }
+
+    .bento-card.hero-gauge { min-height: 280px; padding: 1rem; }
+    .bento-card.consistency-card { min-height: 380px; padding: 1rem; }
+    .bento-card.timeline-card { padding: 1.25rem; }
+    
+    .metric-value {
+        font-size: 3.5rem;
+    }
+
+    .gauge-visual {
+        width: 260px;
+        height: 130px;
+    }
+
+    .stage-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .stage-actions a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Very Small Devices */
+@media (max-width: 480px) {
+    .stage-header h1 {
+        font-size: 1.7rem;
+    }
+
+    .metric-value {
+        font-size: 3rem;
+    }
+
+    .metric-value span {
+        font-size: 1.1rem;
+    }
+
+    .gauge-visual {
+        width: 100%;
+        height: auto;
+        max-width: 220px;
+    }
+
+    .studio-content-wrapper {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .bento-card {
+        padding: 1rem;
+    }
 }

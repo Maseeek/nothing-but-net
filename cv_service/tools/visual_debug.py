@@ -96,6 +96,18 @@ def get_click_coordinates(frame, window_name):
     return (click_x, click_y)
 
 def main():
+    # Clear previous debug logs
+    import glob
+    debug_dir = os.path.join(os.path.dirname(__file__), '..', 'debug_logs')
+    if os.path.exists(debug_dir):
+        files = glob.glob(os.path.join(debug_dir, "*"))
+        for f in files:
+            try:
+                os.remove(f)
+            except:
+                pass
+        print(f" [DEBUG] Cleared {len(files)} old logs.")
+
     video_path = get_video_path()
     if not video_path:
         print("No video selected.")

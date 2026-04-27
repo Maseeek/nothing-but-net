@@ -13,6 +13,12 @@
     z-index: 1000;
     pointer-events: auto;
     /* Block interactions with elements underneath */
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .loading-box {
@@ -60,10 +66,12 @@
     /* filter: brightness(0.8); */
 }
 
-.loading-title {
-    width: 100px;
-    margin-bottom: 20px;
-    /* filter: brightness(0.8); */
+.loading-message {
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
 }
 
 @keyframes spin {

@@ -79,10 +79,13 @@ function Coordinates({ imageUrl, videoFile, onBack, scaleFactor }) {
             // Determine showAngle setting
             const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
 
-            // Start analysis in the background without awaiting
+            // Start analysis in the background
             startAnalysis(videoFile, realHoopLeft, realHoopRight, settingsShowAngle);
 
-            // Immediately close the overlay and let the background process run
+            // Redirect immediately to the results page to show processing state
+            navigate('/results');
+            
+            // Close the overlay konceptually handled by navigation, but onBack resets Home state
             onBack();
 
         } else {

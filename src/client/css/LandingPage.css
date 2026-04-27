@@ -71,6 +71,114 @@
     opacity: 0.5;
 }
 
+/* Trajectory Visual Styles */
+.bento-visual {
+    margin-top: 2rem;
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trajectory-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+}
+
+.arc-path {
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    transition: stroke-dashoffset 2s ease-out;
+}
+
+.ball-glow {
+    filter: blur(4px);
+}
+
+.data-point {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.data-point span {
+    color: var(--accent-color);
+}
+
+.point-angle { top: 15%; left: 10%; }
+.point-optimal { bottom: 15%; right: 10%; }
+
+.peak-asset {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.peak-label {
+    background: #4ade80; /* Emerald Green for distinction */
+    color: #000;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+.peak-indicator {
+    width: 1px;
+    height: 80px;
+    background: repeating-linear-gradient(to bottom, #4ade80 0, #4ade80 4px, transparent 4px, transparent 8px);
+    opacity: 0.6;
+}
+
+.court-line {
+    opacity: 0.3;
+}
+
+/* Fix Bento Grid internal spacing */
+.bento-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.bento-item p {
+    margin-bottom: 1.5rem;
+    flex-grow: 0;
+}
+
+.bento-visual {
+    flex-grow: 1;
+    margin-top: 1rem;
+    min-height: 240px;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
     .landing-main {

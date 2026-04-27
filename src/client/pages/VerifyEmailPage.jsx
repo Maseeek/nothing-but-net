@@ -4,16 +4,19 @@ import Navbar from '../components/Navbar.jsx';
 import { API_BASE_URL } from '../config.js';
 import { motion } from 'framer-motion';
 import nbnLogo from '../assets/nbnlight.png';
+import Loading from '../components/Loading.jsx';
 import './../css/Login.css';
 
 const VerifyEmailPage = () => {
     const { token } = useParams();
-    const [verificationStatus, setVerificationStatus] = useState('Verifying your email, please wait...');
+    const [verificationStatus, setVerificationStatus] = useState(null);
+    const [isVerifying, setIsVerifying] = useState(true);
 
     useEffect(() => {
         const verifyToken = async () => {
             if (!token) {
                 setVerificationStatus('No verification token found.');
+                setIsVerifying(false);
                 return;
             }
 
@@ -37,11 +40,17 @@ const VerifyEmailPage = () => {
             } catch (error) {
                 console.error('Verification API error:', error);
                 setVerificationStatus('An error occurred. Could not connect to the server.');
+            } finally {
+                setIsVerifying(false);
             }
         };
 
         verifyToken();
     }, [token]);
+
+    if (isVerifying) {
+        return <Loading message="Verifying your email, please wait..." />;
+    }
 
     return (
         <div className="login-page">

@@ -12,9 +12,10 @@ GREEN = (63, 99, 68)
 dist = lambda x1, y1, x2, y2: (float(x1)-float(x2))**2 + (float(y1)-float(y2))**2
 
 class BasketballTracker:
-    def __init__(self, hoop_left, hoop_right):
+    def __init__(self, hoop_left, hoop_right, use_color_filter=False): # Default OFF
         self.hoop_left = hoop_left
         self.hoop_right = hoop_right
+        self.use_color_filter = use_color_filter
         
         # Calculate hoop metrics
         hoop_dist = math.sqrt(dist(hoop_left[0], hoop_left[1], hoop_right[0], hoop_right[1]))
@@ -39,6 +40,7 @@ class BasketballTracker:
         self.center = None
         self.shot_in_progress = False
         self.radius = 0
+        self.idle_frames = 0
 
     def find_ball(self, frame):
         """Locates the ball in the current frame using HoughCircles with ROI optimization."""
@@ -62,7 +64,7 @@ class BasketballTracker:
                 
                 circles = cv2.HoughCircles(
                     blurred_roi, cv2.HOUGH_GRADIENT, 1.2, 50,
-                    param1=100, param2=25, 
+                    param1=100, param2=20, # The 'Goldilocks' zone
                     minRadius=self.min_radius, maxRadius=self.max_radius
                 )
                 
@@ -83,10 +85,11 @@ class BasketballTracker:
 
         # 2. Fallback to Full Frame Search if ROI failed or no previous circle
         if chosen is None:
+            # Full frame search - Goldilocks
             blurred_frame = cv2.GaussianBlur(gray_frame, (7, 7), 0)
             circles = cv2.HoughCircles(
                 blurred_frame, cv2.HOUGH_GRADIENT, 1.2, 50,
-                param1=100, param2=25, 
+                param1=100, param2=20, 
                 minRadius=self.min_radius, maxRadius=self.max_radius
             )
             
@@ -106,6 +109,32 @@ class BasketballTracker:
 
         return chosen
 
+    def is_orange(self, frame, circle):
+        """Verifies if the detected circle contains enough orange/brown pixels."""
+        x, y, r = int(circle[0]), int(circle[1]), int(circle[2])
+        h, w = frame.shape[:2]
+        
+        # Create a small ROI mask for the circle
+        mask = np.zeros((h, w), dtype=np.uint8)
+        cv2.circle(mask, (x, y), int(r * 0.8), 255, -1)
+        
+        # Sample the ROI
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        
+        # Basketball deep orange/brown range in HSV 
+        # Shifted to avoid skin tones (which are higher Value/lower Sat in shadows)
+        lower_orange = np.array([0, 60, 40]) # Increased Saturation requirement
+        upper_orange = np.array([22, 255, 200]) # Lowered max Value to avoid bright red/skin
+        
+        orange_mask = cv2.inRange(hsv, lower_orange, upper_orange)
+        final_mask = cv2.bitwise_and(orange_mask, mask)
+        
+        orange_pixels = cv2.countNonZero(final_mask)
+        total_pixels = cv2.countNonZero(mask)
+        
+        if total_pixels == 0: return False
+        return (orange_pixels / total_pixels) > 0.06 # Even lower density but stricter color
+
     def process_frame(self, frame, debug=False):
         """
         Analyzes a single frame, updates state, and returns modified frame (if debug=True).
@@ -116,10 +145,14 @@ class BasketballTracker:
         if basketball is not None:
             new_x, new_y = int(basketball[0]), int(basketball[1])
             
-            # Physic check: If the ball teleported > max_radius*15 px, it's likely a false positive
+            # Physics Check: Reject massive jumps (teleportation)
             if self.center is not None:
-                if dist(new_x, new_y, self.center[0], self.center[1]) > (self.max_radius * 15)**2:
-                     basketball = None # Reject detection
+                if dist(new_x, new_y, self.center[0], self.center[1]) > (self.max_radius * 12)**2:
+                     basketball = None 
+            
+            # Color Check: Ensure it's orange (if enabled)
+            if self.use_color_filter and basketball is not None and not self.is_orange(frame, basketball):
+                basketball = None
 
         if basketball is not None:
             self.prev_circle = (int(basketball[0]), int(basketball[1]), int(basketball[2]))
@@ -136,31 +169,57 @@ class BasketballTracker:
         # If we Lose the ball for > 20 frames, the shot probably ended or was a glitch
         if getattr(self, 'ball_lost_count', 0) > 20:
             if self.shot_in_progress:
+                if debug:
+                    self.save_debug_snapshot(frame, "LOST_BALL", self.calculate_angle())
                 self.pos_list_x.clear()
                 self.pos_list_y.clear()
                 self.shot_in_progress = False
+                self.ball_lost_count = 0
+            elif len(self.pos_list_x) > 0 and debug:
+                # We saw something but not enough to count as a shot
+                self.save_debug_snapshot(frame, "REJECTED_MOVE", 0)
+                self.pos_list_x.clear()
+                self.pos_list_y.clear()
+                self.ball_lost_count = 0
         
         if debug:
             self.draw_hoop(frame)
 
         # 3. Shot Logic
         if self.center is not None and self.cooldown == 0:
-            # Check proximity to hoop height (optimization: only track when near tracking zone)
-            if self.center[1] <= (self.hoop_min_height + self.radius * 5):
-                # Don't add duplicate points if ball hasn't moved or was lost
+            # Velocity Filter: If it's a new shot, it must be moving reasonably fast
+            # (Prevents skin/breath/leaves from starting a track)
+            is_fast_enough = True
+            if len(self.pos_list_x) > 0:
+                v_dist = dist(self.center[0], self.center[1], self.pos_list_x[-1], self.pos_list_y[-1])
+                if v_dist < 4: # If it moved < 2 pixels, it's likely stationary noise
+                    is_fast_enough = False
+
+            if is_fast_enough:
+                # Track points ANYWHERE on screen once a ball is detected
                 if not self.pos_list_x or (self.center[0] != self.pos_list_x[-1]):
                     self.pos_list_x.append(self.center[0])
                     self.pos_list_y.append(self.center[1])
                 
-                if self.center[1] < self.hoop_min_height:
+                # 1. Upward Motion Check (Early Shot)
+                # Shot must have some upward component to be a real shot
+                is_moving_up = True
+                if len(self.pos_list_y) > 2:
+                    is_moving_up = self.pos_list_y[-1] < self.pos_list_y[0]
+
+                # Activate 'shot_in_progress' only when it reaches hoop height AND is moving up
+                if is_moving_up and self.center[1] < self.hoop_min_height:
                      self.shot_in_progress = True
-                
-                if debug:
-                    if self.shot_in_progress:
-                        cv2.putText(frame, "Shot in Progress", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, VANILLA, 2, cv2.LINE_AA)
+            
+            if debug:
+                if self.shot_in_progress:
+                    cv2.putText(frame, "Shot in Progress", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.7, VANILLA, 2, cv2.LINE_AA)
+                    # Save START snapshot earlier
+                    if len(self.pos_list_x) == 2:
+                        self.save_debug_snapshot(frame, "START", self.calculate_angle())
                     if len(self.pos_list_x) > 1:
                         angle = self.calculate_angle()
-                        cv2.putText(frame, f"Release Angle: {angle:.2f}", (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, VANILLA, 2, cv2.LINE_AA)
+                        cv2.putText(frame, f"Rel Angle: {angle:.1f}", (50, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.7, VANILLA, 2, cv2.LINE_AA)
 
         # 4. Shot Outcome Logic
         if len(self.pos_list_x) > 3:
@@ -168,6 +227,12 @@ class BasketballTracker:
             if self.pos_list_y[-1] > self.hoop_min_height and self.shot_in_progress:
                 avg_x = (self.pos_list_x[-1] + self.pos_list_x[-2]) / 2
                 
+                # Draw prediction/trace BEFORE saving
+                if debug:
+                    self.trace_predicted_path(frame)
+                    res_label = "MAKE" if (self.hoop_left[0] < avg_x < self.hoop_right[0]) else "MISS"
+                    self.save_debug_snapshot(frame, res_label, self.calculate_angle())
+
                 if self.hoop_left[0] < avg_x < self.hoop_right[0]:
                     self.shots.append(1)
                     self.fgm += 1
@@ -176,6 +241,8 @@ class BasketballTracker:
                 self.fga += 1
 
                 self.shot_angles.append(self.calculate_angle())
+                
+                # Now clear
                 self.pos_list_x.clear()
                 self.pos_list_y.clear()
                 self.shot_in_progress = False
@@ -185,6 +252,16 @@ class BasketballTracker:
 
         if self.cooldown > 0:
             self.cooldown -= 1
+        
+        # 5. Idle Heartbeat (Periodic diagnostics)
+        if not self.shot_in_progress and basketball is None:
+            self.idle_frames += 1
+            if self.idle_frames > 300: # ~10 seconds at 30fps
+                if debug:
+                    self.save_debug_snapshot(frame, "IDLE", 0)
+                self.idle_frames = 0
+        else:
+            self.idle_frames = 0
             
         current_release_angle = 0
         if self.shot_in_progress:
@@ -194,12 +271,39 @@ class BasketballTracker:
             "fgm": self.fgm,
             "fga": self.fga,
             "fg_percent": (100 * self.fgm / self.fga) if self.fga > 0 else 0.0,
-            "frame": frame,
+            "frame": frame.copy() if debug else frame,
             "cooldown": self.cooldown,
             "shot_in_progress": self.shot_in_progress,
             "current_release_angle": current_release_angle,
             "shots": self.shots
         }
+
+    def save_debug_snapshot(self, frame, shot_type, angle):
+        """Saves a timestamped frame to the debug_logs folder."""
+        import os
+        from datetime import datetime
+        
+        debug_dir = os.path.join(os.path.dirname(__file__), "..", "debug_logs")
+        if not os.path.exists(debug_dir):
+            os.makedirs(debug_dir)
+            
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        filename = f"{shot_type}_{timestamp}.jpg"
+        filepath = os.path.join(debug_dir, filename)
+        
+        # Draw some extra info on the saved image - Move to bottom right to avoid overlap
+        h, w = frame.shape[:2]
+        info_text = f"MODE: {shot_type} | ANGLE: {angle:.1f}"
+        
+        # Semi-transparent background for text
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (w - 400, h - 50), (w, h), (0,0,0), -1)
+        cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
+        
+        cv2.putText(frame, info_text, (w - 380, h - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+        
+        cv2.imwrite(filepath, frame)
+        print(f" [DEBUG] Saved {shot_type} Snapshot")
 
     def calculate_angle(self):
         if len(self.pos_list_x) < 3: return 0
@@ -228,29 +332,42 @@ class BasketballTracker:
         if ball is not None:
             # ball is [x, y, r]
             x, y, r = int(ball[0]), int(ball[1]), int(ball[2])
-            cv2.circle(frame, (x, y), r, PUMPKIN, 2)
-            cv2.putText(frame, f"radius {r}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, PUMPKIN, 2, cv2.LINE_AA)
+            cv2.circle(frame, (x, y), r, PUMPKIN, 1)
+            cv2.putText(frame, f"r {r}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, PUMPKIN, 1, cv2.LINE_AA)
 
     def trace_predicted_path(self, frame):
         if len(self.pos_list_x) < 3: return
         try:
-            A, B, C = np.polyfit(self.pos_list_x, self.pos_list_y, 2)
+            # 1. Robust Polyfit (RANSAC-lite)
+            x_data = self.pos_list_x
+            y_data = self.pos_list_y
             
-            # Optimization: Only draw limited points or use simple lines in debug
-            # But adhering to "remove unnecessary code", we still keep this for debug
+            # Initial fit
+            A, B, C = np.polyfit(x_data, y_data, 2)
+            
+            # Outlier rejection
+            residuals = [abs(y - (A * x**2 + B * x + C)) for x, y in zip(x_data, y_data)]
+            avg_res = np.mean(residuals)
+            threshold = max(20, avg_res * 1.5) # Allow 20px of noise or 1.5x average
+            
+            clean_pts = [(x, y) for i, (x, y) in enumerate(zip(x_data, y_data)) if residuals[i] < threshold]
+            
+            if len(clean_pts) >= 3:
+                cx, cy = zip(*clean_pts)
+                A, B, C = np.polyfit(cx, cy, 2)
+            
+            # 2. Optimization: Only draw limited points or use simple lines in debug
             width_of_frame = frame.shape[1]
-            
-            # Using step of 10 for drawing speed in debug
             x_list = range(0, width_of_frame, 10) 
             
             # Draw historical points
             pts = []
             for px, py in zip(self.pos_list_x, self.pos_list_y):
-                cv2.circle(frame, (px, py), 10, PUMPKIN, cv2.FILLED)
+                cv2.circle(frame, (px, py), 3, PUMPKIN, cv2.FILLED)
                 pts.append((px, py))
             
             if len(pts) > 1:
-                cv2.polylines(frame, [np.array(pts)], False, PUMPKIN, 5)
+                cv2.polylines(frame, [np.array(pts)], False, PUMPKIN, 2)
 
             # Draw prediction
             pred_pts = []
@@ -260,6 +377,6 @@ class BasketballTracker:
                     pred_pts.append((x, y))
             
             if len(pred_pts) > 1:
-                 cv2.polylines(frame, [np.array(pred_pts)], False, FELDGRAU, 2)
+                 cv2.polylines(frame, [np.array(pred_pts)], False, FELDGRAU, 1)
         except:
             pass

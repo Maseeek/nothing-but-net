@@ -8,6 +8,77 @@ import '../css/navbar.css';
 import { isLoggedIn } from '../js/auth.js';
 import Navbar from '../components/Navbar.jsx';
 
+const TrajectoryVisual = ({ isStatic = false }) => {
+    return (
+        <div className="bento-visual">
+            <svg className="trajectory-svg" viewBox="0 0 400 200">
+                {/* Court floor with grid-like lines for technical feel */}
+                <line x1="20" y1="180" x2="380" y2="180" stroke="rgba(255,255,255,0.2)" strokeWidth="1" className="court-line" />
+                <line x1="100" y1="180" x2="100" y2="175" stroke="rgba(255,255,255,0.3)" />
+                <line x1="200" y1="180" x2="200" y2="175" stroke="rgba(255,255,255,0.3)" />
+                <line x1="300" y1="180" x2="300" y2="175" stroke="rgba(255,255,255,0.3)" />
+                
+                {/* Primary Arc */}
+                <motion.path
+                    d="M 50 160 Q 200 20 350 160"
+                    fill="none"
+                    stroke="var(--accent-color)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeDasharray="400"
+                    initial={{ strokeDashoffset: 400 }}
+                    whileInView={{ strokeDashoffset: 0 }}
+                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+                />
+
+                {!isStatic && (
+                    <motion.circle
+                        r="5"
+                        fill="white"
+                        initial={{ offsetDistance: "0%" }}
+                        animate={{ offsetDistance: "100%" }}
+                        transition={{ 
+                            duration: 2.5, 
+                            repeat: Infinity, 
+                            ease: "easeInOut",
+                            repeatDelay: 0.8
+                        }}
+                        style={{ 
+                            offsetPath: "path('M 50 160 Q 200 20 350 160')",
+                            filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))'
+                        }}
+                    />
+                )}
+
+                {/* Target marker at landing point */}
+                <circle cx="350" cy="160" r="10" fill="none" stroke="rgba(214, 75, 23, 0.3)" strokeWidth="1" />
+                <circle cx="350" cy="160" r="4" fill="var(--accent-color)" opacity="0.5" />
+            </svg>
+
+            {/* Technical Peak Callout */}
+            <motion.div 
+                className="peak-asset"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.2 }}
+            >
+                <div className="peak-label">45.2° Arc</div>
+                <div className="peak-indicator"></div>
+            </motion.div>
+
+            {/* AI Callouts */}
+            <div className="data-point point-angle">
+                <Target size={12} className="text-ember" />
+                <span>Detection: </span> 0.98c
+            </div>
+            <div className="data-point point-optimal">
+                <Zap size={12} className="text-ember" />
+                <span>Optimal</span>
+            </div>
+        </div>
+    );
+};
+
 const LandingPage = () => {
     const loggedIn = isLoggedIn();
 
@@ -74,10 +145,8 @@ const LandingPage = () => {
                         </div>
                         <h3>AI Trajectory Analysis</h3>
                         <p>Our custom computer vision engine tracks the ball frame-by-frame, calculating the exact arc and entry angle of your shot.</p>
-                        <div className="bento-visual">
-                            {/* Mock visual representation */}
-                            <div className="mock-arc"></div>
-                        </div>
+                        
+                        <TrajectoryVisual isStatic={false} />
                     </motion.div>
 
                     {/* Bento Box 2: Speed (Medium) */}

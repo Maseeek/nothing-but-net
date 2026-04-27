@@ -47,13 +47,14 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                 </defs>
             </svg>
 
-            {/* The Chart SVG */}
+            {/* The Chart SVG Container */}
             <div className="chart-svg-container"
                 style={{
                     width: '100%',
                     maxWidth: size,
                     aspectRatio: '1/1',
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    position: 'relative'
                 }}>
 
                 {/* The Badge/Stats in Center */}
@@ -66,7 +67,15 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                     </div>
                 </div>
 
-                <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+                <svg 
+                    viewBox={`0 0 ${size} ${size}`} 
+                    style={{ 
+                        transform: 'rotate(-90deg)',
+                        width: '100%',
+                        height: '100%',
+                        display: 'block'
+                    }}
+                >
                     {/* Track (Glass Tube Background) */}
                     <circle
                         cx={center}
@@ -78,45 +87,49 @@ const LiquidGlassGraph = ({ made = 0, missed = 0 }) => {
                     />
 
                     {/* MISSED Arc (Ruby Red) */}
-                    <motion.circle
-                        cx={center}
-                        cy={center}
-                        r={radius}
-                        fill="none"
-                        stroke="var(--error-color, #EF4444)" // Ruby Red / Error variable
-                        strokeWidth={strokeWidth}
-                        strokeLinecap="round"
-                        strokeDasharray={circumference}
-                        initial={{ strokeDashoffset: circumference }}
-                        animate={{
-                            strokeDashoffset: missedOffset,
-                            rotate: (madeRatio * 360) 
-                        }}
-                        transition={springTransition}
-                        style={{
-                            filter: 'url(#doughnut-goo)',
-                            opacity: 0.8
-                        }}
-                    />
+                    {total > 0 && (
+                        <motion.circle
+                            cx={center}
+                            cy={center}
+                            r={radius}
+                            fill="none"
+                            stroke="var(--error-color, #EF4444)"
+                            strokeWidth={strokeWidth}
+                            strokeLinecap="round"
+                            strokeDasharray={circumference}
+                            initial={{ strokeDashoffset: circumference }}
+                            animate={{
+                                strokeDashoffset: missedOffset,
+                                rotate: (madeRatio * 360) 
+                            }}
+                            transition={springTransition}
+                            style={{
+                                filter: 'url(#doughnut-goo)',
+                                opacity: 0.8
+                            }}
+                        />
+                    )}
 
                     {/* MADE Arc (Emerald Green) */}
-                    <motion.circle
-                        cx={center}
-                        cy={center}
-                        r={radius}
-                        fill="none"
-                        stroke="var(--success-color, #10B981)" // Emerald Green / Success variable
-                        strokeWidth={strokeWidth}
-                        strokeLinecap="round"
-                        strokeDasharray={circumference}
-                        initial={{ strokeDashoffset: circumference }}
-                        animate={{ strokeDashoffset: madeOffset }}
-                        transition={springTransition}
-                        style={{
-                            opacity: 0.9,
-                            filter: 'url(#doughnut-goo) drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))'
-                        }}
-                    />
+                    {total > 0 && (
+                        <motion.circle
+                            cx={center}
+                            cy={center}
+                            r={radius}
+                            fill="none"
+                            stroke="var(--success-color, #10B981)"
+                            strokeWidth={strokeWidth}
+                            strokeLinecap="round"
+                            strokeDasharray={circumference}
+                            initial={{ strokeDashoffset: circumference }}
+                            animate={{ strokeDashoffset: madeOffset }}
+                            transition={springTransition}
+                            style={{
+                                opacity: 0.9,
+                                filter: 'url(#doughnut-goo) drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))'
+                            }}
+                        />
+                    )}
 
                     {/* Glass Specular Overlay */}
                     <circle
