@@ -310,7 +310,7 @@ app.get('/api/sessions/:userId', async (req, res, next) => {
         const { userId } = req.params;
 
         const sessions = await Session.find({ userId })
-            .select('sessionDate makes misses longest_streak fg_percentage shot_angles shots_results average_angle total_shots')
+            .select('sessionDate makes misses longest_streak fg_percentage shot_angles shots_results average_angle average_make_angle average_miss_angle total_shots')
             .sort({ sessionDate: -1 })
             .lean();
 
