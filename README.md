@@ -1,6 +1,8 @@
 # Nothing But Net
 
 Currently working on a cleaner and more modern UI for NBN.
+Detailed design decisions and standards can be found in [DESIGN_SYSTEM.md](file:///c:/Users/masee/OneDrive%20-%20Loughborough%20University/PERSONAL/nothing-but-net/DESIGN_SYSTEM.md).
+
 
 ## Getting Started
 
