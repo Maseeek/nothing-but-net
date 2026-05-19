@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
 const sessionSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
+    ip: { type: String, required: false, index: true },
     makes: { type: Number, required: true, default: 0 },
     misses: { type: Number, required: true, default: 0 },
     longestStreak: { type: Number, required: true, default: 0 },
@@ -15,8 +16,9 @@ const sessionSchema = new mongoose.Schema({
     sessionDate: { type: Date, default: Date.now }
 });
 
-// Index for fetching sessions by user, sorted by date (common query)
+// Index for fetching sessions by user or IP, sorted by date (common query)
 sessionSchema.index({ userId: 1, sessionDate: -1 });
+sessionSchema.index({ ip: 1, sessionDate: -1 });
 
 const Session = mongoose.model('Session', sessionSchema);
 

@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
 import '../css/Pricing.css';
 
-const Pricing = () => {
+const Pricing = ({ user }) => {
+    const currentPlan = user?.subscriptionPlan || (user?.isPro ? 'pro' : 'free');
+
     const handleCheckout = async (priceId) => {
         try {
             const token = localStorage.getItem('authToken');
@@ -41,14 +43,13 @@ const Pricing = () => {
             price: '$0',
             description: 'Get 3 free analyses a week',
             features: [
-                { name: '3 Analyses', included: true },
+                { name: '3 Analyses / week', included: true },
+                { name: 'Up to 5 minute videos', included: true },
                 { name: 'Track makes and misses', included: true },
                 { name: 'Track shot angles', included: false },
-                { name: 'Track shot distances', included: false },
-                { name: 'Track shot locations', included: false },
                 { name: 'Priority Support', included: false },
             ],
-            buttonText: 'Get Started',
+            buttonText: 'GET STARTED',
             buttonLink: '/register', // Free plan just registers
             isFree: true,
             popular: false
@@ -58,14 +59,13 @@ const Pricing = () => {
             price: '$9.99',
             description: 'Get 10 free analyses a week',
             features: [
-                { name: '10 Analyses', included: true },
+                { name: '10 Analyses / week', included: true },
+                { name: 'Up to 60 minute videos', included: true },
                 { name: 'Track makes and misses', included: true },
                 { name: 'Track session FG%', included: true },
-                { name: 'Track FG% Progression', included: false },
-                { name: 'Track shot locations', included: false },
                 { name: 'Priority Support', included: false },
             ],
-            buttonText: 'Get Started',
+            buttonText: 'GET STARTED',
             priceId: 'price_1Sr78K0lkHUim5wo9C2J6xhp', // Standard Plan Price ID
             popular: true
         },
@@ -74,14 +74,14 @@ const Pricing = () => {
             price: '$14.99',
             description: 'Get 25 free analyses a week',
             features: [
-                { name: '25 Analyses', included: true },
-                { name: 'Track makes and misses', included: true },
+                { name: '25 Analyses / week', included: true },
+                { name: 'Up to 60 minute videos', included: true },
                 { name: 'Track shot angles', included: true },
                 { name: 'Track FG% Progression', included: true },
                 { name: 'Track shot locations', included: true },
                 { name: 'Priority Support', included: true },
             ],
-            buttonText: 'Get Started',
+            buttonText: 'GET STARTED',
             priceId: 'price_1Sr77w0lkHUim5woxWcXdHbO', // Pro Plan Price ID
             popular: false
         }
@@ -122,9 +122,10 @@ const Pricing = () => {
 
                         <button
                             onClick={() => plan.isFree ? window.location.href = plan.buttonLink : handleCheckout(plan.priceId)}
-                            className={`pricing-btn ${plan.popular ? 'pricing-btn--primary' : 'pricing-btn--outline'}`}
+                            className={`pricing-btn ${plan.popular ? 'pricing-btn--primary' : 'pricing-btn--outline'} ${currentPlan === plan.name.toLowerCase() ? 'current' : ''}`}
+                            disabled={currentPlan === plan.name.toLowerCase()}
                         >
-                            {plan.buttonText}
+                            {currentPlan === plan.name.toLowerCase() ? 'CURRENT PLAN' : plan.buttonText}
                         </button>
                     </div>
                 ))}

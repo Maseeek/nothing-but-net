@@ -167,6 +167,8 @@ function getCurrentUser() {
             userId: payload.userId,
             username: payload.username,
             email: payload.email,
+            isPro: payload.isPro,
+            subscriptionPlan: payload.subscriptionPlan,
             expires: new Date(payload.exp * 1000),
             verified: payload.emailVerified
         };

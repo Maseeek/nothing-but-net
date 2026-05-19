@@ -71,7 +71,7 @@
   --mouse-y: 50%;
 
   /* --- Spacing --- */
-  --nav-height: 120px;
+  --nav-height: 100px;
   --nav-height-mobile: 70px;
 
   color-scheme: dark;
@@ -310,7 +310,104 @@ select:focus {
 /* Light Mode Override - Keeping minimal support or removing if user wants pure dark mode. 
    Assuming purely dark mode based on "Liquid Glass & Ember" description. 
    Commenting out light mode specific overrides to enforce the new aesthetic. */
-/* 
-@media (prefers-color-scheme: light) { ... }
-body.light-mode { ... } 
-*/
+/* --- Typography Utility --- */
+.text-ember {
+    color: var(--accent-color);
+    text-shadow: 0 0 20px rgba(214, 75, 23, 0.4);
+}
+
+/* --- Global Standard Buttons --- */
+.primary-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+/* --- Bento Grid System --- */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(250px, auto);
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.bento-item {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bento-icon-wrapper {
+    background: rgba(214, 75, 23, 0.1);
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(214, 75, 23, 0.2);
+}
+
+.bento-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.bento-item p {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Grid Spans */
+.bento-large { grid-column: span 2; grid-row: span 2; }
+.bento-medium { grid-column: span 1; grid-row: span 1; }
+.bento-wide {
+    grid-column: span 3;
+    grid-row: span 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(214, 75, 23, 0.15) 0%, rgba(30, 30, 47, 0.4) 100%);
+    border: 1px solid rgba(214, 75, 23, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    .bento-large { grid-column: span 2; }
+    .bento-wide { grid-column: span 2; flex-direction: column; text-align: center; gap: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+    .bento-grid { grid-template-columns: 1fr; }
+    .bento-large, .bento-wide, .bento-medium { grid-column: span 1; }
+}

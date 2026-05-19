@@ -81,7 +81,7 @@ const AnalysesHistory = () => {
         // Safe guard if sessions is undefined or empty
         const safeSessions = sessions || [];
 
-        const totalShots = safeSessions.reduce((sum, s) => sum + (s.total_shots || 0), 0);
+        const totalShots = safeSessions.reduce((sum, s) => sum + (s.total_shots || ((s.makes || 0) + (s.misses || 0)) || 0), 0);
         const totalMade = safeSessions.reduce((sum, s) => sum + (s.makes || 0), 0);
         const careerFgPct = totalShots > 0 ? ((totalMade / totalShots) * 100).toFixed(1) : 0;
         const bestSessionPct = Math.max(0, ...safeSessions.map(s => s.fg_percentage || 0));

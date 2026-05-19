@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar.jsx";
 import "../css/MainPage.css";
 import Coordinates from "../components/Coordinates.jsx";
-import { sendVideoForAnalysis } from "../js/videoProcessing.js";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { API_BASE_URL } from "../config.js";
 
 import Instructions from "../components/Instructions.jsx";
 import QuestionMarkIcon from "../components/QuestionMarkIcon.jsx";
@@ -109,32 +111,66 @@ function HomeContent() {
     );
 }
 
-function LandingPage() {
+function Home() {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    const res = await axios.get(`${API_BASE_URL}/api/profile`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setUser(res.data);
+                }
+            } catch (error) {
+                console.error("Not logged in or failed to fetch user", error);
+            }
+        };
+        fetchUserData();
+    }, []);
+
     return (
-        <div className="landing-page">
-            <div className="background-video-form">
-
-                <div className="video-overlay"></div>
-
-                <div className="landing-content-wrapper">
-                    <div className="welcome">
-                        <h1 className="welcome-message">Never Lose Count Again</h1>
-                        <p className="welcome-info">Automatic shot tracking. Get your FG% and shooting angle.</p>
+        <div className="dashboard-container">
+            <Navbar />
+            <div className="dashboard-content-wrapper animate-fade-in">
+                <div className="dashboard-grid">
+                    {/* Header Row */}
+                    <div className="dashboard-header">
+                        <div>
+                            <h1>Welcome back{user && user.username ? `, ${user.username}` : ''}</h1>
+                            <p>Ready to analyze your next shooting session?</p>
+                        </div>
+                    </div>
+                    
+                    {/* Main Area: Upload Window */}
+                    <div className="dashboard-main">
+                        <HomeContent />
                     </div>
 
-                    <HomeContent />
+                    {/* Sidebar Pane */}
+                    <div className="dashboard-sidebar">
+                        <div className="sidebar-glass-panel">
+                            <h3>Analytics Dashboard</h3>
+                            <p style={{ color: 'var(--text-secondary)', marginBottom: '15px' }}>
+                                Track your field goal percentage and arc metrics over time automatically.
+                            </p>
+                            <Link to="/results" className="demo-link-btn" style={{ display: 'inline-block', background: 'var(--accent-color)', color: 'white', padding: '10px 20px', borderRadius: '8px' }}>
+                                View Full History
+                            </Link>
+                        </div>
+
+                        <div className="sidebar-glass-panel">
+                            <h3>Pro Tips</h3>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                For best results, ensure your camera is stable and capturing the full arc of the ball from release to the net. A tripod is highly recommended.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    )
-}
-
-function Home() {
-    return (
-        <>
-            <Navbar />
-            <LandingPage />
-        </>
     );
 }
 

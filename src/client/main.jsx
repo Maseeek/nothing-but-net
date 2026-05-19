@@ -6,6 +6,7 @@ import { Analytics } from '@vercel/analytics/react';
 import './css/index.css';
 import './css/Form.css';
 // Lazy load pages for better performance
+const LandingPage = lazy(() => import('./pages/LandingPage.jsx'));
 const Home = lazy(() => import('./pages/Home.jsx'));
 const Results = lazy(() => import('./pages/Results.jsx'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage.jsx'));
@@ -15,7 +16,6 @@ const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage.jsx'));
 const VerificationSuccessPage = lazy(() => import('./pages/VerificationSuccessPage.jsx'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.jsx'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.jsx'));
-const SettingsPage = lazy(() => import('./pages/SettingsPage.jsx'));
 
 // Loading component
 const PageLoader = () => (
@@ -88,7 +88,8 @@ function Main() {
                 <Suspense fallback={<PageLoader />}>
                     <Routes>
                         {/* All routes must be inside here */}
-                        <Route path="/" element={<Home />} />
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/dashboard" element={<Home />} />
                         <Route path="/results" element={<Results />} />
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
@@ -97,7 +98,6 @@ function Main() {
                         <Route path="/verification-success" element={<VerificationSuccessPage />} />
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-                        <Route path="/settings" element={<SettingsPage />} />
                     </Routes>
                 </Suspense>
             </AnalysisProvider>

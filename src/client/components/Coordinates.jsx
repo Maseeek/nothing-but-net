@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import "../css/Coordinates.css";
 // import { sendVideoForAnalysis } from "../js/videoProcessing.js"; // Removed
-import { useAnalysis } from "../context/AnalysisContext"; // Added
+import { useAnalysis } from "../context/AnalysisContext.jsx"; // Added
 import Loading from "../components/Loading.jsx";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw, ArrowLeft } from 'lucide-react';

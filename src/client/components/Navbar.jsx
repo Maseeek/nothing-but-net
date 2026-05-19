@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Activity } from 'lucide-react';
 import '../css/navbar.css';
 import nbnLogo from '../assets/nbnlight.png';
 import { isLoggedIn, logout } from "../js/auth.js";
 
 
-const HomeButton = memo(function HomeButton() {
+export const HomeButton = memo(function HomeButton() {
     return (
-        <Link to="/">
-            <button className="home-btn">
+        <Link to="/" aria-label="Go to Landing Page">
+            <button className="home-btn" title="Home">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -19,24 +20,24 @@ const HomeButton = memo(function HomeButton() {
     );
 });
 
-const ProfileButton = memo(function ProfileButton({ onClick }) {
+export const ProfileButton = memo(function ProfileButton({ onClick }) {
     return (
-        <button id="profile-button" className="profile-btn" onClick={onClick}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+        <button className="premium-profile-btn" onClick={onClick}>
+            <div className="user-avatar-placeholder">
+                <Activity size={18} color="white" />
+            </div>
+            <span style={{ fontWeight: 600 }}>My Account</span>
         </button>
     );
 });
 
-const DropdownMenu = memo(function DropdownMenu({ isVisible }) {
+export const DropdownMenu = memo(function DropdownMenu({ isVisible }) {
     const navigate = useNavigate();
 
     const handleAuthClick = useCallback(() => {
         if (isLoggedIn()) {
             logout();
+            navigate('/login');
         } else {
             navigate('/login');
         }
@@ -44,8 +45,18 @@ const DropdownMenu = memo(function DropdownMenu({ isVisible }) {
 
     return (
         <div id="dropdown-menu" className={`dropdown-menu ${isVisible ? 'visible' : 'hidden'}`}>
+            <Link to="/dashboard" className="dropdown-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </Link>
             <Link to="/profile" className="dropdown-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
@@ -53,20 +64,17 @@ const DropdownMenu = memo(function DropdownMenu({ isVisible }) {
                 Profile
             </Link>
             <Link to="/results" className="dropdown-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
                 Statistics
             </Link>
-            <Link to="/settings" className="dropdown-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+            <Link to="/profile?tab=settings" className="dropdown-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="3"></circle>
-                    <path
-                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
                 Settings
             </Link>
@@ -95,15 +103,15 @@ const DropdownMenu = memo(function DropdownMenu({ isVisible }) {
     );
 });
 
-
-function Navbar() {
+const Navbar = () => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
     const buttonRef = useRef(null);
+    const loggedIn = isLoggedIn();
 
     const toggleDropdown = useCallback(() => {
-        setDropdownVisible((prev) => !prev);
-    }, []);
+        setDropdownVisible(!isDropdownVisible);
+    }, [isDropdownVisible]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -117,32 +125,38 @@ function Navbar() {
             }
         };
 
-        if (isDropdownVisible) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isDropdownVisible]);
+    }, []);
 
     return (
-        <div className="nav-container">
-            <div className="nav-title">
-                <img id="logo" src={nbnLogo} alt="NBN Logo" height="80" />
+        <div className="nav-container glass">
+            <Link to="/" className="nav-title glow-on-hover" aria-label="Nothing But Net Home">
+                <img id="logo" src={nbnLogo} alt="NBN Logo" className="nav-logo-img" />
                 <h2 id="nbntitle">nothingbutnet</h2>
-            </div>
-            <div className={"nav-options"}>
-                <HomeButton />
-                <div ref={buttonRef}>
-                    <ProfileButton onClick={toggleDropdown} />
-                </div>
-                <div ref={dropdownRef}>
-                    <DropdownMenu isVisible={isDropdownVisible} />
-                </div>
+            </Link>
+            <div className="nav-options">
+                {loggedIn ? (
+                    <>
+                        <HomeButton />
+                        <div ref={buttonRef}>
+                            <ProfileButton onClick={toggleDropdown} />
+                        </div>
+                        <div ref={dropdownRef}>
+                            <DropdownMenu isVisible={isDropdownVisible} />
+                        </div>
+                    </>
+                ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <Link to="/login" className="nav-link" style={{color: 'var(--text-secondary)', fontWeight: 500}}>Log In</Link>
+                        <Link to="/register" className="nav-btn" style={{padding: '0.6rem 1.2rem', background: 'var(--accent-color)', color: 'white', borderRadius: '50px', fontWeight: 600}}>Get Started</Link>
+                    </div>
+                )}
             </div>
         </div>
     );
-}
+};
 
 export default Navbar;

@@ -25,6 +25,14 @@ console.log("PORT:", process.env.PORT || 3000);
 console.log("MONGODB_URI:", process.env.MONGODB_URI ? "Set" : "NOT SET");
 console.log("EMAIL_USER:", process.env.EMAIL_USER ? process.env.EMAIL_USER : "NOT SET");
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "******" : "NOT SET");
+console.log("STRIPE_WEBHOOK_SECRET:", process.env.STRIPE_WEBHOOK_SECRET ? "Set" : "NOT SET");
+
+const PLAN_LIMITS = {
+    guest: { dailyCount: 1, maxDuration: 60, features: ['makes_misses'] },
+    free: { weeklyCount: 3, maxDuration: 300, features: ['makes_misses'] },
+    standard: { weeklyCount: 10, maxDuration: 3600, features: ['makes_misses', 'session_fg'] },
+    pro: { weeklyCount: 25, maxDuration: 3600, features: ['makes_misses', 'session_fg', 'shot_angles', 'fg_progression', 'shot_locations', 'priority_support'] }
+};
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -204,7 +212,14 @@ app.post('/api/login', loginValidation, async (req, res, next) => {
         console.log(`[Login] Successful login for: ${lowerCaseUsername}`);
 
         const token = jwt.sign(
-            { userId: user._id, username: user.username, email: user.email, emailVerified: user.emailVerified },
+            { 
+                userId: user._id, 
+                username: user.username, 
+                email: user.email, 
+                emailVerified: user.emailVerified,
+                isPro: user.isPro,
+                subscriptionPlan: user.subscriptionPlan
+            },
             JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -249,12 +264,25 @@ app.post('/api/session', sessionValidation, async (req, res, next) => {
         // Manual validation removed (handled by middleware)
 
         const session = new Session({
-            userId, makes, misses, longest_streak, average_angle, average_make_angle,
+            userId, 
+            ip: !userId ? req.ip : undefined,
+            makes, misses, longest_streak, average_angle, average_make_angle,
             average_miss_angle, fg_percentage, shot_angles, shots_results, total_shots, sessionDate: new Date()
         });
         await session.save();
 
-        console.log("Session saved successfully:", session);
+        // Also save to Analysis for tracking
+        const analysis = new Analysis({
+            userId,
+            ip: !userId ? req.ip : undefined,
+            totalShots: total_shots,
+            madeShots: makes,
+            fgPercentage: fg_percentage,
+            date: session.sessionDate
+        });
+        await analysis.save();
+
+        console.log("Session and Analysis saved successfully:", session._id);
 
         res.status(201).json({ message: "Session recorded successfully!", session });
     } catch (err) {
@@ -282,14 +310,11 @@ app.get('/api/sessions/:userId', async (req, res, next) => {
         const { userId } = req.params;
 
         const sessions = await Session.find({ userId })
-            .select('sessionDate makes misses longest_streak fg_percentage shot_angles shots_results average_angle')
+            .select('sessionDate makes misses longest_streak fg_percentage shot_angles shots_results average_angle total_shots')
             .sort({ sessionDate: -1 })
-            .lean(); // Added sort for consistency
-        if (!sessions.length) {
-            return res.status(404).json({ error: 'No sessions found for this user' });
-        }
+            .lean();
 
-        res.json(sessions);
+        res.json(sessions); // Returns [] if no sessions — empty state, not an error
     } catch (err) {
         next(err);
     }
@@ -350,6 +375,60 @@ app.get('/api/analyses', requireAuthSession, async (req, res, next) => {
         const userId = req.user._id;
         const analyses = await Analysis.find({ userId }).sort({ date: -1 }).lean();
         res.status(200).json(analyses);
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.get('/api/user-limits', async (req, res, next) => {
+    try {
+        let userId = null;
+        let plan = 'guest';
+
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            try {
+                const token = authHeader.split(' ')[1];
+                const decoded = jwt.verify(token, JWT_SECRET);
+                userId = decoded.userId;
+                
+                const user = await User.findById(userId);
+                if (user) {
+                    plan = user.subscriptionPlan || (user.isPro ? 'pro' : 'free');
+                }
+            } catch (authErr) {
+                // Ignore auth error, treat as guest
+            }
+        }
+
+        const limits = PLAN_LIMITS[plan];
+        let analysisCount = 0;
+
+        if (plan === 'guest') {
+            // Check last 24 hours for guest by IP
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            analysisCount = await Analysis.countDocuments({
+                ip: req.ip,
+                userId: null,
+                date: { $gte: oneDayAgo }
+            });
+        } else {
+            // Check last 7 days for registered users
+            const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            analysisCount = await Analysis.countDocuments({
+                userId,
+                date: { $gte: oneWeekAgo }
+            });
+        }
+
+        res.json({
+            plan,
+            limits,
+            usage: {
+                count: analysisCount,
+                remaining: Math.max(0, (plan === 'guest' ? limits.dailyCount : limits.weeklyCount) - analysisCount)
+            }
+        });
     } catch (err) {
         next(err);
     }
@@ -439,7 +518,9 @@ app.post('/api/verify-email', async (req, res, next) => {
                 userId: user._id,
                 username: user.username,
                 email: user.email,
-                emailVerified: user.emailVerified // This will now be true
+                emailVerified: user.emailVerified, // This will now be true
+                isPro: user.isPro,
+                subscriptionPlan: user.subscriptionPlan
             },
             JWT_SECRET,
             { expiresIn: '1h' }

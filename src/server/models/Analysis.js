@@ -5,8 +5,13 @@ const analysisSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
-        index: true // Index for fast lookups
+        required: false, // Optional for guests
+        index: true
+    },
+    ip: {
+        type: String,
+        required: false,
+        index: true
     },
     date: {
         type: Date,

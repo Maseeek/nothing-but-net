@@ -145,7 +145,7 @@ const RegisterPage = () => {
 
                         <button
                             type="submit"
-                            className="btn-primary"
+                            className="primary-btn"
                             style={{ width: '100%', marginTop: '15px' }}
                             disabled={isLoading}
                         >

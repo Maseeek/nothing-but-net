@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar.jsx';
 import Loading from '../components/Loading.jsx';
 import ProfileDetails from '../components/profile/ProfileDetails.jsx';
 import SecuritySettings from '../components/profile/SecuritySettings.jsx';
 import AnalysesHistory from '../components/profile/AnalysesHistory.jsx';
+import AppSettings from '../components/profile/AppSettings.jsx';
 import MagicButton from '../components/MagicButton.jsx';
 import Pricing from '../components/Pricing.jsx';
 import { API_BASE_URL } from '../config.js';
@@ -13,30 +14,28 @@ import './../css/ProfilePage.css';
 
 const ProfilePage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('analyses'); // Default to the new stats tab
+    const [activeTab, setActiveTab] = useState('analyses');
+
+    // Handle tab from query parameter
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab');
+        if (tab && ['analyses', 'details', 'security', 'settings', 'pricing'].includes(tab)) {
+            setActiveTab(tab);
+        }
+    }, [location]);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Fetch fresh user data from the server
                 const token = localStorage.getItem('authToken');
                 if (!token) {
-                    window.location.href = '/login';
+                    navigate('/login');
                     return;
                 }
-
-                // Check for session_id in URL (Stripe redirect)
-                const urlParams = new URLSearchParams(window.location.search);
-                const sessionId = urlParams.get('session_id');
-
-                if (sessionId) {
-                    console.log("Stripe redirect detected. Verifying payment...");
-                    // Optional: You could show a specific loading state here
-                }
-
-
 
                 const res = await axios.get(`${API_BASE_URL}/api/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -54,22 +53,24 @@ const ProfilePage = () => {
         fetchUserData();
     }, [navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        navigate('/login');
-    };
-
     if (loading) {
         return <Loading />;
     }
 
     if (!user) return null;
 
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        // Clean up URL when changing tabs manually (optional, but cleaner)
+        navigate('/profile', { replace: true });
+    };
+
     return (
-        <div className="profile-page">
+        <div className="dashboard-container">
             <Navbar />
 
-            <div className="profile-container glass">
+            <div className="dashboard-content-wrapper animate-fade-in" style={{maxWidth: '900px', margin: '0 auto', width: '100%'}}>
+                <div className="profile-container bento-item glass">
                 <div className="profile-header">
                     <div className="avatar">
                         {user.username.charAt(0).toUpperCase()}
@@ -90,10 +91,9 @@ const ProfilePage = () => {
                             {user.isPro && <span className="pro-badge">PRO</span>}
                         </div>
 
-                        {/* Upgrade Button Section */}
                         {!user.isPro && (
                             <div style={{ marginTop: '20px' }}>
-                                <MagicButton onClick={() => setActiveTab('pricing')}>
+                                <MagicButton onClick={() => handleTabChange('pricing')}>
                                     View Upgrade Options
                                 </MagicButton>
                             </div>
@@ -104,26 +104,34 @@ const ProfilePage = () => {
                 <nav className="profile-nav">
                     <button
                         className={activeTab === 'analyses' ? 'active' : ''}
-                        onClick={() => setActiveTab('analyses')}
+                        onClick={() => handleTabChange('analyses')}
                     >
                         History
                     </button>
                     <button
                         className={activeTab === 'details' ? 'active' : ''}
-                        onClick={() => setActiveTab('details')}
+                        onClick={() => handleTabChange('details')}
                     >
                         Profile Details
                     </button>
                     <button
                         className={activeTab === 'security' ? 'active' : ''}
-                        onClick={() => setActiveTab('security')}
+                        onClick={() => handleTabChange('security')}
                     >
                         Security
                     </button>
-                    {/* Hidden tab primarily accessed via the Upgrade button */}
-                    {activeTab === 'pricing' && (
-                        <button className="active">
-                            Pricing
+                    <button
+                        className={activeTab === 'settings' ? 'active' : ''}
+                        onClick={() => handleTabChange('settings')}
+                    >
+                        App Settings
+                    </button>
+                    {!user.isPro && (
+                        <button 
+                            className={activeTab === 'pricing' ? 'active' : ''}
+                            onClick={() => handleTabChange('pricing')}
+                        >
+                            Upgrades
                         </button>
                     )}
                 </nav>
@@ -132,11 +140,13 @@ const ProfilePage = () => {
                     {activeTab === 'details' && <ProfileDetails user={user} />}
                     {activeTab === 'security' && <SecuritySettings />}
                     {activeTab === 'analyses' && <AnalysesHistory />}
-                    {activeTab === 'pricing' && <Pricing />}
+                    {activeTab === 'settings' && <AppSettings />}
+                    {activeTab === 'pricing' && <Pricing user={user} />}
                 </main>
+            </div>
             </div>
         </div>
     );
 };
 
-export default ProfilePage;
+export default ProfilePage;

@@ -4,16 +4,12 @@ import { API_BASE_URL, ANALYSIS_API_URL } from '../config.js';
 export async function sendSessionData(sessionData) {
     try {
         const currentUser = getCurrentUser();
-        if (!currentUser || !currentUser.userId) {
-            console.error("User ID not found. Ensure the user is logged in.");
-            return;
-        }
-
+        
         const payload = {
-            userId: currentUser.userId, // Include userId
+            userId: currentUser?.userId || null, 
             makes: sessionData.makes,
             misses: sessionData.misses,
-            longest_streak: sessionData.longest_streak, // Updated field name
+            longest_streak: sessionData.longest_streak,
             average_angle: sessionData.average_angle,
             average_make_angle: sessionData.average_make_angle,
             average_miss_angle: sessionData.average_miss_angle,
@@ -40,41 +36,25 @@ export async function sendSessionData(sessionData) {
     }
 }
 
+export async function getVideoDuration(file) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+            window.URL.revokeObjectURL(video.src);
+            resolve(video.duration);
+        };
+        video.onerror = () => {
+            reject("Could not load video metadata.");
+        };
+        video.src = URL.createObjectURL(file);
+    });
+}
+
+// NOTE: sendVideoForAnalysis is deprecated in favor of AnalysisContext.jsx
+// Keeping only the duration logic helper if needed elsewhere.
 export async function sendVideoForAnalysis(file, hoopLeft, hoopRight, navigate) {
-    const formData = new FormData();
-    formData.append("video", file);
-    formData.append("hoopLeft", JSON.stringify([hoopLeft.x, hoopLeft.y]));
-    formData.append("hoopRight", JSON.stringify([hoopRight.x, hoopRight.y]));
-    try {
-        console.log("Hoop Left:", hoopLeft, "Hoop Right:", hoopRight);
-
-        // Match the key used in Settings and Results
-        const settingsShowAngle = localStorage.getItem('nbn_settings_showAngle') === 'true';
-        formData.append("showAngle", settingsShowAngle);
-
-        const response = await fetch(`${ANALYSIS_API_URL}/upload-and-analyze`, {
-            method: "POST",
-            body: formData,
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            console.log("Analysis raw response data:", data.data);
-            const analysisResults = data.data;
-            console.log("Saving to sessionStorage 'analysisResults':", analysisResults);
-            sessionStorage.setItem("analysisResults", JSON.stringify(analysisResults));
-
-            // Send session data to the server
-            await sendSessionData(analysisResults);
-
-            navigate("/results"); // Navigate to Results.jsx page
-        } else {
-            console.error("Analysis failed:", data.error || "Unknown error");
-            alert("Analysis failed: " + (data.error || "Unknown error"));
-        }
-    } catch (error) {
-        console.error("Error processing video:", error);
-        alert("Error processing video: " + error.message);
-    }
+    // This function is being phased out.
+    // Use AnalysisContext.startAnalysis for production use.
+    console.warn("sendVideoForAnalysis is deprecated. Use AnalysisContext instead.");
 }

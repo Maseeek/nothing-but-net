@@ -6,90 +6,112 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
-
-    /* Glass Recipe Inheritance */
-    /* Glass Recipe Inheritance */
-    /* Liquid Glass Aesthetic - Enhanced */
-    background: rgba(18, 18, 18, 0.4);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    padding: 1rem 5%;
+    position: sticky;
+    top: 20px;
+    margin: 0 5%;
     z-index: 500;
     font-family: var(--font-heading);
     box-sizing: border-box;
     transition: all 0.3s ease;
+    border-radius: 100px;
+    background: rgba(30, 30, 47, 0.5);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .nav-options {
     justify-content: flex-end;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 1.5rem;
 }
 
 .nav-title {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.8rem;
     font-family: var(--font-heading);
     color: var(--text-primary);
     cursor: pointer;
     text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: 700;
+    transition: all 0.3s ease;
 }
 
 #nbntitle {
     margin: 0;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+/* Glow on hover for title/logo */
+.glow-on-hover:hover {
+    text-shadow: 0 0 20px var(--accent-color), 0 0 40px var(--accent-color);
+}
+
+.glow-on-hover:hover #logo {
+    filter: drop-shadow(0 0 15px var(--accent-color));
 }
 
 @media (hover: hover) {
     .nav-title:hover {
-        color: var(--accent-color);
-    }
-
-    .nav-title:hover svg {
-        stroke: var(--accent-color);
+        color: var(--text-primary); /* Keep text white, just glow */
     }
 }
 
-/* Home & Profile Buttons - Using Icon Button Style */
-/* Home & Profile Buttons - Minimalistic Modern Style */
-/* Home & Profile Buttons - Minimalistic Modern Style */
-.home-btn,
-.profile-btn {
+/* Premium Profile Button */
+.premium-profile-btn {
     background: rgba(255, 255, 255, 0.05);
-    /* Base glass tint */
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
-    font-size: 18px;
+    backdrop-filter: blur(10px);
+}
+
+.premium-profile-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px) scale(1.02);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px -10px var(--accent-color);
+}
+
+.user-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--accent-color), #ff5805);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    /* Fluid bounce */
-    padding: 10px;
-    border-radius: 12px;
-    width: auto;
-    height: auto;
-    position: relative;
-    overflow: hidden;
-    will-change: transform;
+    box-shadow: 0 0 10px rgba(214, 75, 23, 0.5);
+}
 
-    /* Volumetric Depth */
-    box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.1),
-        inset 0 1px 1px rgba(255, 255, 255, 0.3),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+/* Standard nav links (Logout, settings icons) can be preserved but adjusted to fit pill */
+.home-btn,
+.profile-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 10px;
+    border-radius: 50%; /* Circle looks better in pill */
+    width: 44px;
+    height: 44px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Spotlight Effect */
