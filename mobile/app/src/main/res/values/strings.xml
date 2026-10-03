@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Nothing But Net</string>
+    
+    <!-- Home Screen -->
+    <string name="welcome_back">Welcome back,</string>
+    <string name="dashboard_title">Dashboard</string>
+    <string name="total_shots">Total Shots</string>
+    <string name="longest_streak">Streak</string>
+    <string name="avg_angle">Avg Angle</string>
+    <string name="arc_analysis">Arc Analysis</string>
+    <string name="real_time_trend">REAL-TIME TREND</string>
+    <string name="optimal_angle">55° OPTIMAL</string>
+    <string name="fg_progression">FG% Progression</string>
+    <string name="performance_trend">PERFORMANCE TREND</string>
+    
+    <!-- Auth Screens -->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="no_account">Don\'t have an account? Sign up</string>
+    <string name="already_have_account">Already have an account? Log in</string>
+
+    <!-- Profile Screen -->
+    <string name="my_profile">My Profile</string>
+    <string name="pro_member">Pro Member</string>
+    <string name="logout">Logout</string>
+</resources>

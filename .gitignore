@@ -14,13 +14,28 @@ dist-ssr
 
 # Environment variables
 .env
+src/server/.env
+*.env
+!.env.example
+!.env.client.example
+!src/server/.env.example
 .env.local
 .env.*.local
+
+# Python bytecode & caches
+__pycache__/
+*.py[cod]
+*.pyc
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
+.kotlin/
+mobile/build/
+mobile/app/build/
+mobile/.gradle/
+mobile/local.properties
 .DS_Store
 *.suo
 *.ntvs*
@@ -35,3 +50,4 @@ src/server/uploads/
 *.mp4
 *.webm
 *.avi
+!research-cv/Resources/**
