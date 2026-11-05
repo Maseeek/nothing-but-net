@@ -19,8 +19,8 @@ allowed_origins = [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:3000",
-    "https://nothingbutnet.online",
-    "https://www.nothingbutnet.online",
+    "https://nbnc-maseeeks-projects.vercel.app",
+    "https://www.nbnc-maseeeks-projects.vercel.app",
     "https://nothing-but-net-cv.onrender.com",
     os.environ.get("FRONTEND_URL"),
     os.environ.get("PRODUCTION_FRONTEND_URL")

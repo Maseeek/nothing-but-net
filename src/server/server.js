@@ -50,8 +50,8 @@ const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:3000",
-    "https://nothingbutnet.online",
-    "https://www.nothingbutnet.online",
+    "https://nbnc-maseeeks-projects.vercel.app",
+    "https://www.nbnc-maseeeks-projects.vercel.app",
     process.env.FRONTEND_URL,
     process.env.PRODUCTION_FRONTEND_URL
 ].filter(Boolean); // Filter out undefined values

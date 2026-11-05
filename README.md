@@ -4,7 +4,7 @@
 
 **Full-Stack Computer Vision & Predictive Trajectory Modeling Platform for Basketball Shooting Telemetry**
 
-[![Live Platform](https://img.shields.io/badge/Live_Platform-nothingbutnet.online-d64b17?style=for-the-badge&logo=vercel&logoColor=white)](https://nothingbutnet.online)
+[![Live Platform](https://img.shields.io/badge/Live_Platform-nbnc-maseeeks-projects.vercel.app-d64b17?style=for-the-badge&logo=vercel&logoColor=white)](https://nbnc-maseeeks-projects.vercel.app)
 [![Case Study](https://img.shields.io/badge/Architecture_Case_Study-maciekgeneja.me-121212?style=for-the-badge&logo=read-the-docs&logoColor=white)](https://maciekgeneja.me/blog/nothing-but-net)
 
 [![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
@@ -21,7 +21,7 @@
 
 ## Executive Overview
 
-**Nothing But Net** ([nothingbutnet.online](https://nothingbutnet.online)) is a multi-platform sports analytics and computer vision system that transforms raw courtside video into biomechanical and statistical shooting telemetry. From a single user-calibrated hoop reference frame, the computer vision engine detects the basketball across frames, rejects false-positive visual artifacts using kinematic displacement bounds, fits a 2nd-degree polynomial trajectory ($y = Ax^2 + Bx + C$) via least-squares regression, computes release angle kinematics, and classifies shot outcomes (FGM, FGA, FG%, make/miss angle differentials, and streak metrics).
+**Nothing But Net** ([nbnc-maseeeks-projects.vercel.app](https://nbnc-maseeeks-projects.vercel.app)) is a multi-platform sports analytics and computer vision system that transforms raw courtside video into biomechanical and statistical shooting telemetry. From a single user-calibrated hoop reference frame, the computer vision engine detects the basketball across frames, rejects false-positive visual artifacts using kinematic displacement bounds, fits a 2nd-degree polynomial trajectory ($y = Ax^2 + Bx + C$) via least-squares regression, computes release angle kinematics, and classifies shot outcomes (FGM, FGA, FG%, make/miss angle differentials, and streak metrics).
 
 This repository consolidates the complete production ecosystem into a unified monorepo while preserving root deployment paths for zero-downtime continuous delivery across **Vercel** (Frontend SPA & Serverless API) and **Render** (Express API & Python CV Microservice):
 
@@ -260,7 +260,7 @@ python main.py
 
 Production infrastructure is declaratively defined at the repository root:
 
-- **Frontend & Serverless Routing (`vercel.json`)**: Deploys the Vite bundle (`dist/`) to [nothingbutnet.online](https://nothingbutnet.online) with `/api/*` serverless rewrite rules.
+- **Frontend & Serverless Routing (`vercel.json`)**: Deploys the Vite bundle (`dist/`) to [nbnc-maseeeks-projects.vercel.app](https://nbnc-maseeeks-projects.vercel.app) with `/api/*` serverless rewrite rules.
 - **Backend & CV Microservices (`render.yaml`)**: Orchestrates two managed Render web services:
   - `nothing-but-net-api` (Node.js runtime executing `node src/server/server.js`)
   - `nothing-but-net-cv` (Python 3.11 runtime executing `gunicorn --chdir cv_service/src server:app --timeout 120`)
@@ -271,5 +271,5 @@ Production infrastructure is declaratively defined at the repository root:
 
 **Maciek Geneja**
 - Portfolio & Architectural Write-Up: [maciekgeneja.me/blog/nothing-but-net](https://maciekgeneja.me/blog/nothing-but-net)
-- Live Application: [nothingbutnet.online](https://nothingbutnet.online)
+- Live Application: [nbnc-maseeeks-projects.vercel.app](https://nbnc-maseeeks-projects.vercel.app)
 - GitHub: [@Maseeek](https://github.com/Maseeek)

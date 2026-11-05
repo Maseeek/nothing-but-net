@@ -1,6 +1,6 @@
 # Nothing But Net — Native Android Companion (`mobile/`)
 
-Native **Kotlin** & **Jetpack Compose** Android client for the [Nothing But Net](https://nothingbutnet.online) basketball analytics ecosystem. Engineered for courtside video capture, real-time shooting session telemetry, and offline-resilient performance tracking.
+Native **Kotlin** & **Jetpack Compose** Android client for the [Nothing But Net](https://nbnc-maseeeks-projects.vercel.app) basketball analytics ecosystem. Engineered for courtside video capture, real-time shooting session telemetry, and offline-resilient performance tracking.
 
 ---
 
